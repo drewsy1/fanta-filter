@@ -1,0 +1,42 @@
+{
+  "name": "fanta-filter",
+  "version": "1.0.0",
+  "description": "An attempt at a JS HTML filtering plugin",
+  "main": "dist/js/fanta-filter.js",
+  "scripts": {
+    "test": "mocha",
+    "test-browser": "start firefox test/browser/browser.html",
+    "start": "webpack --config webpack.config.js --watch --progress --profile",
+    "build": "webpack --config webpack.config.js --progress --profile  --display-error-details",
+    "prod": "webpack --env.NODE_ENV=production --config webpack.config.js --progress --mode=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drewsy1/fanta-filter.git"
+  },
+  "author": "Drew Westgate",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/drewsy1/fanta-filter/issues"
+  },
+  "homepage": "https://github.com/drewsy1/fanta-filter#readme",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
+    "chai": "^4.2.0",
+    "circular-dependency-plugin": "^5.0.2",
+    "eslint": "^6.1.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-mocha": "^6.0.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
+    "terser-webpack-plugin": "^1.3.0",
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6"
+  }
+}
