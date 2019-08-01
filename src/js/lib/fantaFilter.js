@@ -1,3 +1,4 @@
+// Variable to store all FantaFilters instances
 const CurrentFilters = [];
 
 /**
@@ -64,52 +65,4 @@ export const protoFantaFilter = (parentNode,options,name,inputs,items) => ({
     get CurrentFilters() { return CurrentFilters },
     get hasInputs() { return this.inputs !== null },
     get hasItems() { return items !== null }
-})
-
-// export class FantaFilter{
-//     constructor(dependencies,target,userOptions = {}){
-//         const { configure, context, defaultOptions } = dependencies;
-//         const parents = typeof target === `string`
-//             ? context.querySelectorAll(target)
-//             : target;
-
-//         if (parents.length > 1) {
-//             let temp = [].slice.call(parents)
-//                 .map(element => new FantaFilter(dependencies, element, userOptions))
-//                 .filter(x => x instanceof FantaFilter);
-
-//             return temp;
-//         }
-
-//         context = context;
-//         parentNode = parents[0] || parents;
-//         options = configure(parentNode, userOptions, defaultOptions);
-
-//         if(!parentNode.hasAttribute(options.attributeNames.group)){
-//             return []
-//         }
-        
-//         name = parentNode.getAttribute(options.attributeNames.group);
-
-//         inputs = Array.from(context.querySelectorAll(`.${options.classNames.input}[${options.attributeNames.group}=${name}]`))
-//         hasInputs = inputs !== null;
-//         items = Array.from(parentNode.querySelectorAll(`.${options.classNames.item}[${options.attributeNames.group}=${name}]`))
-//         hasItems = items !== null;
-
-//         let groupWithSameName = CurrentFilters.find(filter => filter.name === name)
-//         if(groupWithSameName){
-//             groupWithSameName.items = groupWithSameName.items.concat(items);
-
-//             return []
-//         }
-
-//         parentNode.setAttribute(options.rootAttribute, true);
-
-//         CurrentFilters.push(this);
-//     }
-
-//     static get CURRENTFILTERS() {
-//         return CurrentFilters;
-//     }
-// }
-// CurrentFilters = [];
+});
