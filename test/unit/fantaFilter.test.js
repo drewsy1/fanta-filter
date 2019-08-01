@@ -4,7 +4,7 @@ import { mocks } from 'mock-browser';
 import configure from '../../src/js/lib/configure';
 import defaultOptions from '../../src/js/lib/default-options';
 
-import FantaFilter from '../../src/js/lib/fantaFilter';
+import {protoFantaFilter,createFantaFilter} from '../../src/js/lib/fantaFilter';
 
 const mockBrowser = new mocks.MockBrowser();
 const document = mockBrowser.getDocument();
@@ -26,6 +26,7 @@ let fantaFilterInputs2;
 let fantaFilterInputs2_1;
 let dependencies;
 let fantaFilterInstance;
+let fantaFilter;
 
 function createTestContext(){
   context = document.createElement('div');
@@ -82,12 +83,13 @@ fantaFilterItems2.forEach(item => fantaFilterParent2.appendChild(item));
 fantaFilterItems2_1.forEach(item => fantaFilterParent2_1.appendChild(item));
 [fantaFilterInputs1,fantaFilterInputs2,fantaFilterInputs2_1].forEach(inputGroup => inputGroup.forEach(input => context.appendChild(input)));
 [fantaFilterParent1,fantaFilterParent2,fantaFilterParent2_1].forEach(parent => context.appendChild(parent));
-fantaFilterInstance = new FantaFilter(dependencies, '.js-fafi');
+fantaFilterInstance = createFantaFilter(dependencies, '.js-fafi');
+fantaFilter = fantaFilterInstance[0] || fantaFilterInstance;
 
 describe('FantaFilter',function() {
-  describe('function constructor()',function(){
+  describe('createFantaFilter()',function(){
     it('Should be a function', function(){
-      expect(FantaFilter).to.be.a('function');
+      expect(createFantaFilter).to.be.a('function');
     });
     
     it('Should instantiate and find instances of CSS selector \'.js-fafi\'', function(){
@@ -96,24 +98,24 @@ describe('FantaFilter',function() {
     });
 
     it('Should combine filters (and their elements) with the same group name', function(){
-      let testGroup2Filters = FantaFilter.CURRENTFILTERS.filter(item => item.name == 'testGroup2');
+      let testGroup2Filters = fantaFilter.CurrentFilters.filter(item => item.name == 'testGroup2');
       let testGroup2Elements = fantaFilterItems2.concat(fantaFilterItems2_1,fantaFilterInputs2,fantaFilterInputs2_1);
       expect(testGroup2Filters).to.not.have.lengthOf.greaterThan(1);
       expect(testGroup2Filters[0].items.concat(testGroup2Filters[0].inputs)).to.contain.members(testGroup2Elements).and.have.lengthOf(testGroup2Elements.length);
     });
   })
 
-  describe('static get CURRENTFILTERS()',function(){
+  describe('get CurrentFilters()',function(){
     it('Should return an array of all active FantaFilter instances', function(){
       expect(fantaFilterInstance).to.have.lengthOf(2);
-      expect(FantaFilter.CURRENTFILTERS).to.have.lengthOf(2);
+      expect(fantaFilter.CurrentFilters).to.have.lengthOf(2);
     });
   });
   
   describe('[Properties]',function(){
     describe('items',function(){
       it('Should contain js-fafi-item objects of matching group',function() {
-        expect(fantaFilterInstance[0].items).to.contain.members(fantaFilterItems1);
+        expect(fantaFilter.items).to.contain.members(fantaFilterItems1);
       });
     });
   });  
