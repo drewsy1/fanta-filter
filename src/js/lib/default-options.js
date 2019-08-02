@@ -2,7 +2,8 @@ export default {
     attributeNames: {
         root: `data-fantafilter`,
         group: `data-fantafilter-group`,
-        filterSelector: `data-fantafilter-selector`
+        selector: `data-fantafilter-selector`,
+        comparer: `data-fantafilter-comparer`
     },
     classNames: {
         parent: `js-fafi-parent`,

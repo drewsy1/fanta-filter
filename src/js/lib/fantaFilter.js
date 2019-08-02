@@ -7,8 +7,8 @@ const CurrentFilters = [];
  * @param {*} target String selector representing an HTML object, or the object itself
  * @param {Object} userOptions Optional user override options
  */
-export function createFantaFilter(dependencies,target,userOptions = {}) {
-    const { configure, context, defaultOptions } = dependencies;
+export default function createFantaFilter(dependencies,target,userOptions = {}) {
+    const { configure, context, defaultOptions, createFantaFilterElement } = dependencies;
     const parents = typeof target === `string`
             ? context.querySelectorAll(target)
             : target;
@@ -20,28 +20,32 @@ export function createFantaFilter(dependencies,target,userOptions = {}) {
             .filter(x => x);
     }
 
-    let parentNode = parents[0] || parents;
-    let options = configure(parentNode, userOptions, defaultOptions);
+    let parent = parents[0] || parents;
+    let options = configure(parent, userOptions, defaultOptions);
 
     // If the parent node doesn't have the specified group attribute, cancel factory function
-    if(!parentNode.hasAttribute(options.attributeNames.group)){
+    if(!parent.hasAttribute(options.attributeNames.group)){
         return;
     }
     
-    let name = parentNode.getAttribute(options.attributeNames.group);
-    let inputs = Array.from(context.querySelectorAll(`.${options.classNames.input}[${options.attributeNames.group}=${name}]`))
-    let items = Array.from(parentNode.querySelectorAll(`.${options.classNames.item}[${options.attributeNames.group}=${name}]`))
+    let name = parent.getAttribute(options.attributeNames.group);
     let groupWithSameName = CurrentFilters.find(filter => filter.name === name)
+
+    parent.setAttribute(options.rootAttribute, true);
+
+    const FantaFilter = protoFantaFilter(parent,options,name,'','');
+
+    let inputs = createFantaFilterElement(dependencies, context.querySelectorAll(`.${options.classNames.input}[${options.attributeNames.group}=${name}]`), FantaFilter);
+    let items = createFantaFilterElement(dependencies, parent.querySelectorAll(`.${options.classNames.item}[${options.attributeNames.group}=${name}]`), FantaFilter);
 
     // If a FantaFilter with the same filter group already exists, merge this one's items with that one and then cancel factory
     if(groupWithSameName){
         groupWithSameName.items = groupWithSameName.items.concat(items);
         return
     }
-
-    parentNode.setAttribute(options.rootAttribute, true);
-
-    const FantaFilter = protoFantaFilter(parentNode,options,name,inputs,items);
+    
+    FantaFilter.inputs = inputs;
+    FantaFilter.items = items;
 
     CurrentFilters.push(FantaFilter);
 
@@ -56,7 +60,7 @@ export function createFantaFilter(dependencies,target,userOptions = {}) {
  * @param {Array} inputs HTML input elements that control filtering
  * @param {Array} items HTML elements to be filtered
  */
-export const protoFantaFilter = (parentNode,options,name,inputs,items) => ({
+const protoFantaFilter = (parentNode,options,name,inputs,items) => ({
     parentNode,
     options,
     name,
