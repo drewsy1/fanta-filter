@@ -1,51 +1,31 @@
 ﻿/* eslint-disable no-undef */
-const webpack = require('webpack');
 const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
-const {version} = require('./package.json');
-const circular = require('circular-dependency-plugin');
 
 module.exports = {
-    mode: "development",
-    entry: './src/js/fanta-filter',
+    mode: 'development',
+    entry: './src/ts/index.ts',
     output: {
-        path: path.resolve(__dirname, "dist"),
-        filename: 'js/[name].js',
-        library: "fanta-filter",
-        libraryTarget: "umd"
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'js/bundle.js',
     },
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.tsx?$/,
+                use: 'ts-loader',
                 exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env']
-                    }
-                }
-            }
-        ]
+            },
+        ],
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
         alias: {
-            'fantafilter-util': path.resolve(__dirname, 'src/js/util')
-        }
+            Interfaces: path.resolve(__dirname, 'src/ts/lib/interfaces/index.ts'),
+            Util: path.resolve(__dirname, 'src/ts/lib/util/index.ts'),
+        },
     },
-    devtool: 'source-map',
-    optimization: {
-        minimizer: [new TerserPlugin({})],
-    },
-    plugins: [
-        new circular(),
-        new webpack.DefinePlugin({
-            BUNDLED: true,
-            VERSION: `'${version}'`
-        }),
-    ],
+    devtool: 'inline-source-map',
     stats: {
-        colors: true
-    }
+        colors: true,
+    },
 };

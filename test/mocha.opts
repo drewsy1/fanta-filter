@@ -1,2 +1,5 @@
 # mocha.opts
   --require esm
+  --require ts-node/register
+  --require ignore-styles 
+  --require jsdom-global/register
