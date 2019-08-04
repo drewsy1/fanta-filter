@@ -2,9 +2,11 @@ import { convertKebabToCamelCase } from './string';
 import { Options } from 'Interfaces';
 
 /**
- * Converts a NamedNodeMap of attributes to an object
+ * @description Converts a NamedNodeMap of attributes to an object
+ * 
  * @param {NamedNodeMap} attributes NamedNodeMap to be converted
  * @param {Options | string} options Default options from which to retrieve the root data attribute template, or a string representing the template itself
+ * @returns An object created from the NamedNodeMap
  */
 export const convertAttributesToObject = (attributes: NamedNodeMap, options: Options | string) => {
     const root = typeof options === 'string' ? options : options.attributeNames.root;
