@@ -1,5 +1,5 @@
 import { FantaFilter, Options, FantaFilterElement, Dependencies } from 'Interfaces';
-import {TypeTests, DOM} from './lib/util/index';
+import { TypeTests, DOM } from './lib/util/index';
 
 // Variable to store all FantaFilters instances
 const CurrentFilters: FantaFilter[] = [];
@@ -12,7 +12,7 @@ const CurrentFilters: FantaFilter[] = [];
  * @param {string} name Name of filter
  * @param {FantaFilterElement[]} [inputs] HTML input elements that control filtering
  * @param {FantaFilterElement[]} [items] HTML elements to be filtered
- * @returns {FantaFilter} A FantaFilter object
+ * @returns A FantaFilter object
  */
 const protoFantaFilter = (
     parentNode: HTMLElement,
@@ -44,7 +44,7 @@ const protoFantaFilter = (
  * @param {Dependencies} dependencies Variables passed in from higher context
  * @param {(HTMLElement | string)} target String selector representing an HTML object, or the object itself
  * @param {Options} [userOptions={}] Optional user override options
- * @returns {FantaFilter|FantaFilter[]} A completed FantaFilter object
+ * @returns A completed FantaFilter object
  */
 export default function createFantaFilter(
     dependencies: Dependencies,
@@ -55,7 +55,7 @@ export default function createFantaFilter(
     const parents = typeof target === `string` ? context.querySelectorAll(target) : target;
 
     // If multiple parent nodes, create multiple FantaFilters and return those instead
-    if(TypeTests.isNodeList(parents)) {
+    if (TypeTests.isNodeList(parents)) {
         return [].slice
             .call(parents)
             .map((element: HTMLElement) => createFantaFilter(dependencies, element, userOptions))
