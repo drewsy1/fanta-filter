@@ -7,6 +7,7 @@
 export interface Options {
     attributeNames?: AttributeNames;
     classNames?: ClassNames;
+    inputTypes?: string[];
     [key: string]: any;
 }
 export interface AttributeNames {
@@ -20,6 +21,6 @@ export interface ClassNames {
     parent?: string;
     input?: string;
     item?: string;
-    inactive?: string;
+    hidden?: string;
     [key: string]: any;
 }

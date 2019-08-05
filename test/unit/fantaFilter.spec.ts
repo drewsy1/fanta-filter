@@ -6,8 +6,8 @@ import * as path from 'path';
 import * as Interface from '../../src/ts/lib/interfaces/index';
 import * as Util from '../../src/ts/lib/util/index';
 
-import configure from '../../src/ts/configure';
-import defaultOptions from '../../src/ts/default-options';
+import configure from '../../src/ts/lib/configure';
+import defaultOptions from '../../src/ts/lib/default-options';
 import createFantaFilter from '../../src/ts/fantaFilter';
 import createFantaFilterElement from '../../src/ts/fantaFilterElement';
 
@@ -21,7 +21,6 @@ const defaultDependencies: Interface.Dependencies = {
 };
 
 const externalHTMLPath = path.resolve(__dirname, 'fantaFilter.spec.html').replace(/\\/g, '/');
-// 'C:/Users/dreww/src/Git/fanta-filter/test/unit/fantaFilter.spec.html'
 
 const context: HTMLElement = document.createElement('div');
 context.innerHTML = fs.readFileSync(externalHTMLPath, 'utf8');
@@ -47,12 +46,13 @@ describe('fantaFilter.js', function() {
         it('Should combine filters (and their elements) with the same group name', function() {
             let testGroup2Filters = fantaFilter.CurrentFilters.filter(item => item.name == 'testGroup2');
             let testGroup2Elements = Array.from(
-                context.querySelectorAll('[data-fantafilter-group=testGroup2]:not(div)'),
+                context.querySelectorAll('[data-fantafilter-group=testGroup2]'),
             );
-            expect(testGroup2Filters).to.not.have.lengthOf.greaterThan(1);
             let testGroup2Elements_Actual = testGroup2Filters[0].items
                 .map(item => item.element)
                 .concat(testGroup2Filters[0].inputs.map(item => item.element));
+
+            expect(testGroup2Filters).to.not.have.lengthOf.greaterThan(1);
             expect(testGroup2Elements_Actual)
                 .to.contain.members(testGroup2Elements)
                 .and.have.lengthOf(testGroup2Elements.length);
@@ -75,7 +75,20 @@ describe('fantaFilter.js', function() {
     });
 });
 describe('fantaFilterElement.js', function() {
-    describe('createFantaFilterElement()', function() {});
+    describe('createFantaFilterElement()', function() {
+        it('Should be a function', function() {
+            expect(createFantaFilterElement).to.be.a('function');
+        });
+
+        it('Should create a usable instance', function() {
+            expect(fantaFilter.items[0]).to.not.be.undefined;
+        });
+
+        it("Should detect inputs and return them as FantaFilterInputs", function() {
+            expect(fantaFilter.inputs).to.exist;
+            expect(fantaFilter.inputs.length).to.equal(1);
+        });
+    });
     describe('protoFantaFilterElement()', function() {});
 });
 describe('lib', function() {
@@ -106,6 +119,5 @@ describe('lib', function() {
                 });
             });
         });
-        describe('typetests', function() {});
     });
 });

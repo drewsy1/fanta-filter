@@ -1,5 +1,5 @@
-import configure from './configure';
-import defaultOptions from './default-options';
+import configure from './lib/configure';
+import defaultOptions from './lib/default-options';
 import createFantaFilter from './fantaFilter';
 import createFantaFilterElement from './fantaFilterElement';
 import { Options } from 'Interfaces';

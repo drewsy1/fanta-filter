@@ -11,8 +11,11 @@ const defaultOptions: Options = {
         parent: 'js-fafi-parent',
         input: 'js-fafi-input',
         item: 'js-fafi-item',
-        inactive: 'js-fafi-active',
+        hidden: 'js-fafi-hidden',
     },
+    inputTypes: [
+        "input"
+    ]
 };
 
 export default defaultOptions;

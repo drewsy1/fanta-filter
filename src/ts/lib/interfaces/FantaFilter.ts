@@ -1,4 +1,4 @@
-import FantaFilterElement from './FantaFilterElement';
+import {FantaFilterElement} from './FantaFilterElement';
 
 /**
  * Prototype object to be processed by the createFantaFilter factory function
