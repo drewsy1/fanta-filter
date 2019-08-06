@@ -1,7 +1,7 @@
 import { Options } from "Interfaces";
 
 /**
- * Merges default/user options and finds new attributes on an HTML element.
+ * @description Merges default/user options and finds new attributes on an HTML element.
  *
  * @export
  * @param {HTMLElement} element Element to search for new attributes

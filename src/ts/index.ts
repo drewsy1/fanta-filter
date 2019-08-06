@@ -1,8 +1,7 @@
-import configure from './lib/configure';
-import defaultOptions from './lib/default-options';
-import createFantaFilter from './fantaFilter';
+import {Configure as configure, DefaultOptions as defaultOptions} from 'Util';
+import createFantaFilterWrapper from './fantaFilterWrapper';
 import createFantaFilterElement from './fantaFilterElement';
 import { Options } from 'Interfaces';
 
 export default (selector: string, userOptions: Options, context: HTMLElement | Document = document) =>
-    createFantaFilter({ configure, context, defaultOptions, createFantaFilterElement }, selector, userOptions);
+    createFantaFilterWrapper({ configure, context, defaultOptions, createFantaFilterElement }, selector, userOptions);

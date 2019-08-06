@@ -13,6 +13,8 @@ export interface FantaFilterElement {
 }
 
 export interface FantaFilterInput extends FantaFilterElement {
-    type: string,
-    
+    type: string;
+    comparer: string;
+    selector: string;
+    updateEvent?: CustomEvent;
 }

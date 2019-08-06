@@ -8,6 +8,7 @@
         "sourceMap": true,
         "lib": ["dom", "es6", "es5"],
         "baseUrl": "./",
+        "strictFunctionTypes": false,
         "paths": {
             "Interfaces": ["src/ts/lib/interfaces/index.ts"],
             "Util": ["src/ts/lib/util/index.ts"]

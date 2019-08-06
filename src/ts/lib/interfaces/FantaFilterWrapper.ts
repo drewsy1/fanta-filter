@@ -1,18 +1,18 @@
 import {FantaFilterElement} from './FantaFilterElement';
 
 /**
- * Prototype object to be processed by the createFantaFilter factory function
+ * Prototype object to be processed by the createFantaFilterWrapper factory function
  *
  * @export
- * @interface FantaFilter
+ * @interface FantaFilterWrapper
  */
-export default interface FantaFilter {
+export default interface FantaFilterWrapper {
     parentNode: HTMLElement;
     options: object;
     name: string;
     inputs: FantaFilterElement[];
     items: FantaFilterElement[];
-    CurrentFilters: FantaFilter[];
+    CurrentFilters: FantaFilterWrapper[];
     hasInputs: boolean;
     hasItems: boolean;
 }
