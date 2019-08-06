@@ -1,6 +1,6 @@
 import { Options } from "Interfaces";
 
-export default interface Dependencies {
+export interface Dependencies {
     configure: Function,
     context: HTMLElement | Document,
     defaultOptions: Options,

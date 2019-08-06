@@ -1,6 +1,4 @@
-import FantaFilterWrapper from "./FantaFilterWrapper";
-import {FantaFilterElement,FantaFilterInput} from "./FantaFilterElement";
-import {Options, AttributeNames, ClassNames } from "./Options";
-import Dependencies from "./Dependencies";
-
-export {FantaFilterWrapper as FantaFilterWrapper, FantaFilterElement, FantaFilterInput, Options, AttributeNames, ClassNames, Dependencies};
+export * from "./FantaFilterWrapper";
+export * from "./FantaFilterElement";
+export * from "./Options";
+export * from "./Dependencies";

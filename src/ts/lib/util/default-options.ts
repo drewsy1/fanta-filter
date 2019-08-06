@@ -1,6 +1,6 @@
 import { Options } from 'Interfaces';
 
-const defaultOptions: Options = {
+export const defaultOptions: Options = {
     attributeNames: {
         root: 'data-fantafilter',
         group: 'data-fantafilter-group',
@@ -13,9 +13,5 @@ const defaultOptions: Options = {
         item: 'js-fafi-item',
         hidden: 'js-fafi-hidden',
     },
-    inputTypes: [
-        "input"
-    ]
+    inputTypes: ['input'],
 };
-
-export default defaultOptions;

@@ -1,9 +1,15 @@
 import { FantaFilterElement, FantaFilterInput } from "./FantaFilterElement";
-import FantaFilterWrapper from "./FantaFilterWrapper";
+
+export interface FilterGroup{
+    filters: Filter[],
+    filteredItems: FantaFilterElement[],
+    updateEvent: any,
+    Update: () => void,
+}
 
 export interface Filter{
-    filterGroup: FantaFilterWrapper,
     input: FantaFilterInput,
+    selector: string,
 }
 
 export interface MatchFilter extends Filter{

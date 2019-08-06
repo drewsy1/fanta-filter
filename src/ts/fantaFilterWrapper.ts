@@ -1,5 +1,5 @@
 import { FantaFilterWrapper, Options, FantaFilterElement, Dependencies } from 'Interfaces';
-import { TypeTests } from './lib/util/index';
+import { isNodeList } from 'Util';
 
 // Variable to store all FantaFilters instances
 const CurrentFilters: FantaFilterWrapper[] = [];
@@ -18,6 +18,7 @@ const protoFantaFilterWrapper = (
     parentNode: HTMLElement,
     options: Options,
     name: string,
+    filterGroup?: any,
     inputs?: FantaFilterElement[],
     items?: FantaFilterElement[],
 ): FantaFilterWrapper => ({
@@ -26,6 +27,7 @@ const protoFantaFilterWrapper = (
     name,
     inputs,
     items,
+    filterGroup,
     get CurrentFilters() {
         return CurrentFilters;
     },
@@ -57,7 +59,7 @@ export default function createFantaFilterWrapper(
     const parents = typeof target === `string` ? context.querySelectorAll(target) : target;
 
     // If multiple parent nodes, create multiple FantaFilterWrappers and return those instead
-    if (TypeTests.isNodeList(parents)) {
+    if (isNodeList(parents)) {
         return [].slice
             .call(parents)
             .map((element: HTMLElement) => createFantaFilterWrapper(dependencies, element, userOptions))

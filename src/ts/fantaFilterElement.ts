@@ -1,5 +1,5 @@
 import { FantaFilterWrapper, FantaFilterElement, FantaFilterInput, Options, Dependencies } from 'Interfaces';
-import { TypeTests, DOM } from './lib/util/index';
+import { isNodeList, convertAttributesToObject } from 'Util';
 
 /**
  * @description Creates a prototype object to be processed by the createFantaFilterElement factory function
@@ -71,7 +71,7 @@ export default function createFantaFilterElement(
     userOptions: Options = {},
 ) {
     // if targets is actually a collection of elements, recursively call this function on each of its elements
-    if (TypeTests.isNodeList(targets)) {
+    if (isNodeList(targets)) {
         return [].slice
             .call(Array.from(targets))
             .map((element: HTMLElement) => createFantaFilterElement(dependencies, element, parentFilter, userOptions))
@@ -84,7 +84,7 @@ export default function createFantaFilterElement(
     const options = Object.assign(defaultOptions, userOptions);
     const elementAttributes = Object.assign(
         options.attributeNames,
-        DOM.convertAttributesToObject(targets.attributes, options),
+        convertAttributesToObject(targets.attributes, options),
     );
 
     let newFantaFilterElement = protoFantaFilterElement(targets, name, options);

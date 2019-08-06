@@ -1,7 +1,5 @@
-import * as String from './string';
-import * as DOM from './dom';
-import * as TypeTests from './typetests';
-import {default as Configure} from './configure';
-import {default as DefaultOptions} from './default-options'
-
-export {String, DOM, TypeTests, Configure, DefaultOptions};
+export * from './string';
+export * from './dom';
+export * from './typetests';
+export * from './configure';
+export * from './default-options'

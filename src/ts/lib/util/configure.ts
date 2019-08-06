@@ -9,7 +9,7 @@ import { Options } from "Interfaces";
  * @param {Options} defaultOptions Default options to compare
  * @returns {Options} A finalized Options object
  */
-export default function configure(element: HTMLElement, userOptions: Options, defaultOptions: Options): Options {
+export const configure = (element: HTMLElement, userOptions: Options, defaultOptions: Options): Options => {
     return Object.keys(defaultOptions).reduce((options: Options, key) => {
         const attrValue = element.getAttribute(`data-${key.toLowerCase()}`);
 

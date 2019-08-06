@@ -3,10 +3,15 @@ import { mocks } from 'mock-browser';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import * as Interface from '../../src/ts/lib/interfaces/index';
-import * as Util from '../../src/ts/lib/util/index';
+import * as Interface from 'Interfaces';
+import {
+    configure,
+    defaultOptions,
+    convertAttributesToObject,
+    isNodeList,
+    convertKebabToCamelCase,
+} from 'Util';
 
-import defaultOptions from '../../src/ts/lib/util/default-options';
 import createFantaFilterWrapper from '../../src/ts/fantaFilterWrapper';
 import createFantaFilterElement from '../../src/ts/fantaFilterElement';
 
@@ -23,9 +28,9 @@ const window = mockBrowser.getWindow();
 window.CustomEvent = <any>CustomEvent;
 window.CustomEvent.prototype = window.Event.prototype;
 const defaultDependencies: Interface.Dependencies = {
-    configure: Util.Configure,
+    configure: configure,
     context: document,
-    defaultOptions: Util.DefaultOptions,
+    defaultOptions: defaultOptions,
     createFantaFilterElement,
     window,
 };
@@ -170,7 +175,7 @@ describe('lib', function() {
                             ]);
                     }
 
-                    let attributesObject = Util.DOM.convertAttributesToObject(attributesOriginal, defaultOptions);
+                    let attributesObject = convertAttributesToObject(attributesOriginal, defaultOptions);
                     const attributesObjectArray: any = [];
                     attributesObject.forEach((value, key) => {
                         attributesObjectArray.push([key, value]);
@@ -183,11 +188,11 @@ describe('lib', function() {
         describe('typetests', function() {
             describe('isNodeList()', function() {
                 it('Should return a boolean value representing whether an object is a NodeList', function() {
-                    let isNodeList = context.querySelectorAll('.js-fafi-input');
+                    let NodeList = context.querySelectorAll('.js-fafi-input');
                     let notNodeList = context.querySelector('.js-fafi-input');
 
-                    expect(Util.TypeTests.isNodeList(isNodeList)).to.be.true;
-                    expect(Util.TypeTests.isNodeList(notNodeList)).to.be.false;
+                    expect(isNodeList(NodeList)).to.be.true;
+                    expect(isNodeList(notNodeList)).to.be.false;
                 });
             });
         });
@@ -196,13 +201,13 @@ describe('lib', function() {
                 it('Should convert a KebabCase string to CamelCase (Default root specification)', function() {
                     let testString = 'attribute-value';
 
-                    expect(Util.String.convertKebabToCamelCase(testString)).to.equal('attributeValue');
+                    expect(convertKebabToCamelCase(testString)).to.equal('attributeValue');
                 });
                 it('Should convert a KebabCase string to CamelCase (Manual root specification)', function() {
                     let testRoot = 'data-test-';
                     let testString = testRoot + 'attribute-value';
 
-                    expect(Util.String.convertKebabToCamelCase(testString, testRoot)).to.equal('attributeValue');
+                    expect(convertKebabToCamelCase(testString, testRoot)).to.equal('attributeValue');
                 });
             });
         });
