@@ -13,5 +13,5 @@ export const defaultOptions: Options = {
         item: 'js-fafi-item',
         hidden: 'js-fafi-hidden',
     },
-    inputTypes: ['input'],
+    inputTypes: ['INPUT'],
 };

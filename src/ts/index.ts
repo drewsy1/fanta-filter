@@ -1,7 +1,18 @@
-import {configure, defaultOptions} from 'Util';
-import createFantaFilterWrapper from './fantaFilterWrapper';
-import createFantaFilterElement from './fantaFilterElement';
-import { Options } from 'Interfaces';
+import {configure, defaultOptions} from './lib/util';
+import FantaFilterWrapper from './FantaFilterWrapper';
+import { Options } from './lib/interfaces';
 
-export default (selector: string, userOptions: Options, context: HTMLElement | Document = document) =>
-    createFantaFilterWrapper({ configure, context, defaultOptions, createFantaFilterElement }, selector, userOptions);
+interface FantaFilterObject {
+    [key:string]:FantaFilterWrapper
+}
+
+export function init(selector: string = '.js-fafi', userOptions?: Options, context: HTMLElement | Document = document) {
+    const newFantaFilter = FantaFilterWrapper.create({ configure, context, defaultOptions }, selector, userOptions);
+    const fantaFilterArray = newFantaFilter.length !== undefined ? newFantaFilter : [newFantaFilter];
+    const fantaFilterObj: FantaFilterObject = {};
+    fantaFilterArray.forEach((fantaFilter:FantaFilterWrapper) => {
+        fantaFilterObj[fantaFilter.name] = fantaFilter;
+    });
+
+    return fantaFilterObj;
+};

@@ -1,109 +1,208 @@
-import { FantaFilterWrapper, FantaFilterElement, FantaFilterInput, Options, Dependencies } from 'Interfaces';
-import { isNodeList, convertAttributesToObject } from 'Util';
+import {
+    Dependencies,
+    iFantaFilterElement,
+    iFantaFilterInput,
+    iFantaFilterItem,
+    iFantaFilterWrapper,
+    Options,
+} from './lib/interfaces';
+import { isNodeList, convertAttributesToObject } from './lib/util';
 
 /**
- * @description Creates a prototype object to be processed by the createFantaFilterElement factory function
- * 
- * @param {HTMLElement} element Element from which a FantaFilterElement will be created
- * @param {string} groupName Name of element's filter group
- * @param {Options} options Options object containing CSS class names
- * @returns {FantaFilterElement} A prototype FantaFilterElement
+ * @description An abstract class to be implemented by specific FantaFilter subtypes representing various HTML elements
+ * @class FantaFilterElement
+ * @implements {iFantaFilterElement}
  */
-const protoFantaFilterElement = (element: HTMLElement, groupName: string, options: Options): FantaFilterElement => ({
-    groupName,
-    element,
-    tagName: element.tagName,
-    set hidden(isHidden: boolean) {
-        element.classList.toggle(options.classNames.hidden, isHidden);
-    },
-    get hidden() {
-        return element.classList.contains(options.classNames.hidden);
-    },
-    get isInput() {
-        return options.inputTypes.map(item => item.toUpperCase()).includes(element.tagName);
-    },
-});
+export abstract class FantaFilterElement implements iFantaFilterElement {
+    attributes: object;
+    element: HTMLElement;
+    groupName: string;
+    options: Options;
 
-/**
- * @description Creates a FantaFilterInput prototype from a FantaFilterElement
- * 
- * @param {FantaFilterElement} fantaFilterElement FantaFilterElement from which to create a FantaFilterInput
- * @param {Options} options Options passed from higher above
- * @returns An object that can be merged with a FantaFilterElement to create a FantaFilterInput
- */
-const protoFantaFilterInput = (fantaFilterElement: FantaFilterElement, options: Options): FantaFilterInput => {
-    let protoFantaFilterInputData = {
-        type: fantaFilterElement.element.getAttribute('type'),
-        selector: fantaFilterElement.element.getAttribute(options.attributeNames.selector),
-        comparer: fantaFilterElement.element.getAttribute(options.attributeNames.comparer),
-    };
-    return Object.assign(fantaFilterElement, protoFantaFilterInputData);
-};
+    /**
+     * Creates an instance of FantaFilterElement.
+     * @param {Dependencies} dependencies
+     * @param {HTMLElement} targets
+     * @param {iFantaFilterWrapper} parentFilter
+     * @param {Options} [_userOptions={}]
+     * @memberof FantaFilterElement
+     */
+    constructor(
+        dependencies: Dependencies,
+        targets: HTMLElement,
+        parentFilter: iFantaFilterWrapper,
+        _userOptions: Options = {},
+    ) {
+        this.options = Object.assign(dependencies.defaultOptions, _userOptions);
+        this.groupName = parentFilter.name;
+        this.element = targets;
+        this.attributes = Object.assign(
+            this.options.attributeNames,
+            convertAttributesToObject(this.element.attributes, this.options),
+        );
 
-/**
- * @description Factory function that adds an update event handler to a FantaFilterInput and its HTML element
- * 
- * @param {FantaFilterInput} fantaFilterInput FantaFilterInput to be modified
- * @param {string} triggerEvent Name of event to be triggered
- * @param {CustomEvent} updateEvent Callback function of event to be triggered
- * @returns A FantaFilterInput with an event handler to handle changes
- */
-const addUpdateEvent = (fantaFilterInput: FantaFilterInput, triggerEvent: string, updateEvent: CustomEvent) => {
-    fantaFilterInput.element.addEventListener(triggerEvent, e => e.target.dispatchEvent(updateEvent));
-    fantaFilterInput.updateEvent = updateEvent;
-    return fantaFilterInput;
-};
-
-/**
- * @description Factory method that creates and returns an object from protoFantaFilterElement
- * 
- * @export
- * @param {Dependencies} dependencies Variables passed in from higher context
- * @param {(HTMLElement | HTMLCollection | NodeList)} targets HTML element(s) from which FantaFilterElement(s) should be created
- * @param {FantaFilterWrapper} parentFilter FantaFilterWrapper object containing this element
- * @param {Options} [userOptions={}] Optional user override options
- * @returns A FantaFilterElement object
- */
-export default function createFantaFilterElement(
-    dependencies: Dependencies,
-    targets: HTMLElement | HTMLCollection | NodeList,
-    parentFilter: FantaFilterWrapper,
-    userOptions: Options = {},
-) {
-    // if targets is actually a collection of elements, recursively call this function on each of its elements
-    if (isNodeList(targets)) {
-        return [].slice
-            .call(Array.from(targets))
-            .map((element: HTMLElement) => createFantaFilterElement(dependencies, element, parentFilter, userOptions))
-            .filter((x: HTMLElement) => x);
+        return this;
     }
 
-    const { defaultOptions } = dependencies;
-    let customEvent = dependencies.window !== undefined ? dependencies.window.CustomEvent : CustomEvent;
-    const { name } = parentFilter;
-    const options = Object.assign(defaultOptions, userOptions);
-    const elementAttributes = Object.assign(
-        options.attributeNames,
-        convertAttributesToObject(targets.attributes, options),
-    );
+    /**
+     * @description Retrieves a string representation of this element's HTML element tag
+     * @readonly
+     * @memberof FantaFilterElement
+     */
+    get tagName() {
+        return this.element.tagName;
+    }
 
-    let newFantaFilterElement = protoFantaFilterElement(targets, name, options);
+    /**
+     * @description Creates FantaFilterElement derivatives from a NodeList of HTMLElements
+     * @static
+     * @memberof FantaFilterElement
+     */
+    static createFantaFilterElements = function(
+        dependencies: Dependencies,
+        targets: NodeList,
+        parentFilter: iFantaFilterWrapper,
+        _userOptions: Options = {},
+    ) {
+        let options = Object.assign(dependencies.defaultOptions, _userOptions);
+        let items: FantaFilterItem[] = [];
+        let inputs: FantaFilterInput[] = [];
 
-    let output;
-    if (newFantaFilterElement.isInput) {
-        let newFantaFilterInput = protoFantaFilterInput(newFantaFilterElement, options);
-        let updateEvent = new customEvent(`fafi.filter.${newFantaFilterInput.groupName}.update`, {
+        targets.forEach((target: HTMLElement) => {
+            if (options.inputTypes.includes(target.tagName))
+                inputs.push(new FantaFilterInput(dependencies, target, parentFilter, _userOptions));
+            else items.push(new FantaFilterItem(dependencies, target, parentFilter, _userOptions));
+        });
+
+        return { items, inputs };
+    };
+}
+
+/**
+ * @description A class representing any filterable HTML element
+ * @class FantaFilterItem
+ * @extends {FantaFilterElement}
+ * @implements {iFantaFilterItem}
+ */
+export class FantaFilterItem extends FantaFilterElement implements iFantaFilterItem {
+    /**
+     *Creates an instance of FantaFilterItem.
+     * @param {Dependencies} dependencies
+     * @param {(HTMLElement | HTMLCollection | NodeList)} targets
+     * @param {iFantaFilterWrapper} parentFilter
+     * @param {Options} [_userOptions={}]
+     * @memberof FantaFilterItem
+     */
+    constructor(
+        dependencies: Dependencies,
+        targets: HTMLElement | HTMLCollection | NodeList,
+        parentFilter: iFantaFilterWrapper,
+        _userOptions: Options = {},
+    ) {
+        if (isNodeList(targets)) {
+            return [].slice
+                .call(Array.from(targets))
+                .map((_element: HTMLElement) => new FantaFilterItem(dependencies, targets, parentFilter, _userOptions))
+                .filter((x: HTMLElement) => x);
+        }
+
+        super(dependencies, targets, parentFilter, (_userOptions = {}));
+    }
+
+    /**
+     * @description Sets the 'hidden' attribute of the HTML element of this FantaFilterElement
+     * @memberof FantaFilterItem
+     */
+    set hidden(isHidden: boolean) {
+        this.element.hidden = isHidden;
+    }
+
+    /**
+     * @description Returns the 'hidden' attribute of the HTML element of this FantaFilterElement
+     * @readonly
+     * @memberof FantaFilterItem
+     */
+    get hidden() {
+        return this.element.hidden;
+    }
+}
+
+/**
+ * @description A class representing any HTML inputs that manipulate a FantaFilterWrapper
+ * @class FantaFilterInput
+ * @extends {FantaFilterElement}
+ * @implements {iFantaFilterInput}
+ */
+export class FantaFilterInput extends FantaFilterElement implements iFantaFilterInput {
+    type: string;
+    comparer: string;
+    selector: string;
+    private _updateEvent?: CustomEvent<any>;
+
+    /**
+     *Creates an instance of FantaFilterInput.
+     * @param {Dependencies} dependencies
+     * @param {(HTMLElement | HTMLCollection | NodeList)} targets
+     * @param {iFantaFilterWrapper} parentFilter
+     * @param {Options} [userOptions={}]
+     * @memberof FantaFilterInput
+     */
+    constructor(
+        dependencies: Dependencies,
+        targets: HTMLElement | HTMLCollection | NodeList,
+        parentFilter: iFantaFilterWrapper,
+        userOptions: Options = {},
+    ) {
+        if (isNodeList(targets)) {
+            return [].slice
+                .call(Array.from(targets))
+                .map((_element: HTMLElement) => new FantaFilterInput(dependencies, targets, parentFilter, userOptions))
+                .filter((x: HTMLElement) => x);
+        }
+
+        super(dependencies, targets, parentFilter, userOptions);
+
+        const customEvent = dependencies.window !== undefined ? dependencies.window.CustomEvent : CustomEvent;
+
+        let updateEvent = new customEvent(`fafi.filter.${this.groupName}.update`, {
             bubbles: true,
             detail: {
-                sender: newFantaFilterInput,
-                value: () => (newFantaFilterInput.element as HTMLInputElement).value,
+                sender: this,
+                value: () => (this.element as HTMLInputElement).value,
             },
         });
 
-        newFantaFilterElement = addUpdateEvent(newFantaFilterInput, 'input', updateEvent);
+        this.setUpdateEvent('input', updateEvent);
+        this.type = this.element.getAttribute('type');
+        this.selector = this.element.getAttribute(this.options.attributeNames.selector);
+        this.comparer = this.element.getAttribute(this.options.attributeNames.comparer);
+
+        return this;
     }
 
-    output = Object.assign(newFantaFilterElement, elementAttributes);
+    /**
+     * @description Adds an update event handler to a FantaFilterInput and its HTML element
+     * @private
+     * @param {string} _eventTrigger Name of event to be handled
+     * @param {CustomEvent<any>} _event Callback function of event
+     * @returns This FantaFilterElement's UpdateEvent
+     * @memberof FantaFilterInput
+     */
+    private setUpdateEvent(_eventTrigger: string, _event: CustomEvent<any>) {
+        if (_eventTrigger !== undefined && _event !== undefined) {
+            this.element.addEventListener(_eventTrigger, e => e.target.dispatchEvent(_event));
+            this._updateEvent = _event;
+        }
 
-    return output;
+        return this._updateEvent;
+    }
+
+    /**
+     * @description Returns this FantaFilterElement's UpdateEvent
+     * @readonly
+     * @memberof FantaFilterInput
+     */
+    get updateEvent() {
+        return this._updateEvent;
+    }
 }
