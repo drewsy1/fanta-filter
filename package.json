@@ -4,7 +4,7 @@
   "description": "An attempt at a JS HTML filtering plugin",
   "main": "dist/js/fanta-filter.js",
   "scripts": {
-    "test": "mocha -r ts-node/register test/**/*.spec.ts",
+    "test": "mocha --require ts-node/register --require esm --require ignore-styles --require jsdom-global/register test/**/*.spec.ts",
     "start": "webpack --config webpack.config.js --watch --progress --profile",
     "build": "webpack --config webpack.config.js --progress --profile  --display-error-details",
     "prod": "webpack --env.NODE_ENV=production --config webpack.config.js --progress --mode=production"
@@ -43,6 +43,7 @@
     "jsdom-global": "^3.0.2",
     "mocha": "^6.2.0",
     "mock-browser": "^0.92.14",
+    "ndb": "^1.1.4",
     "nyc": "^14.1.1",
     "prettier": "^1.18.2",
     "sinon": "^7.3.2",

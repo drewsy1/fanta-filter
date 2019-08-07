@@ -1,3 +1,9 @@
 {
-    "eslint.enable": true
+    "eslint.enable": true,
+    "mochaExplorer.files": "test/**/*.ts",
+    "mochaExplorer.require": ["ts-node/register","esm","ignore-styles","jsdom-global/register"],
+    "mochaExplorer.logpanel": true,
+    "mochaExplorer.env": {
+        "TS_NODE_COMPILER_OPTIONS": "{\"lib\": [\"dom\", \"es6\", \"es5\"],\"paths\": {\"Interfaces\": [\"src/ts/lib/interfaces/index.ts\"],\"Util\": [\"src/ts/lib/util/index.ts\"]}}",
+    },
 }

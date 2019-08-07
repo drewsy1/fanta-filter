@@ -1,93 +1,110 @@
-import { FantaFilterWrapper, Options, FantaFilterElement, Dependencies } from 'Interfaces';
-import { isNodeList } from 'Util';
-
-// Variable to store all FantaFilters instances
-const CurrentFilters: FantaFilterWrapper[] = [];
-
-/**
- * @description Creates a prototype object to be processed by the createFantaFilter factory function
- *
- * @param {HTMLElement} parentNode HTML element parent of filterable elements
- * @param {Options} options Options to control the filter object
- * @param {string} name Name of filter
- * @param {FantaFilterElement[]} [inputs] HTML input elements that control filtering
- * @param {FantaFilterElement[]} [items] HTML elements to be filtered
- * @returns A FantaFilterWrapper object
- */
-const protoFantaFilterWrapper = (
-    parentNode: HTMLElement,
-    options: Options,
-    name: string,
-    filterGroup?: any,
-    inputs?: FantaFilterElement[],
-    items?: FantaFilterElement[],
-): FantaFilterWrapper => ({
-    parentNode,
-    options,
-    name,
-    inputs,
-    items,
-    filterGroup,
-    get CurrentFilters() {
-        return CurrentFilters;
-    },
-    get hasInputs() {
-        return inputs !== null;
-    },
-    get hasItems() {
-        return items !== null;
-    },
-});
+import {
+    iFantaFilterWrapper,
+    Options,
+    iFantaFilterElement,
+    iFantaFilterInput,
+    iFantaFilterItem,
+    Dependencies,
+    iFilterGroup,
+} from './lib/interfaces/index';
+import { FantaFilterItem, FantaFilterElement, FantaFilterInput } from './fantaFilterElement';
+import { isNodeList } from './lib/util/index';
 
 /**
- * @description Factory method that creates and returns an object from protoFantaFilterWrapper
- *
+ * Class that represents a data-fantafilter-group
  * @export
- * @param {Dependencies} dependencies Variables passed in from higher context
- * @param {(HTMLElement | string)} target String selector representing an HTML object, or the object itself
- * @param {Options} [userOptions={}] Optional user override options
- * @param {FantaFilterWrapper[]} fantaFilterCollector Optional variable to store all current instances of fantaFilter. Defaults to CurrentFilters
- * @returns A completed FantaFilterWrapper object
+ * @class FantaFilterWrapper
+ * @implements {iFantaFilterWrapper}
  */
-export default function createFantaFilterWrapper(
-    dependencies: Dependencies,
-    target: HTMLElement | string,
-    userOptions: Options = {},
-    fantaFilterCollector: FantaFilterWrapper[] = CurrentFilters,
-): FantaFilterWrapper {
-    const { configure, context, defaultOptions, createFantaFilterElement } = dependencies;
-    const parents = typeof target === `string` ? context.querySelectorAll(target) : target;
+export default class FantaFilterWrapper implements iFantaFilterWrapper {
+    filterGroup: iFilterGroup;
+    inputs: iFantaFilterInput[];
+    items: iFantaFilterItem[];
+    name: string;
+    options: Options;
+    parentNode: HTMLElement;
+    static CurrentFilters: FantaFilterWrapper[];
 
-    // If multiple parent nodes, create multiple FantaFilterWrappers and return those instead
-    if (isNodeList(parents)) {
-        return [].slice
-            .call(parents)
-            .map((element: HTMLElement) => createFantaFilterWrapper(dependencies, element, userOptions))
-            .filter((x: HTMLElement) => x);
+    /**
+     * Creates an instance of FantaFilterWrapper.
+     * @param {Dependencies} dependencies Variables passed in from higher context
+     * @param {HTMLElement} selector A data-fantafilter-group root object
+     * @param {Options} [userOptions={}] Optional user override options
+     * @memberof FantaFilterWrapper
+     */
+    constructor(dependencies: Dependencies, selector: HTMLElement, userOptions: Options = {}) {
+        const { configure, context, defaultOptions } = dependencies;
+
+        this.options = configure(selector, userOptions, defaultOptions);
+        this.parentNode = selector;
+        this.name = selector.getAttribute(this.options.attributeNames.group);
+
+        // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
+        if (
+            !selector.hasAttribute(this.options.attributeNames.group) ||
+            (FantaFilterWrapper.CurrentFilters !== undefined &&
+                FantaFilterWrapper.CurrentFilters.find((filter: FantaFilterWrapper) => filter.name === this.name))
+        ) {
+            this.name = null;
+            return;
+        }
+
+        let elements = FantaFilterElement.createFantaFilterElements(
+            dependencies,
+            context.querySelectorAll(`[${this.options.attributeNames.group}=${this.name}]`),
+            this,
+            userOptions,
+        );
+
+        this.inputs = elements.inputs;
+        this.items = elements.items;
+
+        if (FantaFilterWrapper.CurrentFilters === undefined) FantaFilterWrapper.CurrentFilters = [];
+        FantaFilterWrapper.CurrentFilters.push(this);
     }
 
-    const options: Options = configure(parents, userOptions, defaultOptions);
-    const name = parents.getAttribute(options.attributeNames.group);
+    /**
+     * @description Static method that wraps the default constructor to return null if an object is malformed/invalid.
+     * @static
+     * @param {Dependencies} dependencies Variables passed in from higher context
+     * @param {HTMLElement | string} target String selector representing a data-fantafilter-group HTML root object, or the object itself
+     * @param {Options} [userOptions={}] Optional user override options
+     * @returns A completed FantaFilterWrapper object or objects. Null if object is invalid.
+     * @memberof FantaFilterWrapper
+     */
+    static create = (dependencies: Dependencies, target: HTMLElement | string, userOptions: Options = {}) => {
+        const { context } = dependencies;
+        const parents = typeof target === `string` ? context.querySelectorAll(target) : target;
 
-    // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
-    if (
-        !parents.hasAttribute(options.attributeNames.group) ||
-        fantaFilterCollector.find(filter => filter.name === name)
-    )
-        return;
+        // If multiple parent nodes, create multiple FantaFilterWrappers and return those instead
+        if (isNodeList(parents)) {
+            return [].slice
+                .call(parents)
+                .map((element: HTMLElement) => FantaFilterWrapper.create(dependencies, element, userOptions))
+                .filter((x: HTMLElement) => x);
+        }
 
-    const FantaFilterWrapper = protoFantaFilterWrapper(parents, options, name);
+        let newFantaFilter = new FantaFilterWrapper(dependencies, parents, userOptions);
 
-    let elements = createFantaFilterElement(
-        dependencies,
-        context.querySelectorAll(`[${options.attributeNames.group}=${name}]`),
-        FantaFilterWrapper,
-    );
+        if (newFantaFilter.name === null) return;
+        else return newFantaFilter;
+    };
 
-    FantaFilterWrapper.inputs = elements.filter((element: FantaFilterElement) => element.isInput);
-    FantaFilterWrapper.items = elements.filter((element: FantaFilterElement) => !element.isInput);
+    /**
+     * @description Returns true if this FantaFilterWrapper contains input elements
+     * @readonly
+     * @memberof FantaFilterWrapper
+     */
+    public get hasInputs() {
+        return !!this.inputs.length;
+    }
 
-    fantaFilterCollector.push(FantaFilterWrapper);
-
-    return FantaFilterWrapper;
+    /**
+     * @description Returns true if this FantaFilterWrapper contains item elements
+     * @readonly
+     * @memberof FantaFilterWrapper
+     */
+    public get hasItems() {
+        return !!this.items.length;
+    }
 }

@@ -2,19 +2,20 @@
  * Prototype object to be processed by the createFantaFilterElement factory function
  *
  * @export
- * @interface FantaFilterElement
+ * @interface iFantaFilterElement
  */
-export interface FantaFilterElement {
+export interface iFantaFilterElement {
     groupName: string;
     element: HTMLElement;
-    hidden: boolean;
     tagName: string;
-    isInput: boolean;
 }
 
-export interface FantaFilterInput extends FantaFilterElement {
+export interface iFantaFilterItem extends iFantaFilterElement {
+    hidden: boolean;
+}
+
+export interface iFantaFilterInput extends iFantaFilterElement {
     type: string;
     comparer: string;
     selector: string;
-    updateEvent?: CustomEvent;
 }
