@@ -13,7 +13,6 @@ import {
 } from '../../src/ts/lib/util';
 
 import FantaFilterWrapper from '../../src/ts/FantaFilterWrapper';
-import { FantaFilterElement, FantaFilterInput, FantaFilterItem } from '../../src/ts/FantaFilterElement';
 
 function CustomEvent(event: string, params?: any) {
     params = params || { bubbles: false, cancelable: false, detail: undefined };

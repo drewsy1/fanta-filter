@@ -1,14 +1,13 @@
 import {
     iFantaFilterWrapper,
     Options,
-    iFantaFilterElement,
     iFantaFilterInput,
     iFantaFilterItem,
     Dependencies,
     iFilterGroup,
-} from './lib/interfaces/index';
-import { FantaFilterItem, FantaFilterElement, FantaFilterInput } from './fantaFilterElement';
-import { isNodeList } from './lib/util/index';
+} from './lib/interfaces';
+import { FantaFilterElement } from './lib/elements';
+import { isNodeList } from './lib/util';
 
 /**
  * Class that represents a data-fantafilter-group
@@ -22,26 +21,24 @@ export default class FantaFilterWrapper implements iFantaFilterWrapper {
     items: iFantaFilterItem[];
     name: string;
     options: Options;
-    parentNode: HTMLElement;
     static CurrentFilters: FantaFilterWrapper[];
 
     /**
      * Creates an instance of FantaFilterWrapper.
      * @param {Dependencies} dependencies Variables passed in from higher context
-     * @param {HTMLElement} selector A data-fantafilter-group root object
+     * @param {HTMLElement} parentNode A data-fantafilter-group root object
      * @param {Options} [userOptions={}] Optional user override options
      * @memberof FantaFilterWrapper
      */
-    constructor(dependencies: Dependencies, selector: HTMLElement, userOptions: Options = {}) {
+    constructor(dependencies: Dependencies, public parentNode: HTMLElement, userOptions: Options = {}) {
         const { configure, context, defaultOptions } = dependencies;
 
-        this.options = configure(selector, userOptions, defaultOptions);
-        this.parentNode = selector;
-        this.name = selector.getAttribute(this.options.attributeNames.group);
+        this.options = configure(parentNode, userOptions, defaultOptions);
+        this.name = parentNode.getAttribute(this.options.attributeNames.group);
 
         // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
         if (
-            !selector.hasAttribute(this.options.attributeNames.group) ||
+            !parentNode.hasAttribute(this.options.attributeNames.group) ||
             (FantaFilterWrapper.CurrentFilters !== undefined &&
                 FantaFilterWrapper.CurrentFilters.find((filter: FantaFilterWrapper) => filter.name === this.name))
         ) {
