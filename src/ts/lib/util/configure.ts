@@ -29,7 +29,7 @@ export function configure(
         });
     }
     if (element !== undefined && element !== null) {
-        let newAttributes = convertAttributeNamesToOptions(element.attributes, options);
+        let newAttributes = convertAttributeNamesToOptions(element.attributes, defaultOptions);
         options.attributeNames = Object.assign(defaultOptions.attributeNames, newAttributes);
     }
     return options;

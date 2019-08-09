@@ -36,7 +36,7 @@ export default class FantaFilterWrapper implements iFantaWrapper {
      */
     constructor({ dependencies, parentNode, _userOptions }: iFantaWrapperConstructor) {
         const { configure, context, defaultOptions } = dependencies;
-        this._options = configure(defaultOptions, parentNode, _userOptions );
+        this._options = configure(defaultOptions, parentNode, _userOptions);
 
         this.parentNode = parentNode;
         this.name = parentNode.getAttribute(this._options.getAttribute('group'));
