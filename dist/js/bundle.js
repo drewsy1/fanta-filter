@@ -112,7 +112,7 @@ var index_1 = __webpack_require__(/*! ./lib/util/index */ "./src/ts/lib/util/ind
  * Class that represents a data-fantafilter-group
  * @export
  * @class FantaFilterWrapper
- * @implements {iFantaFilterWrapper}
+ * @implements {iFilterWrapper}
  */
 var FantaFilterWrapper = /** @class */ (function () {
     /**
@@ -245,14 +245,14 @@ var FantaFilterInput_1 = __webpack_require__(/*! ./FantaFilterInput */ "./src/ts
 /**
  * @description An abstract class to be implemented by specific FantaFilter subtypes representing various HTML elements
  * @class FantaFilterElement
- * @implements {iFantaFilterElement}
+ * @implements {iFilterElement}
  */
 var FantaFilterElement = /** @class */ (function () {
     /**
      * Creates an instance of FantaFilterElement.
      * @param {Dependencies} dependencies
      * @param {HTMLElement} element
-     * @param {iFantaFilterWrapper} parentFilter
+     * @param {iFilterWrapper} parentFilter
      * @param {Options} [_userOptions={}]
      * @memberof FantaFilterElement
      */
@@ -330,7 +330,7 @@ var FantaFilterElement_1 = __webpack_require__(/*! ./FantaFilterElement */ "./sr
  * @description A class representing any HTML inputs that manipulate a FantaFilterWrapper
  * @class FantaFilterInput
  * @extends {FantaFilterElement}
- * @implements {iFantaFilterInput}
+ * @implements {iFilterInput}
  */
 var FantaFilterInput = /** @class */ (function (_super) {
     __extends(FantaFilterInput, _super);
@@ -338,7 +338,7 @@ var FantaFilterInput = /** @class */ (function (_super) {
      *Creates an instance of FantaFilterInput.
      * @param {Dependencies} dependencies
      * @param {(HTMLElement | HTMLCollection | NodeList)} targets
-     * @param {iFantaFilterWrapper} parentFilter
+     * @param {iFilterWrapper} parentFilter
      * @param {Options} [userOptions={}]
      * @memberof FantaFilterInput
      */
@@ -429,7 +429,7 @@ var FantaFilterElement_1 = __webpack_require__(/*! ./FantaFilterElement */ "./sr
  * @description A class representing any filterable HTML element
  * @class FantaFilterItem
  * @extends {FantaFilterElement}
- * @implements {iFantaFilterItem}
+ * @implements {iFilterItem}
  */
 var FantaFilterItem = /** @class */ (function (_super) {
     __extends(FantaFilterItem, _super);
@@ -437,7 +437,7 @@ var FantaFilterItem = /** @class */ (function (_super) {
      *Creates an instance of FantaFilterItem.
      * @param {Dependencies} dependencies
      * @param {(HTMLElement | HTMLCollection | NodeList)} targets
-     * @param {iFantaFilterWrapper} parentFilter
+     * @param {iFilterWrapper} parentFilter
      * @param {Options} [_userOptions={}]
      * @memberof FantaFilterItem
      */

@@ -1,3 +1,3 @@
-export * from './FantaFilterElement';
-export * from './FantaFilterInput';
-export * from './FantaFilterItem';
+export * from './element';
+export * from './input';
+export * from './item';

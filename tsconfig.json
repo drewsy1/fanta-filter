@@ -10,10 +10,6 @@
         "baseUrl": "./",
         "strictFunctionTypes": false,
         "allowSyntheticDefaultImports": false,
-        "paths": {
-            "Interfaces": ["src/ts/lib/interfaces/index.ts"],
-            "Util": ["src/ts/lib/util/index.ts"]
-        }
     },
     "include": ["src/**/*.ts", "test/**/*.ts"],
     "exclude": ["node_modules"]

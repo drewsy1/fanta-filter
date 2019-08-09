@@ -1,40 +1,44 @@
-import { Dependencies, iFantaFilterInput, iFantaFilterWrapper, Options } from '../interfaces';
-import { isNodeList } from '../util';
-import { FantaFilterElement } from './FantaFilterElement';
+import {
+    iFantaDependencies,
+    iFantaInput,
+    iFantaWrapper,
+    iFantaOptions,
+    iFantaElementConstructor,
+} from '../interfaces';
+import { isNodeList, getEnumMember } from '../util';
+import { FantaFilterElement } from './element';
+import { InputComparer } from '../enums';
+
 /**
  * @description A class representing any HTML inputs that manipulate a FantaFilterWrapper
  * @class FantaFilterInput
  * @extends {FantaFilterElement}
- * @implements {iFantaFilterInput}
+ * @implements {iFilterInput}
  */
-export class FantaFilterInput extends FantaFilterElement implements iFantaFilterInput {
+export class FantaFilterInput extends FantaFilterElement implements iFantaInput {
     type: string;
-    comparer: string;
+    comparer: InputComparer;
     selector: string;
     private _updateEvent?: CustomEvent<any>;
+
     /**
      *Creates an instance of FantaFilterInput.
-     * @param {Dependencies} dependencies
-     * @param {(HTMLElement | HTMLCollection | NodeList)} targets
-     * @param {iFantaFilterWrapper} parentFilter
-     * @param {Options} [userOptions={}]
+     * @param {iFantaElementConstructor} {dependencies, elements, parentName, eventType, _userOptions}
      * @memberof FantaFilterInput
      */
-    constructor(
-        dependencies: Dependencies,
-        targets: HTMLElement | HTMLCollection | NodeList,
-        parentFilter: iFantaFilterWrapper,
-        userOptions: Options = {},
-    ) {
-        if (isNodeList(targets)) {
+    constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
+        if (isNodeList(elements)) {
             return [].slice
-                .call(Array.from(targets))
-                .map((_element: HTMLElement) => new FantaFilterInput(dependencies, targets, parentFilter, userOptions))
+                .call(Array.from(elements))
+                .map(
+                    (_element: HTMLElement) =>
+                        new FantaFilterInput({ dependencies, elements: _element, parentName, eventType, _userOptions }),
+                )
                 .filter((x: HTMLElement) => x);
         }
-        super(dependencies, targets, parentFilter, userOptions);
+        super({ dependencies, elements: elements, parentName, eventType, _userOptions });
         const customEvent = dependencies.window !== undefined ? dependencies.window.CustomEvent : CustomEvent;
-        let updateEvent = new customEvent(`fafi.filter.${this.groupName}.update`, {
+        let updateEvent = new customEvent(`${this.eventType}.update`, {
             bubbles: true,
             detail: {
                 sender: this,
@@ -43,8 +47,10 @@ export class FantaFilterInput extends FantaFilterElement implements iFantaFilter
         });
         this.setUpdateEvent('input', updateEvent);
         this.type = this.element.getAttribute('type');
-        this.selector = this.element.getAttribute(this.options.attributeNames.selector);
-        this.comparer = this.element.getAttribute(this.options.attributeNames.comparer);
+        this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
+        getEnumMember(InputComparer, [this.element.getAttribute(this._options.getAttribute('comparer'))], 'match').then(
+            result => (this.comparer = result),
+        );
         return this;
     }
     /**

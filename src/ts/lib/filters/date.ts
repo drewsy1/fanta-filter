@@ -1,7 +1,7 @@
 import { Filter } from './filter';
-import { iMatchFantaFilter, iFantaFilterConstructor } from '../interfaces';
+import { iDateFantaFilter, iFantaFilterConstructor } from '../interfaces';
 
-export class MatchFilter extends Filter implements iMatchFantaFilter {
+export class DateFilter extends Filter implements iDateFantaFilter {
     constructor({ dependencies, input, _userOptions }: iFantaFilterConstructor) {
         super({ dependencies, input, _userOptions });
 

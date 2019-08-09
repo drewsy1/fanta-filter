@@ -1,10 +1,9 @@
 /**
- * Object that describes a set of options for FantaFilter
- *
+ * @description Describes options used throughout FantaFilter
  * @export
- * @interface Options
+ * @interface iFantaOptions
  */
-export interface Options {
+export interface iFantaOptions {
     attributeNames?: AttributeNames;
     classNames?: ClassNames;
     inputTypes?: string[];

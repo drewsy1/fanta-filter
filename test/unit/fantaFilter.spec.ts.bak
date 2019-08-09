@@ -3,13 +3,14 @@ import { mocks } from 'mock-browser';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Dependencies, iFantaFilterWrapper } from '../../src/ts/lib/interfaces';
+import { iFantaDependencies } from '../../src/ts/lib/interfaces';
 import {
     configure,
     defaultOptions,
     isNodeList,
     convertAttributesToObject,
     convertKebabToCamelCase,
+    createFantaFilterWrappers,
 } from '../../src/ts/lib/util';
 
 import FantaFilterWrapper from '../../src/ts/FantaFilterWrapper';
@@ -26,7 +27,7 @@ const document = mockBrowser.getDocument();
 const window = mockBrowser.getWindow();
 window.CustomEvent = <any>CustomEvent;
 window.CustomEvent.prototype = window.Event.prototype;
-const defaultDependencies: Dependencies = {
+const defaultDependencies: iFantaDependencies = {
     configure,
     context: document,
     defaultOptions,
@@ -37,8 +38,8 @@ const externalHTMLPath = path.resolve(__dirname, 'fantaFilter.spec.html').replac
 
 const context: HTMLElement = document.createElement('div');
 context.innerHTML = fs.readFileSync(externalHTMLPath, 'utf8');
-const dependencies: Dependencies = Object.assign({}, defaultDependencies, { context });
-const fantaFilterWrapperInstance: FantaFilterWrapper[] = [].concat(FantaFilterWrapper.create(dependencies, '.js-fafi'));
+const dependencies: iFantaDependencies = Object.assign({}, defaultDependencies, { context });
+const fantaFilterWrapperInstance: FantaFilterWrapper[] = [].concat(createFantaFilterWrappers(dependencies, '.js-fafi'));
 const fantaFilterWrapper: FantaFilterWrapper = fantaFilterWrapperInstance[0];
 
 describe('FantaFilterWrapper', function() {
@@ -128,7 +129,7 @@ describe('lib', function() {
 
                     let attributesObject = convertAttributesToObject(attributesOriginal, defaultOptions);
                     const attributesObjectArray: any = [];
-                    attributesObject.forEach((value, key) => {
+                    Object.entries(attributesObject).forEach((value, key) => {
                         attributesObjectArray.push([key, value]);
                     });
                     expect(attributesObjectArray).to.have.lengthOf(attributesOriginalArray.length);
