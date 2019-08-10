@@ -2,6 +2,7 @@ import { iFantaDependencies, iFantaOptions } from "../interfaces";
 import { isNodeList } from "./typetests";
 import FantaFilterWrapper from "../../FantaFilterWrapper";
 import { iFantaWrapperConstructor } from "../interfaces/iFantaWrapperConstructor";
+import {isNull, isString} from 'util'
 
 /**
      * @description Static method that wraps the default constructor to return null if an object is malformed/invalid.
@@ -18,7 +19,7 @@ import { iFantaWrapperConstructor } from "../interfaces/iFantaWrapperConstructor
         _userOptions: iFantaOptions = {},
     ) {
         const { context } = dependencies;
-        const parentNode = typeof target === `string` ? context.querySelectorAll(target) : target;
+        const parentNode = isString(target) ? context.querySelectorAll(target) : target;
 
         // If multiple parent nodes, create multiple FantaFilterWrappers and return those instead
         if (isNodeList(parentNode)) {
@@ -32,6 +33,6 @@ import { iFantaWrapperConstructor } from "../interfaces/iFantaWrapperConstructor
 
         let newFantaFilter = new FantaFilterWrapper(newFilterWrapperConstructor);
 
-        if (newFantaFilter.name === null) return;
+        if (isNull(newFantaFilter.name)) return;
         else return newFantaFilter;
     };

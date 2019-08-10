@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
             "stopOnEntry": false,
-            "args": ["--no-timeouts", "-r","ts-node/register", "${workspaceRoot}/test/**/*.spec.ts"],
+            "args": ["--no-timeouts", "-r", "ts-node/register", "${workspaceRoot}/test/**/*.spec.ts"],
             "cwd": "${workspaceRoot}",
             "protocol": "inspector"
         }

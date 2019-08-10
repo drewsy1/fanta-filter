@@ -1,4 +1,4 @@
-import { iFantaOptions } from "Interfaces";
+import { iFantaOptions } from ".";
 
 /**
  * @description Describes the commonly-used dependencies object

@@ -14,12 +14,12 @@
                 color: blue;
             }
 
-            [hidden] {
+            /* [hidden] {
                 text-decoration: line-through;
                 font-style: italic;
                 color: gray;
-                display: inline;
-            }
+                display: list-item;
+            } */
         </style>
     </head>
     <body>
@@ -54,7 +54,9 @@
             </ul>
 
             <h1>testGroup2</h1>
-            <input class="js-fafi-input" data-fantafilter-group="testGroup2" title="testGroup2, Input 0" />
+            <input class="js-fafi-input" data-fantafilter-group="testGroup2" title="testGroup2, Input 0"
+                data-fantafilter-comparer="match"
+                data-fantafilter-selector="innerText" />
             <ul class="js-fafi js-fafi-parent" data-fantafilter-group="testGroup2">
                 <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 0</li>
                 <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 1</li>

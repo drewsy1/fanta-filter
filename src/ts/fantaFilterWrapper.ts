@@ -5,11 +5,13 @@ import {
     iFantaItem,
     iFantaFilterGroup,
     iFantaElementConstructor,
+    iFantaDependencies,
 } from './lib/interfaces';
 import { asyncForEach, getEnumMember, createClassFromEnumVal } from './lib/util';
 import { FilterGroup } from './lib/filters';
 import { FilterElementType, FilterElementClasses } from './lib/enums';
 import { iFantaWrapperConstructor } from './lib/interfaces/iFantaWrapperConstructor';
+import { FantaFilterInput, FantaFilterItem } from './lib/elements';
 
 /**
  * Class that represents a data-fantafilter-group
@@ -54,21 +56,19 @@ export default class FantaFilterWrapper implements iFantaWrapper {
 
         let domElements = context.querySelectorAll(`[${this._options.getAttribute('group')}=${this.name}]`);
 
-        const forEachPromise = new Promise(resolve =>
-            asyncForEach(domElements, (elements: HTMLElement) => {
-                const filterConstructorArgs: iFantaElementConstructor = {
-                    dependencies,
-                    elements,
-                    parentName: this.name,
-                    eventType: this.eventType,
-                    _userOptions,
-                };
-                getEnumMember(FilterElementType, elements.tagName.toLowerCase(), 'item').then(result => {
-                    this[result].push(createClassFromEnumVal(FilterElementClasses, result, filterConstructorArgs));
-                });
-            }),
-        );
-
+        let forEachPromise = domElements.forEach((elements: HTMLElement) => {
+            const filterConstructorArgs: iFantaElementConstructor = {
+                dependencies,
+                elements,
+                parentName: this.name,
+                eventType: this.eventType,
+                _userOptions,
+            };
+            if(elements.tagName.toLowerCase().match('input')){
+                this.inputs.push(new FantaFilterInput(filterConstructorArgs))
+            }
+            else if(!elements.classList.contains(this._options.getClass('parent'))) this.items.push(new FantaFilterItem(filterConstructorArgs))
+        });
         this.filterGroup = this.hasInputs
             ? new FilterGroup(dependencies, this.eventType, this.inputs, this.items)
             : undefined;

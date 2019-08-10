@@ -7,10 +7,10 @@
  * @param {*} [fallbackValue]
  * @returns
  */
-export async function getEnumMember<T>(enumerator: T, value: any, fallbackValue: any) {
+export function getEnumMember<T>(enumerator: T, value: any, fallbackValue: any) {
     let result_1, result_2: T[Extract<keyof T, string>];
-    result_1 = await enumContains(enumerator, value);
-    result_2 = await enumContains(enumerator, fallbackValue);
+    result_1 = enumContains(enumerator, value);
+    result_2 = enumContains(enumerator, fallbackValue);
     return !!result_1 ? result_1 : result_2;
 }
 
@@ -21,7 +21,7 @@ export async function getEnumMember<T>(enumerator: T, value: any, fallbackValue:
  * @param {*} value
  * @returns
  */
-async function enumContains<T>(enumerator: T, value: any) {
+function enumContains<T>(enumerator: T, value: any) {
     for (let enumMember in enumerator) {
         if (enumMember == value) return enumerator[enumMember];
     }

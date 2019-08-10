@@ -23,12 +23,8 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        alias: {
-            Interfaces: path.resolve(__dirname, 'src/ts/lib/interfaces/index.ts'),
-            Util: path.resolve(__dirname, 'src/ts/lib/util/index.ts'),
-        },
     },
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     stats: {
         colors: true,
     },

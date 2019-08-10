@@ -7,7 +7,8 @@
     "test": "mocha --require ts-node/register --require esm --require ignore-styles --require jsdom-global/register test/**/*.spec.ts",
     "start": "webpack --config webpack.config.js --watch --progress --profile",
     "build": "webpack --config webpack.config.js --progress --profile  --display-error-details",
-    "prod": "webpack --env.NODE_ENV=production --config webpack.config.js --progress --mode=production"
+    "prod": "webpack --env.NODE_ENV=production --config webpack.config.js --progress --mode=production",
+    "web": "http-server"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-standard": "^13.0.1",
     "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-lodash": "^6.0.0",
     "eslint-plugin-mocha": "^6.0.0",
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-prettier": "^3.1.0",
@@ -42,6 +44,7 @@
     "mock-browser": "^0.92.14",
     "ndb": "^1.1.4",
     "prettier": "^1.18.2",
+    "prettier-eslint": "^9.0.0",
     "should": "^13.2.3",
     "terser-webpack-plugin": "^1.4.1",
     "ts-loader": "^6.0.4",
@@ -51,6 +54,7 @@
     "webpack-cli": "^3.3.6"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.136",
     "get-stdin": "^7.0.0"
   }
 }

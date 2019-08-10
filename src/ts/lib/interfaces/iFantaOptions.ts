@@ -1,3 +1,8 @@
+import { iFantaFilterConstructor } from "./iFantaFilterConstructor";
+import { iFantaElementConstructor } from "./iFantaElementConstructor";
+import { iFantaFilter } from "./iFantaFilter";
+import { iFantaElement } from "./iFantaElement";
+
 /**
  * @description Describes options used throughout FantaFilter
  * @export
@@ -7,6 +12,8 @@ export interface iFantaOptions {
     attributeNames?: AttributeNames;
     classNames?: ClassNames;
     inputTypes?: string[];
+    InputComparerClasses?: {[key:string]:(constructor: iFantaFilterConstructor) => iFantaFilter}
+    FilterElementClasses?: {[key:string]:(constructor: iFantaElementConstructor) => iFantaElement}
     getAttribute?: (suffix?:string) => any;
     getClass?: (suffix?:string) => any;
     [key: string]: any;

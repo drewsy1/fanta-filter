@@ -1,8 +1,36 @@
 {
-	"folders": [
-		{
-			"path": "C:\\Users\\dreww\\src\\Git\\fanta-filter"
-		}
-	],
-	"settings": {}
+    "folders": [
+        {
+            "path": "C:\\Users\\dreww\\src\\Git\\fanta-filter"
+        }
+    ],
+    "settings": {
+        "eslint.enable": true,
+        "mochaExplorer.files": "test/**/*.ts",
+        "mochaExplorer.require": ["ts-node/register", "esm", "ignore-styles", "jsdom-global/register"],
+        "mochaExplorer.logpanel": true,
+        "mochaExplorer.env": {
+            "TS_NODE_COMPILER_OPTIONS": "{\"lib\": [\"dom\", \"es6\", \"es5\"]}"
+        },
+        "prettier.eslintIntegration": true
+    },
+    "launch": {
+        "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome",
+            "url": "http://localhost:8080/index",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack://FantaFilter/./*": "${webRoot}/*",
+                "webpack://FantaFilter/./src/*": "${webRoot}/src/*",
+                "webpack://FantaFilter/*": "*",
+                "webpack:///./~/*": "${webRoot}/node_modules/*"
+            }
+        }
+        ],
+        "compounds": []
+    }
 }

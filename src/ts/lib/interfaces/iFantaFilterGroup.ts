@@ -1,4 +1,4 @@
-import { iFantaElement } from './iFantaElement';
+import { iFantaElement, iFantaItem } from './iFantaElement';
 import { iFantaFilter } from './iFantaFilter';
 
 /**
@@ -7,8 +7,9 @@ import { iFantaFilter } from './iFantaFilter';
  * @interface iFantaFilterGroup
  */
 export interface iFantaFilterGroup {
-    filters: Map<string,iFantaFilter>;
-    filteredItems: iFantaElement[];
-    updateEvent: any;
-    Update: () => void;
+    filters: iFantaFilter[];
+    eventType: string;
+    filteredItems: iFantaItem[];
+    returnedItems: iFantaItem[];
+    Update: (event: Event) => void;
 }

@@ -1,3 +1,5 @@
+import { isObject, isNumber } from "util";
+
 /**
  * @description Tests if an object is a NodeList or HTMLCollection
  * @exports
@@ -8,9 +10,9 @@ export function isNodeList(nodes: any): nodes is NodeList | HTMLCollection {
     var stringRepr = Object.prototype.toString.call(nodes);
 
     return (
-        typeof nodes === 'object' &&
+        isObject(nodes) &&
         /^\[object (HTMLCollection|NodeList|Object)\]$/.test(stringRepr) &&
-        typeof nodes.length === 'number' &&
-        (nodes.length === 0 || (typeof nodes[0] === 'object' && nodes[0].nodeType > 0))
+        isNumber(nodes.length) &&
+        (nodes.length === 0 || (isObject(nodes[0]) && nodes[0].nodeType > 0))
     );
 }

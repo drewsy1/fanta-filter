@@ -1,13 +1,8 @@
-import {
-    iFantaDependencies,
-    iFantaInput,
-    iFantaWrapper,
-    iFantaOptions,
-    iFantaElementConstructor,
-} from '../interfaces';
+import { iFantaDependencies, iFantaInput, iFantaWrapper, iFantaOptions, iFantaElementConstructor } from '../interfaces';
 import { isNodeList, getEnumMember } from '../util';
 import { FantaFilterElement } from './element';
 import { InputComparer } from '../enums';
+import { isUndefined } from 'util';
 
 /**
  * @description A class representing any HTML inputs that manipulate a FantaFilterWrapper
@@ -17,8 +12,9 @@ import { InputComparer } from '../enums';
  */
 export class FantaFilterInput extends FantaFilterElement implements iFantaInput {
     type: string;
-    comparer: InputComparer;
+    comparer: string;
     selector: string;
+    updateId: string;
     private _updateEvent?: CustomEvent<any>;
 
     /**
@@ -37,8 +33,13 @@ export class FantaFilterInput extends FantaFilterElement implements iFantaInput 
                 .filter((x: HTMLElement) => x);
         }
         super({ dependencies, elements: elements, parentName, eventType, _userOptions });
-        const customEvent = dependencies.window !== undefined ? dependencies.window.CustomEvent : CustomEvent;
-        let updateEvent = new customEvent(`${this.eventType}.update`, {
+
+        this.type = this.element.getAttribute('type');
+        this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
+        this.updateId = `${this.eventType}.(${this.selector}).update`;
+        let elementComparerVal = this.element.getAttribute(this._options.getAttribute('comparer'))
+        this.comparer = Object.keys(this._options.InputComparerClasses).includes(elementComparerVal) ? elementComparerVal : 'match';
+        let updateEvent = new CustomEvent(this.updateId, {
             bubbles: true,
             detail: {
                 sender: this,
@@ -46,11 +47,6 @@ export class FantaFilterInput extends FantaFilterElement implements iFantaInput 
             },
         });
         this.setUpdateEvent('input', updateEvent);
-        this.type = this.element.getAttribute('type');
-        this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
-        getEnumMember(InputComparer, [this.element.getAttribute(this._options.getAttribute('comparer'))], 'match').then(
-            result => (this.comparer = result),
-        );
         return this;
     }
     /**

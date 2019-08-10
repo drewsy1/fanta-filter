@@ -1,5 +1,6 @@
 import { iFantaOptions } from '../interfaces';
 import { convertAttributeNamesToOptions } from './dom';
+import { assignIn } from 'lodash';
 
 /**
  * @description Merges default/user options and finds new attributes on an HTML element.
@@ -15,22 +16,22 @@ export function configure(
     element?: HTMLElement,
     userOptions?: iFantaOptions,
 ): iFantaOptions {
-    let options: iFantaOptions = { attributeNames: {}, classNames: {}, inputTypes: [] };
+    let options: iFantaOptions = {
+        attributeNames: {},
+        classNames: {},
+        inputTypes: [],
+        getAttribute: null,
+        getClass: null,
+    };
+    assignIn(options, defaultOptions);
+    
     if (userOptions !== undefined) {
-        Object.keys(defaultOptions).forEach(key => {
-            options[key] =
-                userOptions[key] === undefined
-                    ? defaultOptions[key]
-                    : typeof options[key] === 'object'
-                    ? Object.assign(defaultOptions[key], userOptions[key])
-                    : Array.isArray(options[key])
-                    ? defaultOptions[key].concat(userOptions[key])
-                    : userOptions[key];
-        });
+        assignIn(options, userOptions);
     }
+
     if (element !== undefined && element !== null) {
         let newAttributes = convertAttributeNamesToOptions(element.attributes, defaultOptions);
-        options.attributeNames = Object.assign(defaultOptions.attributeNames, newAttributes);
+        assignIn(options.attributeNames, newAttributes);
     }
     return options;
 }

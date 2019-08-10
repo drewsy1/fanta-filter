@@ -29,7 +29,8 @@ export interface iFantaItem extends iFantaElement {
  * @extends {iFantaElement}
  */
 export interface iFantaInput extends iFantaElement {
-    comparer: InputComparer;
+    comparer: string;
     selector: string;
     type: string;
+    updateId: string;
 }

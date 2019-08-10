@@ -5,5 +5,5 @@ import { iFantaOptions } from './iFantaOptions';
 export interface iFantaFilterConstructor {
     dependencies: iFantaDependencies;
     input: iFantaInput;
-    _userOptions: iFantaOptions;
+    _userOptions?: iFantaOptions;
 }

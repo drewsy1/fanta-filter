@@ -1,5 +1,5 @@
 import { iFantaElement, iFantaOptions, iFantaElementConstructor } from '../interfaces';
-import { convertAttributesToObject } from '../util';
+import { convertAttributesToObject, configure } from '../util';
 
 /**
  * @description An abstract class to be implemented by specific FantaFilter subtypes representing various HTML elements
@@ -20,15 +20,15 @@ export abstract class FantaFilterElement implements iFantaElement {
      */
     constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
         const {defaultOptions } = dependencies;
-        this._options = Object.assign(defaultOptions, _userOptions);
+        this._options = configure(defaultOptions,elements, _userOptions);
         
         this.groupName = parentName;
         this.eventType = eventType;
         this.element = elements;
-        this.attributes = Object.assign(
-            this._options.attributeNames,
-            convertAttributesToObject(this.element.attributes, this._options),
-        );
+        // this.attributes = Object.assign(
+        //     this._options.attributeNames,
+        //     convertAttributesToObject(this.element.attributes, this._options),
+        // );
 
         return this;
     }

@@ -8,11 +8,11 @@ import { iFantaOptions } from './iFantaOptions';
  * @interface iFantaWrapper
  */
 export interface iFantaWrapper {
-    parentNode: HTMLElement;
-    name: string;
-    inputs: iFantaElement[];
-    items: iFantaElement[];
-    filterGroup: iFantaFilterGroup;
-    hasInputs: boolean;
-    hasItems: boolean;
+    "parentNode": HTMLElement;
+    "name": string;
+    "inputs": iFantaElement[];
+    "items": iFantaElement[];
+    "filterGroup": iFantaFilterGroup;
+    "hasInputs": boolean;
+    "hasItems": boolean;
 }
