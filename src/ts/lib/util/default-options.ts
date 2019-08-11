@@ -1,5 +1,5 @@
 import { iFantaOptions, iFantaFilterConstructor, iFantaElementConstructor } from '../interfaces';
-import { isUndefined, isString } from 'lodash';
+import { isUndefined, isString } from 'util';
 import { MatchFilter, TagFilter, DateFilter } from '../filters';
 import { FantaFilterInput } from '../elements/input';
 import { FantaFilterItem } from '../elements/item';

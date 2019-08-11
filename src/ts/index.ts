@@ -1,9 +1,8 @@
 import { configure, defaultOptions, createFantaFilterWrappers } from './lib/util';
-import FantaFilterWrapper from './FantaFilterWrapper';
-import { iFantaOptions } from './lib/interfaces';
+import { iFantaOptions, iFantaWrapper } from './lib/interfaces';
 
 interface FantaFilterGlobal {
-    [key: string]: FantaFilterWrapper;
+    [key: string]: iFantaWrapper;
 }
 
 export function init(
@@ -14,7 +13,7 @@ export function init(
     const newFantaFilter = createFantaFilterWrappers({ configure, context, defaultOptions }, selector, userOptions);
     const fantaFilterArray = newFantaFilter.length !== undefined ? newFantaFilter : [newFantaFilter];
     const fantaFilterObj: FantaFilterGlobal = {};
-    fantaFilterArray.forEach((fantaFilter: FantaFilterWrapper) => {
+    fantaFilterArray.forEach((fantaFilter: iFantaWrapper) => {
         fantaFilterObj[fantaFilter.name] = fantaFilter;
     });
 

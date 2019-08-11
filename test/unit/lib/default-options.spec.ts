@@ -1,6 +1,6 @@
 import { defaultOptions, asyncForEach } from '../../../src/ts/lib/util';
 import { iFantaOptions } from 'src/ts/lib/interfaces';
-import * as should from 'should';
+import should from 'should';
 
 describe('default-options', function() {
     let testOptions: iFantaOptions;

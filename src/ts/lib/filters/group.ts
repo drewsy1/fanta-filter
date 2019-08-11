@@ -1,14 +1,6 @@
-import {
-    iFantaFilterGroup,
-    iFantaFilter,
-    iFantaElement,
-    iFantaInput,
-    iFantaDependencies,
-    iFantaItem,
-} from '../interfaces';
-import { InputComparerClasses, InputComparer } from '../enums';
-import { createClassFromEnumVal } from '../util';
-import { difference, union, intersection } from 'lodash';
+import { iFantaFilterGroup, iFantaFilter, iFantaInput, iFantaDependencies, iFantaItem } from '../interfaces';
+import difference from 'lodash.difference';
+import intersection from 'lodash.union';
 
 export class FilterGroup implements iFantaFilterGroup {
     filters: iFantaFilter[] = [];

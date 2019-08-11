@@ -1,6 +1,7 @@
 import { iFantaOptions } from '../interfaces';
-import { camelCase, forEach } from 'lodash';
-import { isUndefined} from 'util';
+import forEach from 'lodash.foreach';
+import camelCase from 'lodash.camelcase';
+import { isUndefined } from 'util';
 
 /**
  * @description Converts a NamedNodeMap of attributes to an object

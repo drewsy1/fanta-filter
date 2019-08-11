@@ -1,5 +1,5 @@
 import { iFantaElement, iFantaOptions, iFantaElementConstructor } from '../interfaces';
-import { convertAttributesToObject, configure } from '../util';
+import { configure } from '../util';
 
 /**
  * @description An abstract class to be implemented by specific FantaFilter subtypes representing various HTML elements

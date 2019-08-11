@@ -1,6 +1,6 @@
 import { iFantaOptions } from '../interfaces';
 import { convertAttributeNamesToOptions } from './dom';
-import { assignIn } from 'lodash';
+import assignIn from 'lodash.assignin';
 
 /**
  * @description Merges default/user options and finds new attributes on an HTML element.

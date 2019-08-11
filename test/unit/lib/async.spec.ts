@@ -1,5 +1,5 @@
 import { asyncForEach } from '../../../src/ts/lib/util';
-import * as should from 'should';
+import should from 'should';
 
 describe('asyncForEach', async function() {
     let testArray: string[];

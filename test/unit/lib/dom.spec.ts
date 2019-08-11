@@ -1,11 +1,11 @@
 import {
+    convertAttributesToObject,
     configure,
     defaultOptions,
     convertAttributeNamesToOptions,
-    convertAttributesToObject,
 } from '../../../src/ts/lib/util';
 import { mocks } from 'mock-browser';
-import * as should from 'should';
+import should from 'should';
 import * as fs from 'fs';
 import * as path from 'path';
 import { iFantaOptions } from 'src/ts/lib/interfaces';

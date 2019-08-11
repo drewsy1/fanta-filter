@@ -10,26 +10,37 @@
         "mochaExplorer.require": ["ts-node/register", "esm", "ignore-styles", "jsdom-global/register"],
         "mochaExplorer.logpanel": true,
         "mochaExplorer.env": {
-            "TS_NODE_COMPILER_OPTIONS": "{\"lib\": [\"dom\", \"es6\", \"es5\"]}"
+            "TS_NODE_COMPILER_OPTIONS": "{\"lib\": [\"dom\", \"es6\", \"es5\"],\"esModuleInterop\": true}"
         },
-        "prettier.eslintIntegration": true
+        "prettier.eslintIntegration": true,
+        "typescript.locale": "en"
     },
     "launch": {
         "configurations": [
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Launch Chrome",
-            "url": "http://localhost:8080/index",
-            "webRoot": "${workspaceFolder}",
-            "sourceMaps": true,
-            "sourceMapPathOverrides": {
-                "webpack://FantaFilter/./*": "${webRoot}/*",
-                "webpack://FantaFilter/./src/*": "${webRoot}/src/*",
-                "webpack://FantaFilter/*": "*",
-                "webpack:///./~/*": "${webRoot}/node_modules/*"
+            {
+                "type": "chrome",
+                "request": "launch",
+                "name": "Launch Chrome",
+                "url": "http://localhost:8080/index",
+                "webRoot": "${workspaceFolder}",
+                "sourceMaps": true,
+                "sourceMapPathOverrides": {
+                    "webpack://FantaFilter/./*": "${webRoot}/*",
+                    "webpack://FantaFilter/./src/*": "${webRoot}/src/*",
+                    "webpack://FantaFilter/*": "*",
+                    "webpack:///./~/*": "${webRoot}/node_modules/*"
+                }
+            },
+            {
+                "name": "Run mocha",
+                "type": "node",
+                "request": "launch",
+                "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+                "stopOnEntry": false,
+                "args": ["--no-timeouts", "-r", "ts-node/register", "${workspaceRoot}/test/**/*.spec.ts"],
+                "cwd": "${workspaceRoot}",
+                "protocol": "inspector"
             }
-        }
         ],
         "compounds": []
     }

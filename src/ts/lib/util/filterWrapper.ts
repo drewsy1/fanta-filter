@@ -1,4 +1,4 @@
-import { iFantaDependencies, iFantaOptions } from "../interfaces";
+import { iFantaDependencies, iFantaOptions, iFantaWrapper } from "../interfaces";
 import { isNodeList } from "./typetests";
 import FantaFilterWrapper from "../../FantaFilterWrapper";
 import { iFantaWrapperConstructor } from "../interfaces/iFantaWrapperConstructor";
@@ -29,9 +29,9 @@ import {isNull, isString} from 'util'
                 .filter((x: HTMLElement) => x);
         }
 
-        let newFilterWrapperConstructor: iFantaWrapperConstructor = {dependencies, parentNode: parentNode, _userOptions}
+        let newFilterWrapperConstructor: iFantaWrapperConstructor = {dependencies, parentNode, _userOptions}
 
-        let newFantaFilter = new FantaFilterWrapper(newFilterWrapperConstructor);
+        let newFantaFilter:iFantaWrapper = FantaFilterWrapper(newFilterWrapperConstructor);
 
         if (isNull(newFantaFilter.name)) return;
         else return newFantaFilter;

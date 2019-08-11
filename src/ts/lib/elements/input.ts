@@ -1,8 +1,6 @@
-import { iFantaDependencies, iFantaInput, iFantaWrapper, iFantaOptions, iFantaElementConstructor } from '../interfaces';
-import { isNodeList, getEnumMember } from '../util';
+import { iFantaInput, iFantaElementConstructor } from '../interfaces';
+import { isNodeList } from '../util';
 import { FantaFilterElement } from './element';
-import { InputComparer } from '../enums';
-import { isUndefined } from 'util';
 
 /**
  * @description A class representing any HTML inputs that manipulate a FantaFilterWrapper

@@ -3,11 +3,9 @@ import {
     iFantaInput,
     iFantaFilter,
     iFantaOptions,
-    iFantaElement,
     iFantaItem,
 } from '../interfaces';
-import { isNull } from 'util';
-import { without } from 'lodash';
+import without from 'lodash.without';
 
 export abstract class Filter implements iFantaFilter {
     selector: string;
