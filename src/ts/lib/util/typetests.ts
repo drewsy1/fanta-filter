@@ -1,4 +1,4 @@
-import { isObject, isNumber } from "util";
+import { isObject, isNumber } from 'util';
 
 /**
  * @description Tests if an object is a NodeList or HTMLCollection

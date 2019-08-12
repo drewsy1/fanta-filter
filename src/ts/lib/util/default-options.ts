@@ -40,8 +40,7 @@ function getChildValue(group: any, root?: string, suffix?: string) {
         return groupKeys.map(key => prependRoot(root, group[key])) as string[];
     } else if (isString(suffix) && groupKeys.includes(suffix)) {
         return prependRoot(root, group[suffix]) as string;
-    }
-    else return suffix as string;
+    } else return suffix as string;
 }
 
 const prependRoot = (root: string, suffix: string): string => `${root}-${suffix}`;

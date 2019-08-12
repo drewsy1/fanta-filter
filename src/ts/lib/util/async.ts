@@ -6,6 +6,6 @@
  */
 export async function asyncForEach(iterable: any, callback: Function) {
     for (let index = 0; index < iterable.length; index++) {
-      await callback(iterable[index], index, iterable);
+        await callback(iterable[index], index, iterable);
     }
-  }
+}

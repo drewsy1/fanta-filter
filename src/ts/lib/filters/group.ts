@@ -24,8 +24,8 @@ export class FilterGroup implements iFantaFilterGroup {
         let allFilteredItems = this.filters.map(filter => filter.applyFilter(this.items));
         this.returnedItems = intersection(...allFilteredItems);
 
-        this.filteredItems.forEach((item: iFantaItem) => (item.hidden(true)));
-        this.returnedItems.forEach((item: iFantaItem) => (item.hidden(false)));
+        this.filteredItems.forEach((item: iFantaItem) => item.hidden(true));
+        this.returnedItems.forEach((item: iFantaItem) => item.hidden(false));
     }
 
     get filteredItems() {

@@ -12,9 +12,9 @@ export class MatchFilter extends Filter implements iMatchFantaFilter {
         let attrName: string = this._options.getAttribute(this.selector);
         let attrVal: string =
             this.selector === 'innerText' ? inputItem.element.innerText : inputItem.element.getAttribute(attrName);
-        if(attrVal === null) {
-            console.error("Property not found on object")
-            return null
+        if (attrVal === null) {
+            console.error('Property not found on object');
+            return null;
         }
         let isMatch = !!attrVal.match(this.filterValue) || this.filterValue === '';
         return isMatch ? inputItem : null;

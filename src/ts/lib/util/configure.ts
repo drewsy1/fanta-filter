@@ -24,7 +24,7 @@ export function configure(
         getClass: null,
     };
     assignIn(options, defaultOptions);
-    
+
     if (userOptions !== undefined) {
         assignIn(options, userOptions);
     }

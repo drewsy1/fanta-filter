@@ -14,7 +14,7 @@ export function convertAttributesToObject(attributes: NamedNodeMap, options: iFa
     let outputObject: { [key: string]: any } = {};
 
     if (!isUndefined(attributes)) {
-        forEach(attributes, (attr:any) => {
+        forEach(attributes, (attr: any) => {
             if (attr.name.match(root)) {
                 let convertedName = camelCase(attr.name.replace(`${root}-`, ''));
                 outputObject[convertedName] = attr.value;
@@ -36,7 +36,7 @@ export function convertAttributeNamesToOptions(attributes: NamedNodeMap, options
     let outputObject: { [key: string]: any } = {};
 
     if (!isUndefined(attributes)) {
-        forEach(attributes, (attr:any) => {
+        forEach(attributes, (attr: any) => {
             if (attr.name.match(root)) {
                 let deRooted = attr.name.replace(`${root}-`, '');
                 outputObject[camelCase(deRooted)] = deRooted;
