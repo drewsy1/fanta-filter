@@ -8,6 +8,6 @@ import {iFantaDependencies} from './iFantaDependencies';
  */
 export interface iFantaWrapperConstructor {
     dependencies: iFantaDependencies;
-    parentNode: HTMLElement;
+    parentNode: string | HTMLElement;
     _userOptions?: iFantaOptions;
 }

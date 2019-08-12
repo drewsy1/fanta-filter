@@ -1,9 +1,14 @@
-import { InputComparer } from "../enums";
-import { iFantaElementConstructor } from "./iFantaElementConstructor";
-import { iStampFactory, iStamp } from "./iStamp";
+import { iFantaElementConstructor } from './iFantaElementConstructor';
+import { iStampFactory, iStamp } from './iStamp';
 
+/**
+ * @description
+ * @export
+ * @interface iFantaElementFactory
+ * @extends {iStampFactory}
+ */
 export interface iFantaElementFactory extends iStampFactory {
-    ({ value }: { value: any }): iFantaElement
+    ({ value }: { value: any }): iFantaElement;
 }
 
 /**
@@ -18,22 +23,32 @@ export interface iFantaElement extends iStamp {
     tagName: string;
 }
 
+/**
+ * @description
+ * @export
+ * @interface iFantaElementBase
+ */
 export interface iFantaElementBase {
-    props:{
+    props: {
         attributes: object;
         element: HTMLElement;
         eventType: string;
         groupName: string;
-    }
-    methods:{
+    };
+    methods: {
         tagName: () => string;
-    }
+    };
     init: ({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) => void;
-    
 }
 
+/**
+ * @description
+ * @export
+ * @interface iFantaItemFactory
+ * @extends {iFantaElementFactory}
+ */
 export interface iFantaItemFactory extends iFantaElementFactory {
-    ({ value }: { value: any }): iFantaItem
+    ({ value }: { value: any }): iFantaItem;
 }
 
 /**
@@ -46,8 +61,14 @@ export interface iFantaItem extends iFantaElement {
     hidden: (isHidden: boolean) => boolean;
 }
 
+/**
+ * @description
+ * @export
+ * @interface iFantaInputFactory
+ * @extends {iFantaElementFactory}
+ */
 export interface iFantaInputFactory extends iFantaElementFactory {
-    ({ value }: { value: any }): iFantaInput
+    ({ value }: { value: any }): iFantaInput;
 }
 
 /**

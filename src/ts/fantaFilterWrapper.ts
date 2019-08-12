@@ -4,19 +4,21 @@ import { FilterGroup } from './lib/filters';
 import { iFantaWrapperConstructor } from './lib/interfaces/iFantaWrapperConstructor';
 import stampit from 'stampit';
 import { FantaFilterItem, FantaFilterInput } from './lib/elements';
+import { isNodeList } from './lib/util';
+import { isString } from 'util';
 
 const Base = stampit.init(function() {
     var _options: iFantaOptions = null;
 });
 
 const Properties: iFantaWrapper_Base = {
-    conf:{
-        currentFilters: []
+    conf: {
+        currentFilters: [],
     },
-    statics:{
-        CurrentFilters(){
-            return this.compose.configuration.CurrentFilters
-        }
+    statics: {
+        CurrentFilters() {
+            return this.compose.configuration.CurrentFilters;
+        },
     },
     props: {
         eventType: null,
@@ -34,20 +36,30 @@ const Properties: iFantaWrapper_Base = {
             return !!this.items.length;
         },
     },
-    init({ dependencies, parentNode, _userOptions }: iFantaWrapperConstructor,{ stamp }) {
+    init({ dependencies, parentNode, _userOptions }: iFantaWrapperConstructor, { stamp }) {
         const { configure, context, defaultOptions } = dependencies;
+        const targetNode = isString(parentNode) ? context.querySelectorAll(parentNode) : parentNode;
+        const configuration: any = stamp.compose.configuration;
+
+        if (isNodeList(targetNode)) {
+            return [].slice
+                .call(targetNode)
+                .map((element: HTMLElement) => stamp({ dependencies, parentNode: element, _userOptions }))
+                .filter((x: HTMLElement) => x);
+        }
+
         this.inputs = [];
         this.items = [];
-        this._options = configure(defaultOptions, parentNode, _userOptions);
-        this.parentNode = parentNode;
-        this.name = parentNode.getAttribute(this._options.getAttribute('group'));
+        this._options = configure(defaultOptions, targetNode, _userOptions);
+        this.parentNode = targetNode;
+        this.name = targetNode.getAttribute(this._options.getAttribute('group'));
         this.eventType = `fafi.filter.${this.name}`;
 
         // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
         if (
-            !parentNode.hasAttribute(this._options.getAttribute('group')) ||
-            (stamp.compose.configuration.CurrentFilters !== undefined &&
-                stamp.compose.configuration.CurrentFilters.find((filter: iFantaWrapper) => filter.name === this.name))
+            !targetNode.hasAttribute(this._options.getAttribute('group')) ||
+            (configuration.currentFilters !== undefined &&
+                configuration.currentFilters.find((filter: iFantaWrapper) => filter.name === this.name))
         ) {
             return null;
         }
@@ -72,8 +84,8 @@ const Properties: iFantaWrapper_Base = {
             ? new FilterGroup(dependencies, this.eventType, this.inputs, this.items)
             : undefined;
 
-        if (stamp.compose.configuration.CurrentFilters === undefined) stamp.compose.configuration.CurrentFilters = [];
-        stamp.compose.configuration.CurrentFilters.push(this);
+        if (configuration.currentFilters === undefined) configuration.currentFilters = [];
+        configuration.currentFilters.push(this);
     },
 };
 export const FantaFilterWrapper = stampit(Base, Properties);

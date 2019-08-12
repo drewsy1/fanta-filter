@@ -17,6 +17,7 @@ export interface iFantaWrapper {
     eventType: string;
     hasInputs: boolean;
     hasItems: boolean;
+    length: number;
     CurrentFilters: iFantaWrapper[];
     _options: iFantaOptions;
 }

@@ -6261,17 +6261,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var filters_1 = __webpack_require__(/*! ./lib/filters */ "./src/ts/lib/filters/index.ts");
 var stampit_1 = __importDefault(__webpack_require__(/*! stampit */ "./node_modules/stampit/dist/stampit.min.js"));
 var elements_1 = __webpack_require__(/*! ./lib/elements */ "./src/ts/lib/elements/index.ts");
+var util_1 = __webpack_require__(/*! ./lib/util */ "./src/ts/lib/util/index.ts");
+var util_2 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
 var Base = stampit_1.default.init(function () {
     var _options = null;
 });
 var Properties = {
     conf: {
-        currentFilters: []
+        currentFilters: [],
     },
     statics: {
         CurrentFilters: function () {
             return this.compose.configuration.CurrentFilters;
-        }
+        },
     },
     props: {
         eventType: null,
@@ -6294,16 +6296,24 @@ var Properties = {
         var dependencies = _a.dependencies, parentNode = _a.parentNode, _userOptions = _a._userOptions;
         var stamp = _b.stamp;
         var configure = dependencies.configure, context = dependencies.context, defaultOptions = dependencies.defaultOptions;
+        var targetNode = util_2.isString(parentNode) ? context.querySelectorAll(parentNode) : parentNode;
+        var configuration = stamp.compose.configuration;
+        if (util_1.isNodeList(targetNode)) {
+            return [].slice
+                .call(targetNode)
+                .map(function (element) { return stamp({ dependencies: dependencies, parentNode: element, _userOptions: _userOptions }); })
+                .filter(function (x) { return x; });
+        }
         this.inputs = [];
         this.items = [];
-        this._options = configure(defaultOptions, parentNode, _userOptions);
-        this.parentNode = parentNode;
-        this.name = parentNode.getAttribute(this._options.getAttribute('group'));
+        this._options = configure(defaultOptions, targetNode, _userOptions);
+        this.parentNode = targetNode;
+        this.name = targetNode.getAttribute(this._options.getAttribute('group'));
         this.eventType = "fafi.filter." + this.name;
         // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
-        if (!parentNode.hasAttribute(this._options.getAttribute('group')) ||
-            (stamp.compose.configuration.CurrentFilters !== undefined &&
-                stamp.compose.configuration.CurrentFilters.find(function (filter) { return filter.name === _this.name; }))) {
+        if (!targetNode.hasAttribute(this._options.getAttribute('group')) ||
+            (configuration.currentFilters !== undefined &&
+                configuration.currentFilters.find(function (filter) { return filter.name === _this.name; }))) {
             return null;
         }
         var domElements = context.querySelectorAll("[" + this._options.getAttribute('group') + "=" + this.name + "]");
@@ -6324,9 +6334,9 @@ var Properties = {
         this.filterGroup = this.hasInputs()
             ? new filters_1.FilterGroup(dependencies, this.eventType, this.inputs, this.items)
             : undefined;
-        if (stamp.compose.configuration.CurrentFilters === undefined)
-            stamp.compose.configuration.CurrentFilters = [];
-        stamp.compose.configuration.CurrentFilters.push(this);
+        if (configuration.currentFilters === undefined)
+            configuration.currentFilters = [];
+        configuration.currentFilters.push(this);
     },
 };
 exports.FantaFilterWrapper = stampit_1.default(Base, Properties);
@@ -6345,11 +6355,21 @@ exports.FantaFilterWrapper = stampit_1.default(Base, Properties);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ./lib/util */ "./src/ts/lib/util/index.ts");
-function init(selector, userOptions, context) {
+var FantaFilterWrapper_1 = __webpack_require__(/*! ./FantaFilterWrapper */ "./src/ts/FantaFilterWrapper.ts");
+var util_2 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
+function init(selector, _userOptions, context) {
     if (selector === void 0) { selector = '.js-fafi'; }
     if (context === void 0) { context = document; }
-    var newFantaFilter = util_1.createFantaFilterWrappers({ configure: util_1.configure, context: context, defaultOptions: util_1.defaultOptions }, selector, userOptions);
-    var fantaFilterArray = newFantaFilter.length !== undefined ? newFantaFilter : [newFantaFilter];
+    var dependencies = { configure: util_1.configure, context: context, defaultOptions: util_1.defaultOptions };
+    var newFilterWrapperConstructor = { dependencies: dependencies, parentNode: selector, _userOptions: _userOptions };
+    var newFantaFilter = FantaFilterWrapper_1.FantaFilterWrapper(newFilterWrapperConstructor);
+    var fantaFilterArray = [];
+    if (util_2.isUndefined(newFantaFilter.length)) {
+        fantaFilterArray.push(newFantaFilter);
+    }
+    else {
+        fantaFilterArray.concat(newFantaFilter);
+    }
     var fantaFilterObj = {};
     fantaFilterArray.forEach(function (fantaFilter) {
         fantaFilterObj[fantaFilter.name] = fantaFilter;
@@ -7188,49 +7208,6 @@ exports.createClassFromEnumVal = createClassFromEnumVal;
 
 /***/ }),
 
-/***/ "./src/ts/lib/util/filterWrapper.ts":
-/*!******************************************!*\
-  !*** ./src/ts/lib/util/filterWrapper.ts ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var typetests_1 = __webpack_require__(/*! ./typetests */ "./src/ts/lib/util/typetests.ts");
-var FantaFilterWrapper_1 = __webpack_require__(/*! ../../FantaFilterWrapper */ "./src/ts/FantaFilterWrapper.ts");
-var util_1 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
-/**
-     * @description Static method that wraps the default constructor to return null if an object is malformed/invalid.
-     * @static
-     * @param {iFantaDependencies} dependencies Variables passed in from higher context
-     * @param {HTMLElement | string} target String selector representing a data-fantafilter-group HTML root object, or the object itself
-     * @param {iFantaOptions} [_userOptions={}] Optional user override options
-     * @returns A completed FantaFilterWrapper object or objects. Null if object is invalid.
-     * @memberof FantaFilterWrapper
-     */
-function createFantaFilterWrappers(dependencies, target, _userOptions) {
-    if (_userOptions === void 0) { _userOptions = {}; }
-    var context = dependencies.context;
-    var parentNode = util_1.isString(target) ? context.querySelectorAll(target) : target;
-    // If multiple parent nodes, create multiple FantaFilterWrappers and return those instead
-    if (typetests_1.isNodeList(parentNode)) {
-        return [].slice
-            .call(parentNode)
-            .map(function (element) { return createFantaFilterWrappers(dependencies, element, _userOptions); })
-            .filter(function (x) { return x; });
-    }
-    var newFilterWrapperConstructor = { dependencies: dependencies, parentNode: parentNode, _userOptions: _userOptions };
-    var newFantaFilter = FantaFilterWrapper_1.FantaFilterWrapper(newFilterWrapperConstructor);
-    return (util_1.isNull(newFantaFilter)) ? newFantaFilter : undefined;
-}
-exports.createFantaFilterWrappers = createFantaFilterWrappers;
-;
-
-
-/***/ }),
-
 /***/ "./src/ts/lib/util/index.ts":
 /*!**********************************!*\
   !*** ./src/ts/lib/util/index.ts ***!
@@ -7249,7 +7226,6 @@ __export(__webpack_require__(/*! ./configure */ "./src/ts/lib/util/configure.ts"
 __export(__webpack_require__(/*! ./default-options */ "./src/ts/lib/util/default-options.ts"));
 __export(__webpack_require__(/*! ./dom */ "./src/ts/lib/util/dom.ts"));
 __export(__webpack_require__(/*! ./enum */ "./src/ts/lib/util/enum.ts"));
-__export(__webpack_require__(/*! ./filterWrapper */ "./src/ts/lib/util/filterWrapper.ts"));
 __export(__webpack_require__(/*! ./typetests */ "./src/ts/lib/util/typetests.ts"));
 
 
