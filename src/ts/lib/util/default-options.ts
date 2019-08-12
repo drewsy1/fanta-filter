@@ -25,8 +25,8 @@ export const defaultOptions: iFantaOptions = {
         date: (constructor: iFantaFilterConstructor) => new DateFilter(constructor),
     },
     FilterElementClasses: {
-        inputs: (constructor: iFantaElementConstructor) => new FantaFilterInput(constructor),
-        items: (constructor: iFantaElementConstructor) => new FantaFilterItem(constructor),
+        inputs: (constructor: iFantaElementConstructor) => FantaFilterInput(constructor),
+        items: (constructor: iFantaElementConstructor) => FantaFilterItem(constructor),
     },
     getAttribute: (suffix?: string) =>
         getChildValue(defaultOptions.attributeNames, defaultOptions.attributeNames.root, suffix),

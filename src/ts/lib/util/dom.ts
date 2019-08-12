@@ -1,8 +1,7 @@
 import { iFantaOptions } from '../interfaces';
-import forEach from 'lodash.foreach';
-import camelCase from 'lodash.camelcase';
 import { isUndefined } from 'util';
-
+var forEach = require('lodash.foreach');
+var camelCase = require('lodash.camelcase');
 /**
  * @description Converts a NamedNodeMap of attributes to an object
  *
@@ -15,7 +14,7 @@ export function convertAttributesToObject(attributes: NamedNodeMap, options: iFa
     let outputObject: { [key: string]: any } = {};
 
     if (!isUndefined(attributes)) {
-        forEach(attributes, attr => {
+        forEach(attributes, (attr:any) => {
             if (attr.name.match(root)) {
                 let convertedName = camelCase(attr.name.replace(`${root}-`, ''));
                 outputObject[convertedName] = attr.value;
@@ -37,7 +36,7 @@ export function convertAttributeNamesToOptions(attributes: NamedNodeMap, options
     let outputObject: { [key: string]: any } = {};
 
     if (!isUndefined(attributes)) {
-        forEach(attributes, attr => {
+        forEach(attributes, (attr:any) => {
             if (attr.name.match(root)) {
                 let deRooted = attr.name.replace(`${root}-`, '');
                 outputObject[camelCase(deRooted)] = deRooted;

@@ -1,4 +1,4 @@
-import { FantaFilterInput, FantaFilterItem } from '../elements';
+import { FantaFilterItem, FantaFilterInput } from '../elements';
 import { iFantaElementConstructor } from '../interfaces';
 
 export const enum FilterElementType {
@@ -7,6 +7,6 @@ export const enum FilterElementType {
 }
 
 export const FilterElementClasses = {
-    inputs: (constructor: iFantaElementConstructor) => new FantaFilterInput(constructor),
-    items: (constructor: iFantaElementConstructor) => new FantaFilterItem(constructor),
+    inputs: (constructor: iFantaElementConstructor) => FantaFilterInput(constructor),
+    items: (constructor: iFantaElementConstructor) => FantaFilterItem(constructor),
 };

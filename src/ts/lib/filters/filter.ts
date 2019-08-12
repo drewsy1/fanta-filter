@@ -5,7 +5,7 @@ import {
     iFantaOptions,
     iFantaItem,
 } from '../interfaces';
-import without from 'lodash.without';
+var without = require('lodash.without');
 
 export abstract class Filter implements iFantaFilter {
     selector: string;

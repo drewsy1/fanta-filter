@@ -6,3 +6,4 @@ export * from './iFantaFilterGroup';
 export * from './iFantaWrapper';
 export * from './iFantaOptions';
 export * from './iFantaFilterConstructor'
+export * from './iStamp';

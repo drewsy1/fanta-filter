@@ -3102,10 +3102,10 @@ module.exports = forEach;
 
 /***/ }),
 
-/***/ "./node_modules/lodash.union/index.js":
-/*!********************************************!*\
-  !*** ./node_modules/lodash.union/index.js ***!
-  \********************************************/
+/***/ "./node_modules/lodash.intersection/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/lodash.intersection/index.js ***!
+  \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3118,19 +3118,14 @@ module.exports = forEach;
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 
-/** Used as the size to enable large array optimizations. */
-var LARGE_ARRAY_SIZE = 200;
-
 /** Used to stand-in for `undefined` hash values. */
 var HASH_UNDEFINED = '__lodash_hash_undefined__';
 
 /** Used as references for various `Number` constants. */
-var INFINITY = 1 / 0,
-    MAX_SAFE_INTEGER = 9007199254740991;
+var MAX_SAFE_INTEGER = 9007199254740991;
 
 /** `Object#toString` result references. */
-var argsTag = '[object Arguments]',
-    funcTag = '[object Function]',
+var funcTag = '[object Function]',
     genTag = '[object GeneratorFunction]';
 
 /**
@@ -3207,22 +3202,23 @@ function arrayIncludesWith(array, value, comparator) {
 }
 
 /**
- * Appends the elements of `values` to `array`.
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
  *
  * @private
- * @param {Array} array The array to modify.
- * @param {Array} values The values to append.
- * @returns {Array} Returns `array`.
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
  */
-function arrayPush(array, values) {
+function arrayMap(array, iteratee) {
   var index = -1,
-      length = values.length,
-      offset = array.length;
+      length = array ? array.length : 0,
+      result = Array(length);
 
   while (++index < length) {
-    array[offset + index] = values[index];
+    result[index] = iteratee(array[index], index, array);
   }
-  return array;
+  return result;
 }
 
 /**
@@ -3284,6 +3280,19 @@ function baseIsNaN(value) {
 }
 
 /**
+ * The base implementation of `_.unary` without support for storing metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
+}
+
+/**
  * Checks if a cache value for `key` exists.
  *
  * @private
@@ -3326,23 +3335,6 @@ function isHostObject(value) {
   return result;
 }
 
-/**
- * Converts `set` to an array of its values.
- *
- * @private
- * @param {Object} set The set to convert.
- * @returns {Array} Returns the values.
- */
-function setToArray(set) {
-  var index = -1,
-      result = Array(set.size);
-
-  set.forEach(function(value) {
-    result[++index] = value;
-  });
-  return result;
-}
-
 /** Used for built-in method references. */
 var arrayProto = Array.prototype,
     funcProto = Function.prototype,
@@ -3377,17 +3369,14 @@ var reIsNative = RegExp('^' +
 );
 
 /** Built-in value references. */
-var Symbol = root.Symbol,
-    propertyIsEnumerable = objectProto.propertyIsEnumerable,
-    splice = arrayProto.splice,
-    spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
+var splice = arrayProto.splice;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
+var nativeMax = Math.max,
+    nativeMin = Math.min;
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map'),
-    Set = getNative(root, 'Set'),
     nativeCreate = getNative(Object, 'create');
 
 /**
@@ -3763,34 +3752,63 @@ function assocIndexOf(array, key) {
 }
 
 /**
- * The base implementation of `_.flatten` with support for restricting flattening.
+ * The base implementation of methods like `_.intersection`, without support
+ * for iteratee shorthands, that accepts an array of arrays to inspect.
  *
  * @private
- * @param {Array} array The array to flatten.
- * @param {number} depth The maximum recursion depth.
- * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
- * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
- * @param {Array} [result=[]] The initial result value.
- * @returns {Array} Returns the new flattened array.
+ * @param {Array} arrays The arrays to inspect.
+ * @param {Function} [iteratee] The iteratee invoked per element.
+ * @param {Function} [comparator] The comparator invoked per element.
+ * @returns {Array} Returns the new array of shared values.
  */
-function baseFlatten(array, depth, predicate, isStrict, result) {
+function baseIntersection(arrays, iteratee, comparator) {
+  var includes = comparator ? arrayIncludesWith : arrayIncludes,
+      length = arrays[0].length,
+      othLength = arrays.length,
+      othIndex = othLength,
+      caches = Array(othLength),
+      maxLength = Infinity,
+      result = [];
+
+  while (othIndex--) {
+    var array = arrays[othIndex];
+    if (othIndex && iteratee) {
+      array = arrayMap(array, baseUnary(iteratee));
+    }
+    maxLength = nativeMin(array.length, maxLength);
+    caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))
+      ? new SetCache(othIndex && array)
+      : undefined;
+  }
+  array = arrays[0];
+
   var index = -1,
-      length = array.length;
+      seen = caches[0];
 
-  predicate || (predicate = isFlattenable);
-  result || (result = []);
+  outer:
+  while (++index < length && result.length < maxLength) {
+    var value = array[index],
+        computed = iteratee ? iteratee(value) : value;
 
-  while (++index < length) {
-    var value = array[index];
-    if (depth > 0 && predicate(value)) {
-      if (depth > 1) {
-        // Recursively flatten arrays (susceptible to call stack limits).
-        baseFlatten(value, depth - 1, predicate, isStrict, result);
-      } else {
-        arrayPush(result, value);
+    value = (comparator || value !== 0) ? value : 0;
+    if (!(seen
+          ? cacheHas(seen, computed)
+          : includes(result, computed, comparator)
+        )) {
+      othIndex = othLength;
+      while (--othIndex) {
+        var cache = caches[othIndex];
+        if (!(cache
+              ? cacheHas(cache, computed)
+              : includes(arrays[othIndex], computed, comparator))
+            ) {
+          continue outer;
+        }
       }
-    } else if (!isStrict) {
-      result[result.length] = value;
+      if (seen) {
+        seen.push(computed);
+      }
+      result.push(value);
     }
   }
   return result;
@@ -3842,76 +3860,15 @@ function baseRest(func, start) {
 }
 
 /**
- * The base implementation of `_.uniqBy` without support for iteratee shorthands.
+ * Casts `value` to an empty array if it's not an array like object.
  *
  * @private
- * @param {Array} array The array to inspect.
- * @param {Function} [iteratee] The iteratee invoked per element.
- * @param {Function} [comparator] The comparator invoked per element.
- * @returns {Array} Returns the new duplicate free array.
+ * @param {*} value The value to inspect.
+ * @returns {Array|Object} Returns the cast array-like object.
  */
-function baseUniq(array, iteratee, comparator) {
-  var index = -1,
-      includes = arrayIncludes,
-      length = array.length,
-      isCommon = true,
-      result = [],
-      seen = result;
-
-  if (comparator) {
-    isCommon = false;
-    includes = arrayIncludesWith;
-  }
-  else if (length >= LARGE_ARRAY_SIZE) {
-    var set = iteratee ? null : createSet(array);
-    if (set) {
-      return setToArray(set);
-    }
-    isCommon = false;
-    includes = cacheHas;
-    seen = new SetCache;
-  }
-  else {
-    seen = iteratee ? [] : result;
-  }
-  outer:
-  while (++index < length) {
-    var value = array[index],
-        computed = iteratee ? iteratee(value) : value;
-
-    value = (comparator || value !== 0) ? value : 0;
-    if (isCommon && computed === computed) {
-      var seenIndex = seen.length;
-      while (seenIndex--) {
-        if (seen[seenIndex] === computed) {
-          continue outer;
-        }
-      }
-      if (iteratee) {
-        seen.push(computed);
-      }
-      result.push(value);
-    }
-    else if (!includes(seen, computed, comparator)) {
-      if (seen !== result) {
-        seen.push(computed);
-      }
-      result.push(value);
-    }
-  }
-  return result;
+function castArrayLikeObject(value) {
+  return isArrayLikeObject(value) ? value : [];
 }
-
-/**
- * Creates a set object of `values`.
- *
- * @private
- * @param {Array} values The values to add to the set.
- * @returns {Object} Returns the new set.
- */
-var createSet = !(Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY) ? noop : function(values) {
-  return new Set(values);
-};
 
 /**
  * Gets the data for `map`.
@@ -3939,18 +3896,6 @@ function getMapData(map, key) {
 function getNative(object, key) {
   var value = getValue(object, key);
   return baseIsNative(value) ? value : undefined;
-}
-
-/**
- * Checks if `value` is a flattenable `arguments` object or array.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
- */
-function isFlattenable(value) {
-  return isArray(value) || isArguments(value) ||
-    !!(spreadableSymbol && value && value[spreadableSymbol]);
 }
 
 /**
@@ -3998,23 +3943,27 @@ function toSource(func) {
 }
 
 /**
- * Creates an array of unique values, in order, from all given arrays using
- * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
- * for equality comparisons.
+ * Creates an array of unique values that are included in all given arrays
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons. The order of result values is determined by the
+ * order they occur in the first array.
  *
  * @static
  * @memberOf _
  * @since 0.1.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
- * @returns {Array} Returns the new array of combined values.
+ * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
- * _.union([2], [1, 2]);
- * // => [2, 1]
+ * _.intersection([2, 1], [2, 3]);
+ * // => [2]
  */
-var union = baseRest(function(arrays) {
-  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
+var intersection = baseRest(function(arrays) {
+  var mapped = arrayMap(arrays, castArrayLikeObject);
+  return (mapped.length && mapped[0] === arrays[0])
+    ? baseIntersection(mapped)
+    : [];
 });
 
 /**
@@ -4052,55 +4001,6 @@ var union = baseRest(function(arrays) {
 function eq(value, other) {
   return value === other || (value !== value && other !== other);
 }
-
-/**
- * Checks if `value` is likely an `arguments` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an `arguments` object,
- *  else `false`.
- * @example
- *
- * _.isArguments(function() { return arguments; }());
- * // => true
- *
- * _.isArguments([1, 2, 3]);
- * // => false
- */
-function isArguments(value) {
-  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
-  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
-    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
-}
-
-/**
- * Checks if `value` is classified as an `Array` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array, else `false`.
- * @example
- *
- * _.isArray([1, 2, 3]);
- * // => true
- *
- * _.isArray(document.body.children);
- * // => false
- *
- * _.isArray('abc');
- * // => false
- *
- * _.isArray(_.noop);
- * // => false
- */
-var isArray = Array.isArray;
 
 /**
  * Checks if `value` is array-like. A value is considered array-like if it's
@@ -4273,23 +4173,7 @@ function isObjectLike(value) {
   return !!value && typeof value == 'object';
 }
 
-/**
- * This method returns `undefined`.
- *
- * @static
- * @memberOf _
- * @since 2.3.0
- * @category Util
- * @example
- *
- * _.times(2, _.noop);
- * // => [undefined, undefined]
- */
-function noop() {
-  // No operation performed.
-}
-
-module.exports = union;
+module.exports = intersection;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
@@ -6381,14 +6265,19 @@ var Base = stampit_1.default.init(function () {
     var _options = null;
 });
 var Properties = {
+    conf: {
+        currentFilters: []
+    },
     statics: {
-        CurrentFilters: [],
+        CurrentFilters: function () {
+            return this.compose.configuration.CurrentFilters;
+        }
     },
     props: {
         eventType: null,
         filterGroup: null,
-        inputs: [],
-        items: [],
+        inputs: null,
+        items: null,
         name: null,
         parentNode: null,
     },
@@ -6400,20 +6289,22 @@ var Properties = {
             return !!this.items.length;
         },
     },
-    init: function (_a) {
+    init: function (_a, _b) {
         var _this = this;
         var dependencies = _a.dependencies, parentNode = _a.parentNode, _userOptions = _a._userOptions;
+        var stamp = _b.stamp;
         var configure = dependencies.configure, context = dependencies.context, defaultOptions = dependencies.defaultOptions;
+        this.inputs = [];
+        this.items = [];
         this._options = configure(defaultOptions, parentNode, _userOptions);
         this.parentNode = parentNode;
         this.name = parentNode.getAttribute(this._options.getAttribute('group'));
         this.eventType = "fafi.filter." + this.name;
         // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
         if (!parentNode.hasAttribute(this._options.getAttribute('group')) ||
-            (this.CurrentFilters !== undefined &&
-                this.CurrentFilters.find(function (filter) { return filter.name === _this.name; }))) {
-            this.name = null;
-            return;
+            (stamp.compose.configuration.CurrentFilters !== undefined &&
+                stamp.compose.configuration.CurrentFilters.find(function (filter) { return filter.name === _this.name; }))) {
+            return null;
         }
         var domElements = context.querySelectorAll("[" + this._options.getAttribute('group') + "=" + this.name + "]");
         domElements.forEach(function (elements) {
@@ -6425,81 +6316,20 @@ var Properties = {
                 _userOptions: _userOptions,
             };
             if (elements.tagName.toLowerCase().match('input')) {
-                _this.inputs.push(new elements_1.FantaFilterInput(filterConstructorArgs));
+                _this.inputs.push(elements_1.FantaFilterInput(filterConstructorArgs));
             }
             else if (!elements.classList.contains(_this._options.getClass('parent')))
-                _this.items.push(new elements_1.FantaFilterItem(filterConstructorArgs));
+                _this.items.push(elements_1.FantaFilterItem(filterConstructorArgs));
         });
         this.filterGroup = this.hasInputs()
             ? new filters_1.FilterGroup(dependencies, this.eventType, this.inputs, this.items)
             : undefined;
-        if (this.CurrentFilters === undefined)
-            this.CurrentFilters = [];
-        this.CurrentFilters.push(this);
+        if (stamp.compose.configuration.CurrentFilters === undefined)
+            stamp.compose.configuration.CurrentFilters = [];
+        stamp.compose.configuration.CurrentFilters.push(this);
     },
 };
-var FantaFilterWrapper = stampit_1.default(Base, Properties);
-exports.default = FantaFilterWrapper;
-// /**
-//  * Class that represents a data-fantafilter-group
-//  * @export
-//  * @class FantaFilterWrapper
-//  * @implements {iFilterWrapper}
-//  */
-// export default class _FantaFilterWrapper implements iFantaWrapper {
-//     filterGroup: iFantaFilterGroup;
-//     inputs: iFantaInput[] = [];
-//     items: iFantaItem[] = [];
-//     parentNode: HTMLElement;
-//     name: string;
-//     eventType: string;
-//     protected _options: iFantaOptions;
-//     static CurrentFilters: FantaFilterWrapper[];
-//     /**
-//      * Creates an instance of FantaFilterWrapper.
-//      * @param {iFilterDependencies} dependencies Variables passed in from higher context
-//      * @param {HTMLElement} parentNode A data-fantafilter-group root object
-//      * @param {iFantaOptions} [_userOptions={}] Optional user override options
-//      * @memberof FantaFilterWrapper
-//      */
-//     constructor({ dependencies, parentNode, _userOptions }: iFantaWrapperConstructor) {
-//         const { configure, context, defaultOptions } = dependencies;
-//         this._options = configure(defaultOptions, parentNode, _userOptions);
-//         this.parentNode = parentNode;
-//         this.name = parentNode.getAttribute(this._options.getAttribute('group'));
-//         this.eventType = `fafi.filter.${this.name}`;
-//         // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
-//         if (
-//             !parentNode.hasAttribute(this._options.getAttribute('group')) ||
-//             (FantaFilterWrapper.CurrentFilters !== undefined &&
-//                 FantaFilterWrapper.CurrentFilters.find((filter: FantaFilterWrapper) => filter.name === this.name))
-//         ) {
-//             this.name = null;
-//             return;
-//         }
-//         this.filterGroup = this.hasInputs
-//             ? new FilterGroup(dependencies, this.eventType, this.inputs, this.items)
-//             : undefined;
-//         if (FantaFilterWrapper.CurrentFilters === undefined) FantaFilterWrapper.CurrentFilters = [];
-//         FantaFilterWrapper.CurrentFilters.push(this);
-//     }
-//     /**
-//      * @description Returns true if this FantaFilterWrapper contains input elements
-//      * @readonly
-//      * @memberof FantaFilterWrapper
-//      */
-//     public get hasInputs() {
-//         return !!this.inputs.length;
-//     }
-//     /**
-//      * @description Returns true if this FantaFilterWrapper contains item elements
-//      * @readonly
-//      * @memberof FantaFilterWrapper
-//      */
-//     public get hasItems() {
-//         return !!this.items.length;
-//     }
-// }
+exports.FantaFilterWrapper = stampit_1.default(Base, Properties);
 
 
 /***/ }),
@@ -6540,47 +6370,37 @@ exports.init = init;
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
-/**
- * @description An abstract class to be implemented by specific FantaFilter subtypes representing various HTML elements
- * @class FantaFilterElement
- * @implements {iFilterElement}
- */
-var FantaFilterElement = /** @class */ (function () {
-    /**
-     *Creates an instance of FantaFilterElement.
-     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
-     * @memberof FantaFilterElement
-     */
-    function FantaFilterElement(_a) {
+var stampit_1 = __importDefault(__webpack_require__(/*! stampit */ "./node_modules/stampit/dist/stampit.min.js"));
+var PrivateVars = stampit_1.default.init(function () {
+    var _options = null;
+});
+var Properties = stampit_1.default({
+    props: {
+        kind: null,
+        attributes: null,
+        element: null,
+        eventType: null,
+        groupName: null
+    },
+    methods: {
+        tagName: function () { return this.element.tagName; }
+    },
+    init: function (_a) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         var defaultOptions = dependencies.defaultOptions;
         this._options = util_1.configure(defaultOptions, elements, _userOptions);
+        this.attributes = util_1.convertAttributesToObject(elements.attributes, this._options);
         this.groupName = parentName;
         this.eventType = eventType;
         this.element = elements;
-        // this.attributes = Object.assign(
-        //     this._options.attributeNames,
-        //     convertAttributesToObject(this.element.attributes, this._options),
-        // );
-        return this;
     }
-    Object.defineProperty(FantaFilterElement.prototype, "tagName", {
-        /**
-         * @description Retrieves a string representation of this element's HTML element tag
-         * @readonly
-         * @memberof FantaFilterElement
-         */
-        get: function () {
-            return this.element.tagName;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return FantaFilterElement;
-}());
-exports.FantaFilterElement = FantaFilterElement;
+});
+exports.FantaFilterElement = stampit_1.default(PrivateVars, Properties);
 
 
 /***/ }),
@@ -6614,92 +6434,132 @@ __export(__webpack_require__(/*! ./item */ "./src/ts/lib/elements/item.ts"));
 
 "use strict";
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
 var element_1 = __webpack_require__(/*! ./element */ "./src/ts/lib/elements/element.ts");
-/**
- * @description A class representing any HTML inputs that manipulate a FantaFilterWrapper
- * @class FantaFilterInput
- * @extends {FantaFilterElement}
- * @implements {iFilterInput}
- */
-var FantaFilterInput = /** @class */ (function (_super) {
-    __extends(FantaFilterInput, _super);
-    /**
-     *Creates an instance of FantaFilterInput.
-     * @param {iFantaElementConstructor} {dependencies, elements, parentName, eventType, _userOptions}
-     * @memberof FantaFilterInput
-     */
-    function FantaFilterInput(_a) {
-        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+var stampit_1 = __importDefault(__webpack_require__(/*! stampit */ "./node_modules/stampit/dist/stampit.min.js"));
+var PrivateVars = stampit_1.default.init(function () {
+    var _updateEvent = null;
+});
+var Properties = stampit_1.default({
+    props: {
+        type: null,
+        comparer: null,
+        selector: null,
+        updateId: null,
+    },
+    methods: {
+        setUpdateEvent: function (_eventTrigger, _event) {
+            if (_eventTrigger !== undefined && _event !== undefined) {
+                this.element.addEventListener(_eventTrigger, function (e) { return e.target.dispatchEvent(_event); });
+                this._updateEvent = _event;
+            }
+            return this._updateEvent;
+        },
+        updateEvent: function () {
+            return this._updateEvent;
+        },
+    },
+    init: function (_a) {
         var _this = this;
+        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         if (util_1.isNodeList(elements)) {
             return [].slice
                 .call(Array.from(elements))
                 .map(function (_element) {
-                return new FantaFilterInput({ dependencies: dependencies, elements: _element, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
+                return _this({ dependencies: dependencies, elements: _element, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
             })
                 .filter(function (x) { return x; });
         }
-        _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
-        _this.type = _this.element.getAttribute('type');
-        _this.selector = _this.element.getAttribute(_this._options.getAttribute('selector'));
-        _this.updateId = _this.eventType + ".(" + _this.selector + ").update";
-        var elementComparerVal = _this.element.getAttribute(_this._options.getAttribute('comparer'));
-        _this.comparer = Object.keys(_this._options.InputComparerClasses).includes(elementComparerVal) ? elementComparerVal : 'match';
-        var updateEvent = new CustomEvent(_this.updateId, {
+        this.kind = "input";
+        this.type = this.element.getAttribute('type') || "text";
+        this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
+        this.updateId = this.eventType + ".(" + this.selector + ").update";
+        var elementComparerVal = this.element.getAttribute(this._options.getAttribute('comparer'));
+        this.comparer = Object.keys(this._options.InputComparerClasses).includes(elementComparerVal)
+            ? elementComparerVal
+            : 'match';
+        var updateEvent = new CustomEvent(this.updateId, {
             bubbles: true,
             detail: {
-                sender: _this,
+                sender: this,
                 value: function () { return _this.element.value; },
             },
         });
-        _this.setUpdateEvent('input', updateEvent);
-        return _this;
-    }
-    /**
-     * @description Adds an update event handler to a FantaFilterInput and its HTML element
-     * @private
-     * @param {string} _eventTrigger Name of event to be handled
-     * @param {CustomEvent<any>} _event Callback function of event
-     * @returns This FantaFilterElement's UpdateEvent
-     * @memberof FantaFilterInput
-     */
-    FantaFilterInput.prototype.setUpdateEvent = function (_eventTrigger, _event) {
-        if (_eventTrigger !== undefined && _event !== undefined) {
-            this.element.addEventListener(_eventTrigger, function (e) { return e.target.dispatchEvent(_event); });
-            this._updateEvent = _event;
-        }
-        return this._updateEvent;
-    };
-    Object.defineProperty(FantaFilterInput.prototype, "updateEvent", {
-        /**
-         * @description Returns this FantaFilterElement's UpdateEvent
-         * @readonly
-         * @memberof FantaFilterInput
-         */
-        get: function () {
-            return this._updateEvent;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return FantaFilterInput;
-}(element_1.FantaFilterElement));
-exports.FantaFilterInput = FantaFilterInput;
+        this.setUpdateEvent('input', updateEvent);
+    },
+});
+exports.FantaFilterInput = stampit_1.default(element_1.FantaFilterElement, PrivateVars, Properties);
+// /**
+//  * @description A class representing any HTML inputs that manipulate a FantaFilterWrapper
+//  * @class FantaFilterInput
+//  * @extends {FantaFilterElement}
+//  * @implements {iFilterInput}
+//  */
+// export class FantaFilterInput extends FantaFilterElement implements iFantaInput {
+//     type: string;
+//     comparer: string;
+//     selector: string;
+//     updateId: string;
+//     private _updateEvent?: CustomEvent<any>;
+//     /**
+//      *Creates an instance of FantaFilterInput.
+//      * @param {iFantaElementConstructor} {dependencies, elements, parentName, eventType, _userOptions}
+//      * @memberof FantaFilterInput
+//      */
+//     constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
+//         if (isNodeList(elements)) {
+//             return [].slice
+//                 .call(Array.from(elements))
+//                 .map(
+//                     (_element: HTMLElement) =>
+//                         new FantaFilterInput({ dependencies, elements: _element, parentName, eventType, _userOptions }),
+//                 )
+//                 .filter((x: HTMLElement) => x);
+//         }
+//         super({ dependencies, elements: elements, parentName, eventType, _userOptions });
+//         this.type = this.element.getAttribute('type');
+//         this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
+//         this.updateId = `${this.eventType}.(${this.selector}).update`;
+//         let elementComparerVal = this.element.getAttribute(this._options.getAttribute('comparer'))
+//         this.comparer = Object.keys(this._options.InputComparerClasses).includes(elementComparerVal) ? elementComparerVal : 'match';
+//         let updateEvent = new CustomEvent(this.updateId, {
+//             bubbles: true,
+//             detail: {
+//                 sender: this,
+//                 value: () => (this.element as HTMLInputElement).value,
+//             },
+//         });
+//         this.setUpdateEvent('input', updateEvent);
+//         return this;
+//     }
+//     /**
+//      * @description Adds an update event handler to a FantaFilterInput and its HTML element
+//      * @private
+//      * @param {string} _eventTrigger Name of event to be handled
+//      * @param {CustomEvent<any>} _event Callback function of event
+//      * @returns This FantaFilterElement's UpdateEvent
+//      * @memberof FantaFilterInput
+//      */
+//     private setUpdateEvent(_eventTrigger: string, _event: CustomEvent<any>) {
+//         if (_eventTrigger !== undefined && _event !== undefined) {
+//             this.element.addEventListener(_eventTrigger, e => e.target.dispatchEvent(_event));
+//             this._updateEvent = _event;
+//         }
+//         return this._updateEvent;
+//     }
+//     /**
+//      * @description Returns this FantaFilterElement's UpdateEvent
+//      * @readonly
+//      * @memberof FantaFilterInput
+//      */
+//     get updateEvent() {
+//         return this._updateEvent;
+//     }
+// }
 
 
 /***/ }),
@@ -6713,71 +6573,74 @@ exports.FantaFilterInput = FantaFilterInput;
 
 "use strict";
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
 var element_1 = __webpack_require__(/*! ./element */ "./src/ts/lib/elements/element.ts");
-/**
- * @description A class representing any filterable HTML element
- * @class FantaFilterItem
- * @extends {FantaFilterElement}
- * @implements {iFilterItem}
- */
-var FantaFilterItem = /** @class */ (function (_super) {
-    __extends(FantaFilterItem, _super);
-    /**
-     *Creates an instance of FantaFilterItem.
-     * @param {iFantaElementConstructor} {dependencies, elements, parentName, eventType, _userOptions}
-     * @memberof FantaFilterItem
-     */
-    function FantaFilterItem(_a) {
-        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+var util_2 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
+var stampit_1 = __importDefault(__webpack_require__(/*! stampit */ "./node_modules/stampit/dist/stampit.min.js"));
+var Properties = stampit_1.default({
+    methods: {
+        hidden: function (isHidden) {
+            this.element.hidden = util_2.isUndefined(isHidden) ? this.element.hidden : isHidden;
+            return this.element.hidden;
+        }
+    },
+    init: function (_a) {
         var _this = this;
+        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         if (util_1.isNodeList(elements)) {
             return [].slice
                 .call(Array.from(elements))
-                .map(function (_element) {
-                return new FantaFilterItem({ dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
-            })
+                .map(function (_element) { return _this({ dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }); })
                 .filter(function (x) { return x; });
         }
-        _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
-        return _this;
-    }
-    Object.defineProperty(FantaFilterItem.prototype, "hidden", {
-        /**
-         * @description Returns the 'hidden' attribute of the HTML element of this FantaFilterElement
-         * @readonly
-         * @memberof FantaFilterItem
-         */
-        get: function () {
-            return this.element.hidden;
-        },
-        /**
-         * @description Sets the 'hidden' attribute of the HTML element of this FantaFilterElement
-         * @memberof FantaFilterItem
-         */
-        set: function (isHidden) {
-            this.element.hidden = isHidden;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return FantaFilterItem;
-}(element_1.FantaFilterElement));
-exports.FantaFilterItem = FantaFilterItem;
+        this.kind = "item";
+    },
+});
+exports.FantaFilterItem = stampit_1.default(element_1.FantaFilterElement, Properties);
+// /**
+//  * @description A class representing any filterable HTML element
+//  * @class FantaFilterItem
+//  * @extends {FantaFilterElement}
+//  * @implements {iFilterItem}
+//  */
+// export class FantaFilterItem extends FantaFilterElement implements iFantaItem {
+//     /**
+//      *Creates an instance of FantaFilterItem.
+//      * @param {iFantaElementConstructor} {dependencies, elements, parentName, eventType, _userOptions}
+//      * @memberof FantaFilterItem
+//      */
+//     constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
+//         if (isNodeList(elements)) {
+//             return [].slice
+//                 .call(Array.from(elements))
+//                 .map(
+//                     (_element: HTMLElement) =>
+//                         new FantaFilterItem({ dependencies, elements, parentName, eventType, _userOptions }),
+//                 )
+//                 .filter((x: HTMLElement) => x);
+//         }
+//         super({ dependencies, elements, parentName, eventType, _userOptions });
+//     }
+//     /**
+//      * @description Sets the 'hidden' attribute of the HTML element of this FantaFilterElement
+//      * @memberof FantaFilterItem
+//      */
+//     set hidden(isHidden: boolean) {
+//         this.element.hidden = isHidden;
+//     }
+//     /**
+//      * @description Returns the 'hidden' attribute of the HTML element of this FantaFilterElement
+//      * @readonly
+//      * @memberof FantaFilterItem
+//      */
+//     get hidden() {
+//         return this.element.hidden;
+//     }
+// }
 
 
 /***/ }),
@@ -6832,11 +6695,8 @@ exports.DateFilter = DateFilter;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_without_1 = __importDefault(__webpack_require__(/*! lodash.without */ "./node_modules/lodash.without/index.js"));
+var without = __webpack_require__(/*! lodash.without */ "./node_modules/lodash.without/index.js");
 var Filter = /** @class */ (function () {
     function Filter(_a) {
         var _this = this;
@@ -6864,7 +6724,7 @@ var Filter = /** @class */ (function () {
     };
     Filter.prototype.applyFilter = function (inputItems) {
         var _this = this;
-        return lodash_without_1.default(inputItems.map(function (item) { return _this.filterObject(item); }), null);
+        return without(inputItems.map(function (item) { return _this.filterObject(item); }), null);
     };
     return Filter;
 }());
@@ -6882,12 +6742,9 @@ exports.Filter = Filter;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_difference_1 = __importDefault(__webpack_require__(/*! lodash.difference */ "./node_modules/lodash.difference/index.js"));
-var lodash_union_1 = __importDefault(__webpack_require__(/*! lodash.union */ "./node_modules/lodash.union/index.js"));
+var difference = __webpack_require__(/*! lodash.difference */ "./node_modules/lodash.difference/index.js");
+var intersection = __webpack_require__(/*! lodash.intersection */ "./node_modules/lodash.intersection/index.js");
 var FilterGroup = /** @class */ (function () {
     function FilterGroup(dependencies, eventType, inputs, items) {
         var _this = this;
@@ -6905,13 +6762,13 @@ var FilterGroup = /** @class */ (function () {
     FilterGroup.prototype.Update = function (event) {
         var _this = this;
         var allFilteredItems = this.filters.map(function (filter) { return filter.applyFilter(_this.items); });
-        this.returnedItems = lodash_union_1.default.apply(void 0, allFilteredItems);
-        this.filteredItems.forEach(function (item) { return (item.hidden = true); });
-        this.returnedItems.forEach(function (item) { return (item.hidden = false); });
+        this.returnedItems = intersection.apply(void 0, allFilteredItems);
+        this.filteredItems.forEach(function (item) { return (item.hidden(true)); });
+        this.returnedItems.forEach(function (item) { return (item.hidden(false)); });
     };
     Object.defineProperty(FilterGroup.prototype, "filteredItems", {
         get: function () {
-            return lodash_difference_1.default(this.items, this.returnedItems);
+            return difference(this.items, this.returnedItems);
         },
         enumerable: true,
         configurable: true
@@ -7121,12 +6978,9 @@ exports.asyncForEach = asyncForEach;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var dom_1 = __webpack_require__(/*! ./dom */ "./src/ts/lib/util/dom.ts");
-var lodash_assignin_1 = __importDefault(__webpack_require__(/*! lodash.assignin */ "./node_modules/lodash.assignin/index.js"));
+var assignIn = __webpack_require__(/*! lodash.assignin */ "./node_modules/lodash.assignin/index.js");
 /**
  * @description Merges default/user options and finds new attributes on an HTML element.
  *
@@ -7144,13 +6998,13 @@ function configure(defaultOptions, element, userOptions) {
         getAttribute: null,
         getClass: null,
     };
-    lodash_assignin_1.default(options, defaultOptions);
+    assignIn(options, defaultOptions);
     if (userOptions !== undefined) {
-        lodash_assignin_1.default(options, userOptions);
+        assignIn(options, userOptions);
     }
     if (element !== undefined && element !== null) {
         var newAttributes = dom_1.convertAttributeNamesToOptions(element.attributes, defaultOptions);
-        lodash_assignin_1.default(options.attributeNames, newAttributes);
+        assignIn(options.attributeNames, newAttributes);
     }
     return options;
 }
@@ -7194,8 +7048,8 @@ exports.defaultOptions = {
         date: function (constructor) { return new filters_1.DateFilter(constructor); },
     },
     FilterElementClasses: {
-        inputs: function (constructor) { return new input_1.FantaFilterInput(constructor); },
-        items: function (constructor) { return new item_1.FantaFilterItem(constructor); },
+        inputs: function (constructor) { return input_1.FantaFilterInput(constructor); },
+        items: function (constructor) { return item_1.FantaFilterItem(constructor); },
     },
     getAttribute: function (suffix) {
         return getChildValue(exports.defaultOptions.attributeNames, exports.defaultOptions.attributeNames.root, suffix);
@@ -7228,13 +7082,10 @@ var prependRoot = function (root, suffix) { return root + "-" + suffix; };
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_foreach_1 = __importDefault(__webpack_require__(/*! lodash.foreach */ "./node_modules/lodash.foreach/index.js"));
-var lodash_camelcase_1 = __importDefault(__webpack_require__(/*! lodash.camelcase */ "./node_modules/lodash.camelcase/index.js"));
 var util_1 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
+var forEach = __webpack_require__(/*! lodash.foreach */ "./node_modules/lodash.foreach/index.js");
+var camelCase = __webpack_require__(/*! lodash.camelcase */ "./node_modules/lodash.camelcase/index.js");
 /**
  * @description Converts a NamedNodeMap of attributes to an object
  *
@@ -7246,9 +7097,9 @@ function convertAttributesToObject(attributes, options) {
     var root = options.attributeNames.root;
     var outputObject = {};
     if (!util_1.isUndefined(attributes)) {
-        lodash_foreach_1.default(attributes, function (attr) {
+        forEach(attributes, function (attr) {
             if (attr.name.match(root)) {
-                var convertedName = lodash_camelcase_1.default(attr.name.replace(root + "-", ''));
+                var convertedName = camelCase(attr.name.replace(root + "-", ''));
                 outputObject[convertedName] = attr.value;
             }
         });
@@ -7267,10 +7118,10 @@ function convertAttributeNamesToOptions(attributes, options) {
     var root = options.attributeNames.root;
     var outputObject = {};
     if (!util_1.isUndefined(attributes)) {
-        lodash_foreach_1.default(attributes, function (attr) {
+        forEach(attributes, function (attr) {
             if (attr.name.match(root)) {
                 var deRooted = attr.name.replace(root + "-", '');
-                outputObject[lodash_camelcase_1.default(deRooted)] = deRooted;
+                outputObject[camelCase(deRooted)] = deRooted;
             }
         });
     }
@@ -7346,12 +7197,9 @@ exports.createClassFromEnumVal = createClassFromEnumVal;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var typetests_1 = __webpack_require__(/*! ./typetests */ "./src/ts/lib/util/typetests.ts");
-var FantaFilterWrapper_1 = __importDefault(__webpack_require__(/*! ../../FantaFilterWrapper */ "./src/ts/FantaFilterWrapper.ts"));
+var FantaFilterWrapper_1 = __webpack_require__(/*! ../../FantaFilterWrapper */ "./src/ts/FantaFilterWrapper.ts");
 var util_1 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
 /**
      * @description Static method that wraps the default constructor to return null if an object is malformed/invalid.
@@ -7374,11 +7222,8 @@ function createFantaFilterWrappers(dependencies, target, _userOptions) {
             .filter(function (x) { return x; });
     }
     var newFilterWrapperConstructor = { dependencies: dependencies, parentNode: parentNode, _userOptions: _userOptions };
-    var newFantaFilter = FantaFilterWrapper_1.default(newFilterWrapperConstructor);
-    if (util_1.isNull(newFantaFilter.name))
-        return;
-    else
-        return newFantaFilter;
+    var newFantaFilter = FantaFilterWrapper_1.FantaFilterWrapper(newFilterWrapperConstructor);
+    return (util_1.isNull(newFantaFilter)) ? newFantaFilter : undefined;
 }
 exports.createFantaFilterWrappers = createFantaFilterWrappers;
 ;

@@ -1,8 +1,8 @@
 import { iFantaDependencies, iFantaOptions, iFantaWrapper } from "../interfaces";
 import { isNodeList } from "./typetests";
-import FantaFilterWrapper from "../../FantaFilterWrapper";
+import {FantaFilterWrapper} from "../../FantaFilterWrapper";
 import { iFantaWrapperConstructor } from "../interfaces/iFantaWrapperConstructor";
-import {isNull, isString} from 'util'
+import {isNull, isString, isUndefined} from 'util'
 
 /**
      * @description Static method that wraps the default constructor to return null if an object is malformed/invalid.
@@ -33,6 +33,5 @@ import {isNull, isString} from 'util'
 
         let newFantaFilter:iFantaWrapper = FantaFilterWrapper(newFilterWrapperConstructor);
 
-        if (isNull(newFantaFilter.name)) return;
-        else return newFantaFilter;
+        return (isNull(newFantaFilter)) ? newFantaFilter : undefined;
     };

@@ -12,8 +12,8 @@ export interface iFantaOptions {
     attributeNames?: AttributeNames;
     classNames?: ClassNames;
     inputTypes?: string[];
-    InputComparerClasses?: {[key:string]:(constructor: iFantaFilterConstructor) => iFantaFilter}
-    FilterElementClasses?: {[key:string]:(constructor: iFantaElementConstructor) => iFantaElement}
+    InputComparerClasses?: {[key:string]:(constructor: iFantaFilterConstructor) => any}
+    FilterElementClasses?: {[key:string]:(constructor: iFantaElementConstructor) => any}
     getAttribute?: (suffix?:string) => any;
     getClass?: (suffix?:string) => any;
     [key: string]: any;

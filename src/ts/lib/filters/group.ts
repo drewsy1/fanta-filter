@@ -1,6 +1,6 @@
 import { iFantaFilterGroup, iFantaFilter, iFantaInput, iFantaDependencies, iFantaItem } from '../interfaces';
-import difference from 'lodash.difference';
-import intersection from 'lodash.union';
+var difference = require('lodash.difference');
+var intersection = require('lodash.intersection');
 
 export class FilterGroup implements iFantaFilterGroup {
     filters: iFantaFilter[] = [];
@@ -24,8 +24,8 @@ export class FilterGroup implements iFantaFilterGroup {
         let allFilteredItems = this.filters.map(filter => filter.applyFilter(this.items));
         this.returnedItems = intersection(...allFilteredItems);
 
-        this.filteredItems.forEach(item => (item.hidden = true));
-        this.returnedItems.forEach(item => (item.hidden = false));
+        this.filteredItems.forEach((item: iFantaItem) => (item.hidden(true)));
+        this.returnedItems.forEach((item: iFantaItem) => (item.hidden(false)));
     }
 
     get filteredItems() {

@@ -1,44 +1,32 @@
-import { iFantaElement, iFantaOptions, iFantaElementConstructor } from '../interfaces';
-import { configure } from '../util';
+import { iFantaElement, iFantaOptions, iFantaElementConstructor, iFantaElementBase, iFantaElementFactory } from '../interfaces';
+import { configure, convertAttributesToObject } from '../util';
+import stampit from 'stampit';
 
-/**
- * @description An abstract class to be implemented by specific FantaFilter subtypes representing various HTML elements
- * @class FantaFilterElement
- * @implements {iFilterElement}
- */
-export abstract class FantaFilterElement implements iFantaElement {
-    attributes: object;
-    element: HTMLElement;
-    eventType: string;
-    groupName: string;
-    protected _options: iFantaOptions;
+const PrivateVars = stampit.init(function() {
+    var _options: iFantaOptions = null;
+});
 
-    /**
-     *Creates an instance of FantaFilterElement.
-     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
-     * @memberof FantaFilterElement
-     */
-    constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
-        const {defaultOptions } = dependencies;
-        this._options = configure(defaultOptions,elements, _userOptions);
+const Properties = stampit({
+    props:{
+        kind: null,
+        attributes: null,
+        element: null,
+        eventType: null,
+        groupName: null
+    },
+    methods:{
         
-        this.groupName = parentName;
-        this.eventType = eventType;
-        this.element = elements;
-        // this.attributes = Object.assign(
-        //     this._options.attributeNames,
-        //     convertAttributesToObject(this.element.attributes, this._options),
-        // );
+        tagName(){return this.element.tagName}
+    },
+    init({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
+                const {defaultOptions } = dependencies;
+                this._options = configure(defaultOptions,elements, _userOptions);
+                this.attributes = convertAttributesToObject(elements.attributes, this._options);
+                this.groupName = parentName;
+                this.eventType = eventType;
+                this.element = elements;
+            }
+    
+})
 
-        return this;
-    }
-
-    /**
-     * @description Retrieves a string representation of this element's HTML element tag
-     * @readonly
-     * @memberof FantaFilterElement
-     */
-    get tagName() {
-        return this.element.tagName;
-    }
-}
+export const FantaFilterElement: iFantaElementFactory = stampit(PrivateVars, Properties);

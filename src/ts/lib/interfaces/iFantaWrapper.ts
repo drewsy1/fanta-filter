@@ -22,15 +22,19 @@ export interface iFantaWrapper {
 }
 
 export interface iFantaWrapper_Base {
-    props: iFantaWrapper_Base_props;
+    conf: iFantaWrapper_Base_conf;
     statics: iFantaWrapper_Base_statics;
+    props: iFantaWrapper_Base_props;
     methods: iFantaWrapper_Base_methods;
-    init: ({ dependencies, parentNode, _userOptions }: iFantaWrapperConstructor) => void;
+    init: ({ dependencies, parentNode, _userOptions}: iFantaWrapperConstructor,{stamp}:any) => void;
 }
 
+interface iFantaWrapper_Base_conf {
+    currentFilters: iFantaWrapper[];
+}
 
 interface iFantaWrapper_Base_statics {
-    CurrentFilters: iFantaWrapper[];
+    CurrentFilters: () => iFantaWrapper[];
 }
 
 interface iFantaWrapper_Base_props {
