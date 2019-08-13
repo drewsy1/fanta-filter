@@ -1,54 +1,15 @@
-import { iFantaElementConstructor } from './iFantaElementConstructor';
-import { iStampFactory, iStamp } from './iStamp';
-
-/**
- * @description
- * @export
- * @interface iFantaElementFactory
- * @extends {iStampFactory}
- */
-export interface iFantaElementFactory extends iStampFactory {
-    ({ value }: { value: any }): iFantaElement;
-}
-
 /**
  * @description Defines a FantaFilterElement object
  * @export
  * @interface iFantaElement
  */
-export interface iFantaElement extends iStamp {
+export interface iFantaElement {
+    type: string;
+    attributes: object;
     element: HTMLElement;
     eventType: string;
     groupName: string;
     tagName: string;
-}
-
-/**
- * @description
- * @export
- * @interface iFantaElementBase
- */
-export interface iFantaElementBase {
-    props: {
-        attributes: object;
-        element: HTMLElement;
-        eventType: string;
-        groupName: string;
-    };
-    methods: {
-        tagName: () => string;
-    };
-    init: ({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) => void;
-}
-
-/**
- * @description
- * @export
- * @interface iFantaItemFactory
- * @extends {iFantaElementFactory}
- */
-export interface iFantaItemFactory extends iFantaElementFactory {
-    ({ value }: { value: any }): iFantaItem;
 }
 
 /**
@@ -58,17 +19,7 @@ export interface iFantaItemFactory extends iFantaElementFactory {
  * @extends {iFantaElement}
  */
 export interface iFantaItem extends iFantaElement {
-    hidden: (isHidden: boolean) => boolean;
-}
-
-/**
- * @description
- * @export
- * @interface iFantaInputFactory
- * @extends {iFantaElementFactory}
- */
-export interface iFantaInputFactory extends iFantaElementFactory {
-    ({ value }: { value: any }): iFantaInput;
+    hidden: boolean;
 }
 
 /**
@@ -80,6 +31,8 @@ export interface iFantaInputFactory extends iFantaElementFactory {
 export interface iFantaInput extends iFantaElement {
     comparer: string;
     selector: string;
-    type: string;
+    inputType: string;
     updateId: string;
+    updateEvent: CustomEvent<any>;
+    setUpdateEvent: (eventTrigger: string, event: CustomEvent<any>) => CustomEvent<any>;
 }

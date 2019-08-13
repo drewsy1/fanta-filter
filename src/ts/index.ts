@@ -1,31 +1,26 @@
 import { configure, defaultOptions } from './lib/util';
 import { iFantaOptions, iFantaWrapper, iFantaDependencies } from './lib/interfaces';
 import { FantaFilterWrapper } from './FantaFilterWrapper';
-import { iFantaWrapperConstructor } from './lib/interfaces/iFantaWrapperConstructor';
-import { isUndefined } from 'util';
+import { isNull } from 'util';
 
-interface FantaFilterGlobal {
-    [key: string]: iFantaWrapper;
-}
-
+/**
+ * @description Creates an instance of FantaFilter
+ * @export
+ * @param {string} [selector='.js-fafi'] CSS selector used to search for items to filter/be filtered
+ * @param {iFantaOptions} [_userOptions] Customizable user overrides for the instance
+ * @param {(HTMLElement | Document)} [context=document] The context in which the instance should be created
+ * @returns A FantaFilter instance
+ */
 export function init(
     selector: string = '.js-fafi',
     _userOptions?: iFantaOptions,
     context: HTMLElement | Document = document,
 ) {
     const dependencies: iFantaDependencies = { configure, context, defaultOptions };
-    const newFilterWrapperConstructor: iFantaWrapperConstructor = { dependencies, parentNode: selector, _userOptions };
-    const newFantaFilter: iFantaWrapper | iFantaWrapper[] = FantaFilterWrapper(newFilterWrapperConstructor);
-    const fantaFilterArray: iFantaWrapper[] = [];
-    if (isUndefined(newFantaFilter.length)) {
-        fantaFilterArray.push(newFantaFilter as iFantaWrapper);
-    } else {
-        fantaFilterArray.concat(newFantaFilter as iFantaWrapper[]);
-    }
-    const fantaFilterObj: FantaFilterGlobal = {};
-    fantaFilterArray.forEach((fantaFilter: iFantaWrapper) => {
-        fantaFilterObj[fantaFilter.name] = fantaFilter;
-    });
 
-    return fantaFilterObj;
+    const newFantaFilters: iFantaWrapper[] = Array.from(context.querySelectorAll(selector))
+        .map((element: HTMLElement) => new FantaFilterWrapper({ dependencies, parentNode: element, _userOptions }))
+        .filter((x: iFantaWrapper) => !isNull(x.name));
+
+    return newFantaFilters;
 }

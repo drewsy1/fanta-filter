@@ -1,4 +1,4 @@
-import { iFantaElement, iFantaItem } from './iFantaElement';
+import { iFantaItem } from './iFantaElement';
 import { iFantaFilter } from './iFantaFilter';
 
 /**

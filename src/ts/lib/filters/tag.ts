@@ -8,6 +8,12 @@ export class TagFilter extends Filter implements iTagFantaFilter {
         return this;
     }
 
+    /**
+     * @description Implements the Filter superclass' filterObject method
+     * @param {iFantaItem} inputItem An element to be filtered
+     * @returns {(iFantaItem | null)} The element if it passes the filter test, or null
+     * @memberof MatchFilter
+     */
     filterObject(inputItem: iFantaItem): iFantaItem | null {
         return inputItem;
     }

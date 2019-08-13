@@ -5437,18 +5437,6 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ "./node_modules/stampit/dist/stampit.min.js":
-/*!**************************************************!*\
-  !*** ./node_modules/stampit/dist/stampit.min.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-!function(){"use strict";function t(t,n){return J.call(arguments,2).reduce(t,n)}function n(t,n){if(n)for(var r=F(n),e=0;e<r[V];e++)t[r[e]]=n[r[e]];return t}function r(t){return"function"==typeof t}function e(t){return t&&typeof t==R||r(t)}function o(t){return t&&typeof t==R&&t.__proto__==q.prototype}function i(t,n){if(n===d)return t;if(w(n))return(w(t)?t:[]).concat(n);if(!o(n))return n;for(var r,e=F(n),u=0;u<e[V];)r=e[u++],n[r]!==d&&(t[r]=i(o(t[r])||w(n[r])?t[r]:{},n[r]));return t}function u(){return m=H.apply([],arguments).filter(function(t,n,e){return r(t)&&e.indexOf(t)===n}),m[V]?m:d}function p(t){return v={},v[E]=t[E]||d,m=t[b],h=t.props,v[b]=e(m||h)?K({},h,m):d,v[z]=u(t.init,t[z]),v[I]=u(t[I]),m=t[P],h=t[D],v[P]=e(m||h)?L({},h,m):d,v[g]=t[g],m=t[A],h=t.statics,v[A]=e(m||h)?K({},h,m):d,m=t[O],h=t[S],v[O]=e(m||h)?L({},h,m):d,m=t[j],h=t.name&&{name:{value:t.name}},v[j]=e(h||m)?K({},m,h):d,m=t[x],h=t.conf,v[x]=e(m||h)?K({},h,m):d,m=t[C],h=t[k],v[C]=e(m||h)?L({},h,m):d,v}function c(){return function Stamp(t){var n,e,o=Stamp[N]||{},i={__proto__:o[E]},u=o[z],p=J.apply(arguments),c=o[P];if(c&&L(i,c),c=o[b],c&&K(i,c),c=o[g],c&&B(i,c),!u||!u[V])return i;for(t===d&&(t={}),o=0;o<u[V];)n=u[o++],r(n)&&(e=n.call(i,t,{instance:i,stamp:Stamp,args:p}),i=e===d?i:e);return i}}function f(t){return m=c(),h=t[O],h&&L(m,h),h=t[A],h&&K(m,h),h=t[j],h&&B(m,h),h=r(m[N])?m[N]:a,K(m[N]=function(){return h.apply(this,arguments)},t),m}function s(t,n){function r(r,o){e(n[r])&&(e(t[r])||(t[r]={}),(o||K)(t[r],n[r]))}function o(r){(m=u(t[r],n[r]))&&(t[r]=m)}return n&&e(n=n[N]||n)&&(r(E),r(b),r(P,L),r(g),r(A),r(O,L),r(j),r(x),r(C,L),o(z),o(I)),t}function a(){return f(H.apply([this],arguments).reduce(s,{}))}function l(t){return r(t)&&r(t[N])}function y(t,n){return function(){return v={},v[t]=n.apply(d,H.apply([{}],arguments)),m=this,(m&&m[N]||h).call(m,v)}}var d,m="roperties",h="ropertyDescriptors",_="static",v="onfiguration",b="p"+m,P="deepP"+m,g="p"+h,A=_+"P"+m,O=_+"DeepP"+m,j=_+"P"+h,x="c"+v,C="deepC"+v,D="deepProps",S="deepStatics",k="deepConf",z="initializers",E="methods",I="composers",N="compose",R="object",V="length",q=Object,w=Array.isArray,B=q.defineProperties,F=q.keys,G=Array.prototype,H=G.concat,J=G.slice,K=q.assign||t.bind(0,n),L=t.bind(0,i),M={};M[E]=y(E,K),M[b]=M.props=y(b,K),M[z]=M.init=y(z,u),M[I]=y(I,u),M[P]=M[D]=y(P,L),M[A]=M.statics=y(A,K),M[O]=M[S]=y(O,L),M[x]=M.conf=y(x,K),M[C]=M[k]=y(C,L),M[g]=y(g,K),M[j]=y(j,K),h=M[N]=K(function stampit(){for(var t,n=0,r=[],o=arguments,i=this;n<o[V];)t=o[n++],e(t)&&r.push(l(t)?t:p(t));if(t=a.apply(i||G,r),i&&r.unshift(i),o=t[N][I],w(o))for(n=0;n<o[V];)i=o[n++]({stamp:t,composables:r}),t=l(i)?i:t;return t},M),M.create=function(){return this.apply(d,arguments)},v={},v[A]=M,G=a(v),h[N]=h.bind(),h.version="4.2.0",typeof d!=typeof module?module.exports=h:self.stampit=h}();
-
-
-/***/ }),
-
 /***/ "./node_modules/util/node_modules/inherits/inherits_browser.js":
 /*!*********************************************************************!*\
   !*** ./node_modules/util/node_modules/inherits/inherits_browser.js ***!
@@ -6254,67 +6242,38 @@ module.exports = g;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var filters_1 = __webpack_require__(/*! ./lib/filters */ "./src/ts/lib/filters/index.ts");
-var stampit_1 = __importDefault(__webpack_require__(/*! stampit */ "./node_modules/stampit/dist/stampit.min.js"));
-var elements_1 = __webpack_require__(/*! ./lib/elements */ "./src/ts/lib/elements/index.ts");
-var util_1 = __webpack_require__(/*! ./lib/util */ "./src/ts/lib/util/index.ts");
-var util_2 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
-var Base = stampit_1.default.init(function () {
-    var _options = null;
-});
-var Properties = {
-    conf: {
-        currentFilters: [],
-    },
-    statics: {
-        CurrentFilters: function () {
-            return this.compose.configuration.CurrentFilters;
-        },
-    },
-    props: {
-        eventType: null,
-        filterGroup: null,
-        inputs: null,
-        items: null,
-        name: null,
-        parentNode: null,
-    },
-    methods: {
-        hasInputs: function () {
-            return !!this.inputs.length;
-        },
-        hasItems: function () {
-            return !!this.items.length;
-        },
-    },
-    init: function (_a, _b) {
+var util_1 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
+/**
+ * @description Manages a group of elements that filter/will be filtered and their mechanisms
+ * @export
+ * @class FantaFilterWrapper
+ * @implements {iFantaWrapper}
+ */
+var FantaFilterWrapper = /** @class */ (function () {
+    /**
+     *Creates an instance of FantaFilterWrapper.
+     * @param {iFantaWrapperConstructor} { dependencies, parentNode, _userOptions }
+     * @memberof FantaFilterWrapper
+     */
+    function FantaFilterWrapper(_a) {
         var _this = this;
         var dependencies = _a.dependencies, parentNode = _a.parentNode, _userOptions = _a._userOptions;
-        var stamp = _b.stamp;
         var configure = dependencies.configure, context = dependencies.context, defaultOptions = dependencies.defaultOptions;
-        var targetNode = util_2.isString(parentNode) ? context.querySelectorAll(parentNode) : parentNode;
-        var configuration = stamp.compose.configuration;
-        if (util_1.isNodeList(targetNode)) {
-            return [].slice
-                .call(targetNode)
-                .map(function (element) { return stamp({ dependencies: dependencies, parentNode: element, _userOptions: _userOptions }); })
-                .filter(function (x) { return x; });
-        }
+        // Public properties
         this.inputs = [];
         this.items = [];
-        this._options = configure(defaultOptions, targetNode, _userOptions);
-        this.parentNode = targetNode;
-        this.name = targetNode.getAttribute(this._options.getAttribute('group'));
+        this._options = configure(defaultOptions, parentNode, _userOptions);
+        this.parentNode = parentNode;
+        this.name = parentNode.getAttribute(this._options.getAttribute('group'));
         this.eventType = "fafi.filter." + this.name;
-        // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
-        if (!targetNode.hasAttribute(this._options.getAttribute('group')) ||
-            (configuration.currentFilters !== undefined &&
-                configuration.currentFilters.find(function (filter) { return filter.name === _this.name; }))) {
-            return null;
+        // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel constructor
+        if (!parentNode.hasAttribute(this._options.getAttribute('group')) ||
+            (FantaFilterWrapper.CurrentFilters !== undefined &&
+                FantaFilterWrapper.CurrentFilters.find(function (filter) { return filter.name === _this.name; }))) {
+            this.name = null;
+            return this;
         }
         var domElements = context.querySelectorAll("[" + this._options.getAttribute('group') + "=" + this.name + "]");
         domElements.forEach(function (elements) {
@@ -6326,20 +6285,36 @@ var Properties = {
                 _userOptions: _userOptions,
             };
             if (elements.tagName.toLowerCase().match('input')) {
-                _this.inputs.push(elements_1.FantaFilterInput(filterConstructorArgs));
+                _this.inputs.push(_this._options.FilterElementClasses.inputs(filterConstructorArgs));
             }
             else if (!elements.classList.contains(_this._options.getClass('parent')))
-                _this.items.push(elements_1.FantaFilterItem(filterConstructorArgs));
+                _this.items.push(_this._options.FilterElementClasses.items(filterConstructorArgs));
         });
-        this.filterGroup = this.hasInputs()
+        this.filterGroup = this.hasInputs
             ? new filters_1.FilterGroup(dependencies, this.eventType, this.inputs, this.items)
             : undefined;
-        if (configuration.currentFilters === undefined)
-            configuration.currentFilters = [];
-        configuration.currentFilters.push(this);
-    },
-};
-exports.FantaFilterWrapper = stampit_1.default(Base, Properties);
+        if (util_1.isUndefined(FantaFilterWrapper.CurrentFilters))
+            FantaFilterWrapper.CurrentFilters = [];
+        FantaFilterWrapper.CurrentFilters.push(this);
+        return this;
+    }
+    Object.defineProperty(FantaFilterWrapper.prototype, "hasInputs", {
+        get: function () {
+            return !!this.inputs.length;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FantaFilterWrapper.prototype, "hasItems", {
+        get: function () {
+            return !!this.items.length;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return FantaFilterWrapper;
+}());
+exports.FantaFilterWrapper = FantaFilterWrapper;
 
 
 /***/ }),
@@ -6357,24 +6332,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ./lib/util */ "./src/ts/lib/util/index.ts");
 var FantaFilterWrapper_1 = __webpack_require__(/*! ./FantaFilterWrapper */ "./src/ts/FantaFilterWrapper.ts");
 var util_2 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
+/**
+ * @description Creates an instance of FantaFilter
+ * @export
+ * @param {string} [selector='.js-fafi'] CSS selector used to search for items to filter/be filtered
+ * @param {iFantaOptions} [_userOptions] Customizable user overrides for the instance
+ * @param {(HTMLElement | Document)} [context=document] The context in which the instance should be created
+ * @returns A FantaFilter instance
+ */
 function init(selector, _userOptions, context) {
     if (selector === void 0) { selector = '.js-fafi'; }
     if (context === void 0) { context = document; }
     var dependencies = { configure: util_1.configure, context: context, defaultOptions: util_1.defaultOptions };
-    var newFilterWrapperConstructor = { dependencies: dependencies, parentNode: selector, _userOptions: _userOptions };
-    var newFantaFilter = FantaFilterWrapper_1.FantaFilterWrapper(newFilterWrapperConstructor);
-    var fantaFilterArray = [];
-    if (util_2.isUndefined(newFantaFilter.length)) {
-        fantaFilterArray.push(newFantaFilter);
-    }
-    else {
-        fantaFilterArray.concat(newFantaFilter);
-    }
-    var fantaFilterObj = {};
-    fantaFilterArray.forEach(function (fantaFilter) {
-        fantaFilterObj[fantaFilter.name] = fantaFilter;
-    });
-    return fantaFilterObj;
+    var newFantaFilters = Array.from(context.querySelectorAll(selector))
+        .map(function (element) { return new FantaFilterWrapper_1.FantaFilterWrapper({ dependencies: dependencies, parentNode: element, _userOptions: _userOptions }); })
+        .filter(function (x) { return !util_2.isNull(x.name); });
+    return newFantaFilters;
 }
 exports.init = init;
 
@@ -6390,27 +6363,21 @@ exports.init = init;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
-var stampit_1 = __importDefault(__webpack_require__(/*! stampit */ "./node_modules/stampit/dist/stampit.min.js"));
-var PrivateVars = stampit_1.default.init(function () {
-    var _options = null;
-});
-var Properties = stampit_1.default({
-    props: {
-        kind: null,
-        attributes: null,
-        element: null,
-        eventType: null,
-        groupName: null
-    },
-    methods: {
-        tagName: function () { return this.element.tagName; }
-    },
-    init: function (_a) {
+/**
+ * @description A base class for meta-element classes
+ * @export
+ * @class FantaFilterElement
+ * @implements {iFantaElement}
+ */
+var FantaFilterElement = /** @class */ (function () {
+    /**
+     *Creates an instance of FantaFilterElement.
+     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
+     * @memberof FantaFilterElement
+     */
+    function FantaFilterElement(_a) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         var defaultOptions = dependencies.defaultOptions;
         this._options = util_1.configure(defaultOptions, elements, _userOptions);
@@ -6419,28 +6386,16 @@ var Properties = stampit_1.default({
         this.eventType = eventType;
         this.element = elements;
     }
-});
-exports.FantaFilterElement = stampit_1.default(PrivateVars, Properties);
-
-
-/***/ }),
-
-/***/ "./src/ts/lib/elements/index.ts":
-/*!**************************************!*\
-  !*** ./src/ts/lib/elements/index.ts ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(/*! ./element */ "./src/ts/lib/elements/element.ts"));
-__export(__webpack_require__(/*! ./input */ "./src/ts/lib/elements/input.ts"));
-__export(__webpack_require__(/*! ./item */ "./src/ts/lib/elements/item.ts"));
+    Object.defineProperty(FantaFilterElement.prototype, "tagName", {
+        get: function () {
+            return this.element.tagName;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return FantaFilterElement;
+}());
+exports.FantaFilterElement = FantaFilterElement;
 
 
 /***/ }),
@@ -6454,132 +6409,90 @@ __export(__webpack_require__(/*! ./item */ "./src/ts/lib/elements/item.ts"));
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
 var element_1 = __webpack_require__(/*! ./element */ "./src/ts/lib/elements/element.ts");
-var stampit_1 = __importDefault(__webpack_require__(/*! stampit */ "./node_modules/stampit/dist/stampit.min.js"));
-var PrivateVars = stampit_1.default.init(function () {
-    var _updateEvent = null;
-});
-var Properties = stampit_1.default({
-    props: {
-        type: null,
-        comparer: null,
-        selector: null,
-        updateId: null,
-    },
-    methods: {
-        setUpdateEvent: function (_eventTrigger, _event) {
-            if (_eventTrigger !== undefined && _event !== undefined) {
-                this.element.addEventListener(_eventTrigger, function (e) { return e.target.dispatchEvent(_event); });
-                this._updateEvent = _event;
-            }
-            return this._updateEvent;
-        },
-        updateEvent: function () {
-            return this._updateEvent;
-        },
-    },
-    init: function (_a) {
-        var _this = this;
+/**
+ * @description Implements the FantaFilterElement class to describe an input element
+ * @export
+ * @class FantaFilterInput
+ * @extends {FantaFilterElement}
+ * @implements {iFantaInput}
+ */
+var FantaFilterInput = /** @class */ (function (_super) {
+    __extends(FantaFilterInput, _super);
+    /**
+     *Creates an instance of FantaFilterInput.
+     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
+     * @memberof FantaFilterInput
+     */
+    function FantaFilterInput(_a) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+        var _this = this;
         if (util_1.isNodeList(elements)) {
             return [].slice
                 .call(Array.from(elements))
                 .map(function (_element) {
-                return _this({ dependencies: dependencies, elements: _element, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
+                return new FantaFilterInput({ dependencies: dependencies, elements: _element, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
             })
                 .filter(function (x) { return x; });
         }
-        this.kind = "input";
-        this.type = this.element.getAttribute('type') || "text";
-        this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
-        this.updateId = this.eventType + ".(" + this.selector + ").update";
-        var elementComparerVal = this.element.getAttribute(this._options.getAttribute('comparer'));
-        this.comparer = Object.keys(this._options.InputComparerClasses).includes(elementComparerVal)
+        _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
+        _this.type = 'input';
+        _this.inputType = _this.element.getAttribute('type') || 'text';
+        _this.selector = _this.element.getAttribute(_this._options.getAttribute('selector'));
+        _this.updateId = _this.eventType + ".(" + _this.selector + ").update";
+        var elementComparerVal = _this.element.getAttribute(_this._options.getAttribute('comparer'));
+        _this.comparer = Object.keys(_this._options.InputComparerClasses).includes(elementComparerVal)
             ? elementComparerVal
             : 'match';
-        var updateEvent = new CustomEvent(this.updateId, {
+        var updateEvent = new CustomEvent(_this.updateId, {
             bubbles: true,
             detail: {
-                sender: this,
+                sender: _this,
                 value: function () { return _this.element.value; },
             },
         });
-        this.setUpdateEvent('input', updateEvent);
-    },
-});
-exports.FantaFilterInput = stampit_1.default(element_1.FantaFilterElement, PrivateVars, Properties);
-// /**
-//  * @description A class representing any HTML inputs that manipulate a FantaFilterWrapper
-//  * @class FantaFilterInput
-//  * @extends {FantaFilterElement}
-//  * @implements {iFilterInput}
-//  */
-// export class FantaFilterInput extends FantaFilterElement implements iFantaInput {
-//     type: string;
-//     comparer: string;
-//     selector: string;
-//     updateId: string;
-//     private _updateEvent?: CustomEvent<any>;
-//     /**
-//      *Creates an instance of FantaFilterInput.
-//      * @param {iFantaElementConstructor} {dependencies, elements, parentName, eventType, _userOptions}
-//      * @memberof FantaFilterInput
-//      */
-//     constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
-//         if (isNodeList(elements)) {
-//             return [].slice
-//                 .call(Array.from(elements))
-//                 .map(
-//                     (_element: HTMLElement) =>
-//                         new FantaFilterInput({ dependencies, elements: _element, parentName, eventType, _userOptions }),
-//                 )
-//                 .filter((x: HTMLElement) => x);
-//         }
-//         super({ dependencies, elements: elements, parentName, eventType, _userOptions });
-//         this.type = this.element.getAttribute('type');
-//         this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
-//         this.updateId = `${this.eventType}.(${this.selector}).update`;
-//         let elementComparerVal = this.element.getAttribute(this._options.getAttribute('comparer'))
-//         this.comparer = Object.keys(this._options.InputComparerClasses).includes(elementComparerVal) ? elementComparerVal : 'match';
-//         let updateEvent = new CustomEvent(this.updateId, {
-//             bubbles: true,
-//             detail: {
-//                 sender: this,
-//                 value: () => (this.element as HTMLInputElement).value,
-//             },
-//         });
-//         this.setUpdateEvent('input', updateEvent);
-//         return this;
-//     }
-//     /**
-//      * @description Adds an update event handler to a FantaFilterInput and its HTML element
-//      * @private
-//      * @param {string} _eventTrigger Name of event to be handled
-//      * @param {CustomEvent<any>} _event Callback function of event
-//      * @returns This FantaFilterElement's UpdateEvent
-//      * @memberof FantaFilterInput
-//      */
-//     private setUpdateEvent(_eventTrigger: string, _event: CustomEvent<any>) {
-//         if (_eventTrigger !== undefined && _event !== undefined) {
-//             this.element.addEventListener(_eventTrigger, e => e.target.dispatchEvent(_event));
-//             this._updateEvent = _event;
-//         }
-//         return this._updateEvent;
-//     }
-//     /**
-//      * @description Returns this FantaFilterElement's UpdateEvent
-//      * @readonly
-//      * @memberof FantaFilterInput
-//      */
-//     get updateEvent() {
-//         return this._updateEvent;
-//     }
-// }
+        _this.setUpdateEvent('input', updateEvent);
+        return _this;
+    }
+    Object.defineProperty(FantaFilterInput.prototype, "updateEvent", {
+        get: function () {
+            return this._updateEvent;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @description Sets this class' update event
+     * @param {string} eventTrigger String representation of the event that will trigger the dispatch of this event
+     * @param {CustomEvent<any>} event The event that will be dispatched
+     * @returns The _updateEvent of the class, after having been set by this method
+     * @memberof FantaFilterInput
+     */
+    FantaFilterInput.prototype.setUpdateEvent = function (eventTrigger, event) {
+        if (eventTrigger !== undefined && event !== undefined) {
+            this.element.addEventListener(eventTrigger, function (e) { return e.target.dispatchEvent(event); });
+            this._updateEvent = event;
+        }
+        return this._updateEvent;
+    };
+    return FantaFilterInput;
+}(element_1.FantaFilterElement));
+exports.FantaFilterInput = FantaFilterInput;
 
 
 /***/ }),
@@ -6593,74 +6506,65 @@ exports.FantaFilterInput = stampit_1.default(element_1.FantaFilterElement, Priva
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
 var element_1 = __webpack_require__(/*! ./element */ "./src/ts/lib/elements/element.ts");
 var util_2 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
-var stampit_1 = __importDefault(__webpack_require__(/*! stampit */ "./node_modules/stampit/dist/stampit.min.js"));
-var Properties = stampit_1.default({
-    methods: {
-        hidden: function (isHidden) {
-            this.element.hidden = util_2.isUndefined(isHidden) ? this.element.hidden : isHidden;
-            return this.element.hidden;
-        }
-    },
-    init: function (_a) {
-        var _this = this;
+/**
+ * @description Implements the FantaFilterElement class to describe a filterable item element
+ * @export
+ * @class FantaFilterItem
+ * @extends {FantaFilterElement}
+ * @implements {iFantaItem}
+ */
+var FantaFilterItem = /** @class */ (function (_super) {
+    __extends(FantaFilterItem, _super);
+    /**
+     *Creates an instance of FantaFilterItem.
+     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
+     * @memberof FantaFilterItem
+     */
+    function FantaFilterItem(_a) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+        var _this = this;
         if (util_1.isNodeList(elements)) {
             return [].slice
                 .call(Array.from(elements))
-                .map(function (_element) { return _this({ dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }); })
+                .map(function (_element) {
+                return new FantaFilterItem({ dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
+            })
                 .filter(function (x) { return x; });
         }
-        this.kind = "item";
-    },
-});
-exports.FantaFilterItem = stampit_1.default(element_1.FantaFilterElement, Properties);
-// /**
-//  * @description A class representing any filterable HTML element
-//  * @class FantaFilterItem
-//  * @extends {FantaFilterElement}
-//  * @implements {iFilterItem}
-//  */
-// export class FantaFilterItem extends FantaFilterElement implements iFantaItem {
-//     /**
-//      *Creates an instance of FantaFilterItem.
-//      * @param {iFantaElementConstructor} {dependencies, elements, parentName, eventType, _userOptions}
-//      * @memberof FantaFilterItem
-//      */
-//     constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
-//         if (isNodeList(elements)) {
-//             return [].slice
-//                 .call(Array.from(elements))
-//                 .map(
-//                     (_element: HTMLElement) =>
-//                         new FantaFilterItem({ dependencies, elements, parentName, eventType, _userOptions }),
-//                 )
-//                 .filter((x: HTMLElement) => x);
-//         }
-//         super({ dependencies, elements, parentName, eventType, _userOptions });
-//     }
-//     /**
-//      * @description Sets the 'hidden' attribute of the HTML element of this FantaFilterElement
-//      * @memberof FantaFilterItem
-//      */
-//     set hidden(isHidden: boolean) {
-//         this.element.hidden = isHidden;
-//     }
-//     /**
-//      * @description Returns the 'hidden' attribute of the HTML element of this FantaFilterElement
-//      * @readonly
-//      * @memberof FantaFilterItem
-//      */
-//     get hidden() {
-//         return this.element.hidden;
-//     }
-// }
+        _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
+        _this.type = 'item';
+        return _this;
+    }
+    Object.defineProperty(FantaFilterItem.prototype, "hidden", {
+        get: function () {
+            return this.element.hidden;
+        },
+        set: function (isHidden) {
+            this.element.hidden = util_2.isUndefined(isHidden) ? this.element.hidden : isHidden;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return FantaFilterItem;
+}(element_1.FantaFilterElement));
+exports.FantaFilterItem = FantaFilterItem;
 
 
 /***/ }),
@@ -6696,6 +6600,12 @@ var DateFilter = /** @class */ (function (_super) {
         var _this = _super.call(this, { dependencies: dependencies, input: input, _userOptions: _userOptions }) || this;
         return _this;
     }
+    /**
+     * @description Implements the Filter superclass' filterObject method
+     * @param {iFantaItem} inputItem An element to be filtered
+     * @returns {(iFantaItem | null)} The element if it passes the filter test, or null
+     * @memberof MatchFilter
+     */
     DateFilter.prototype.filterObject = function (inputItem) {
         return inputItem;
     };
@@ -6717,7 +6627,19 @@ exports.DateFilter = DateFilter;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var without = __webpack_require__(/*! lodash.without */ "./node_modules/lodash.without/index.js");
+/**
+ * @description A base class that implements properties/methods common to all kinds of filters
+ * @export
+ * @abstract
+ * @class Filter
+ * @implements {iFantaFilter}
+ */
 var Filter = /** @class */ (function () {
+    /**
+     *Creates an instance of Filter.
+     * @param {iFantaFilterConstructor} { dependencies, input, _userOptions }
+     * @memberof Filter
+     */
     function Filter(_a) {
         var _this = this;
         var dependencies = _a.dependencies, input = _a.input, _userOptions = _a._userOptions;
@@ -6737,11 +6659,22 @@ var Filter = /** @class */ (function () {
         });
         return this;
     }
+    /**
+     * @description Sets the filterValue of the current class and dispatches an update event to its parent group
+     * @param {Event} event The event that triggered the Update method
+     * @memberof Filter
+     */
     Filter.prototype.Update = function (event) {
         var eventTarget = event.target;
         this.filterValue = eventTarget.value;
         eventTarget.dispatchEvent(this.updateEvent);
     };
+    /**
+     * @description Returns the inputItems group, sans elements that failed to pass the filter test
+     * @param {iFantaItem[]} inputItems A group of elements to be filtered
+     * @returns {iFantaItem[]} The input group, minus those elements that were filtered
+     * @memberof Filter
+     */
     Filter.prototype.applyFilter = function (inputItems) {
         var _this = this;
         return without(inputItems.map(function (item) { return _this.filterObject(item); }), null);
@@ -6765,7 +6698,21 @@ exports.Filter = Filter;
 Object.defineProperty(exports, "__esModule", { value: true });
 var difference = __webpack_require__(/*! lodash.difference */ "./node_modules/lodash.difference/index.js");
 var intersection = __webpack_require__(/*! lodash.intersection */ "./node_modules/lodash.intersection/index.js");
+/**
+ * @description A collection of Filters for a specific group of elements
+ * @export
+ * @class FilterGroup
+ * @implements {iFantaFilterGroup}
+ */
 var FilterGroup = /** @class */ (function () {
+    /**
+     *Creates an instance of FilterGroup.
+     * @param {iFantaDependencies} dependencies
+     * @param {string} eventType
+     * @param {iFantaInput[]} inputs
+     * @param {iFantaItem[]} items
+     * @memberof FilterGroup
+     */
     function FilterGroup(dependencies, eventType, inputs, items) {
         var _this = this;
         this.eventType = eventType;
@@ -6779,13 +6726,6 @@ var FilterGroup = /** @class */ (function () {
             _this.Update(event);
         });
     }
-    FilterGroup.prototype.Update = function (event) {
-        var _this = this;
-        var allFilteredItems = this.filters.map(function (filter) { return filter.applyFilter(_this.items); });
-        this.returnedItems = intersection.apply(void 0, allFilteredItems);
-        this.filteredItems.forEach(function (item) { return (item.hidden(true)); });
-        this.returnedItems.forEach(function (item) { return (item.hidden(false)); });
-    };
     Object.defineProperty(FilterGroup.prototype, "filteredItems", {
         get: function () {
             return difference(this.items, this.returnedItems);
@@ -6793,6 +6733,18 @@ var FilterGroup = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    /**
+     * @description Shows/hides all elements in a filter group based on the results of the group's filters
+     * @param {Event} event The event that triggered the Update method
+     * @memberof FilterGroup
+     */
+    FilterGroup.prototype.Update = function (event) {
+        var _this = this;
+        var allFilteredItems = this.filters.map(function (filter) { return filter.applyFilter(_this.items); });
+        this.returnedItems = intersection.apply(void 0, allFilteredItems);
+        this.filteredItems.forEach(function (item) { return (item.hidden = true); });
+        this.returnedItems.forEach(function (item) { return (item.hidden = false); });
+    };
     return FilterGroup;
 }());
 exports.FilterGroup = FilterGroup;
@@ -6846,6 +6798,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var filter_1 = __webpack_require__(/*! ./filter */ "./src/ts/lib/filters/filter.ts");
+/**
+ * @description Implements a basic text-matching filter
+ * @export
+ * @class MatchFilter
+ * @extends {Filter}
+ * @implements {iMatchFantaFilter}
+ */
 var MatchFilter = /** @class */ (function (_super) {
     __extends(MatchFilter, _super);
     function MatchFilter(_a) {
@@ -6853,11 +6812,17 @@ var MatchFilter = /** @class */ (function (_super) {
         var _this = _super.call(this, { dependencies: dependencies, input: input, _userOptions: _userOptions }) || this;
         return _this;
     }
+    /**
+     * @description Implements the Filter superclass' filterObject method
+     * @param {iFantaItem} inputItem An element to be filtered
+     * @returns {(iFantaItem | null)} The element if it passes the filter test, or null
+     * @memberof MatchFilter
+     */
     MatchFilter.prototype.filterObject = function (inputItem) {
         var attrName = this._options.getAttribute(this.selector);
         var attrVal = this.selector === 'innerText' ? inputItem.element.innerText : inputItem.element.getAttribute(attrName);
         if (attrVal === null) {
-            console.error("Property not found on object");
+            console.error('Property not found on object');
             return null;
         }
         var isMatch = !!attrVal.match(this.filterValue) || this.filterValue === '';
@@ -6901,6 +6866,12 @@ var TagFilter = /** @class */ (function (_super) {
         var _this = _super.call(this, { dependencies: dependencies, input: input, _userOptions: _userOptions }) || this;
         return _this;
     }
+    /**
+     * @description Implements the Filter superclass' filterObject method
+     * @param {iFantaItem} inputItem An element to be filtered
+     * @returns {(iFantaItem | null)} The element if it passes the filter test, or null
+     * @memberof MatchFilter
+     */
     TagFilter.prototype.filterObject = function (inputItem) {
         return inputItem;
     };
@@ -7068,8 +7039,8 @@ exports.defaultOptions = {
         date: function (constructor) { return new filters_1.DateFilter(constructor); },
     },
     FilterElementClasses: {
-        inputs: function (constructor) { return input_1.FantaFilterInput(constructor); },
-        items: function (constructor) { return item_1.FantaFilterItem(constructor); },
+        inputs: function (constructor) { return new input_1.FantaFilterInput(constructor); },
+        items: function (constructor) { return new item_1.FantaFilterItem(constructor); },
     },
     getAttribute: function (suffix) {
         return getChildValue(exports.defaultOptions.attributeNames, exports.defaultOptions.attributeNames.root, suffix);

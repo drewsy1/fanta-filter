@@ -1,6 +1,13 @@
 import { Filter } from './filter';
-import { iMatchFantaFilter, iFantaFilterConstructor, iFantaElement, iFantaItem } from '../interfaces';
+import { iMatchFantaFilter, iFantaFilterConstructor, iFantaItem } from '../interfaces';
 
+/**
+ * @description Implements a basic text-matching filter
+ * @export
+ * @class MatchFilter
+ * @extends {Filter}
+ * @implements {iMatchFantaFilter}
+ */
 export class MatchFilter extends Filter implements iMatchFantaFilter {
     constructor({ dependencies, input, _userOptions }: iFantaFilterConstructor) {
         super({ dependencies, input, _userOptions });
@@ -8,6 +15,12 @@ export class MatchFilter extends Filter implements iMatchFantaFilter {
         return this;
     }
 
+    /**
+     * @description Implements the Filter superclass' filterObject method
+     * @param {iFantaItem} inputItem An element to be filtered
+     * @returns {(iFantaItem | null)} The element if it passes the filter test, or null
+     * @memberof MatchFilter
+     */
     filterObject(inputItem: iFantaItem): iFantaItem | null {
         let attrName: string = this._options.getAttribute(this.selector);
         let attrVal: string =

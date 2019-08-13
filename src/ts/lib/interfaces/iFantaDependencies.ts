@@ -1,4 +1,4 @@
-import { iFantaOptions } from ".";
+import { iFantaOptions } from './iFantaOptions';
 
 /**
  * @description Describes the commonly-used dependencies object
@@ -6,8 +6,8 @@ import { iFantaOptions } from ".";
  * @interface iFantaDependencies
  */
 export interface iFantaDependencies {
-    configure: Function,
-    context: HTMLElement | Document,
-    defaultOptions: iFantaOptions,
-    [key:string]:any
+    configure: Function;
+    context: HTMLElement | Document;
+    defaultOptions: iFantaOptions;
+    [key: string]: any;
 }

@@ -1,67 +1,64 @@
-import { iFantaWrapper, iFantaOptions, iFantaElementConstructor } from './lib/interfaces';
-import { iFantaWrapper_Base } from './lib/interfaces/iFantaWrapper';
+import {
+    iFantaWrapper,
+    iFantaOptions,
+    iFantaElementConstructor,
+    iFantaFilterGroup,
+    iFantaItem,
+    iFantaInput,
+} from './lib/interfaces';
 import { FilterGroup } from './lib/filters';
-import { iFantaWrapperConstructor } from './lib/interfaces/iFantaWrapperConstructor';
-import stampit from 'stampit';
-import { FantaFilterItem, FantaFilterInput } from './lib/elements';
-import { isNodeList } from './lib/util';
-import { isString } from 'util';
+import { iFantaWrapperConstructor } from './lib/interfaces/iFantaOptions';
+import { isUndefined } from 'util';
 
-const Base = stampit.init(function() {
-    var _options: iFantaOptions = null;
-});
+/**
+ * @description Manages a group of elements that filter/will be filtered and their mechanisms
+ * @export
+ * @class FantaFilterWrapper
+ * @implements {iFantaWrapper}
+ */
+export class FantaFilterWrapper implements iFantaWrapper {
+    parentNode: HTMLElement;
+    name: string;
+    inputs: iFantaInput[];
+    items: iFantaItem[];
+    filterGroup: iFantaFilterGroup;
+    eventType: string;
+    length: number;
+    private _options: iFantaOptions;
+    static CurrentFilters: iFantaWrapper[];
 
-const Properties: iFantaWrapper_Base = {
-    conf: {
-        currentFilters: [],
-    },
-    statics: {
-        CurrentFilters() {
-            return this.compose.configuration.CurrentFilters;
-        },
-    },
-    props: {
-        eventType: null,
-        filterGroup: null,
-        inputs: null,
-        items: null,
-        name: null,
-        parentNode: null,
-    },
-    methods: {
-        hasInputs() {
-            return !!this.inputs.length;
-        },
-        hasItems() {
-            return !!this.items.length;
-        },
-    },
-    init({ dependencies, parentNode, _userOptions }: iFantaWrapperConstructor, { stamp }) {
+    get hasInputs() {
+        return !!this.inputs.length;
+    }
+
+    get hasItems() {
+        return !!this.items.length;
+    }
+
+    /**
+     *Creates an instance of FantaFilterWrapper.
+     * @param {iFantaWrapperConstructor} { dependencies, parentNode, _userOptions }
+     * @memberof FantaFilterWrapper
+     */
+    constructor({ dependencies, parentNode, _userOptions }: iFantaWrapperConstructor) {
         const { configure, context, defaultOptions } = dependencies;
-        const targetNode = isString(parentNode) ? context.querySelectorAll(parentNode) : parentNode;
-        const configuration: any = stamp.compose.configuration;
 
-        if (isNodeList(targetNode)) {
-            return [].slice
-                .call(targetNode)
-                .map((element: HTMLElement) => stamp({ dependencies, parentNode: element, _userOptions }))
-                .filter((x: HTMLElement) => x);
-        }
-
+        // Public properties
         this.inputs = [];
         this.items = [];
-        this._options = configure(defaultOptions, targetNode, _userOptions);
-        this.parentNode = targetNode;
-        this.name = targetNode.getAttribute(this._options.getAttribute('group'));
+        this._options = configure(defaultOptions, parentNode, _userOptions);
+        this.parentNode = parentNode;
+        this.name = parentNode.getAttribute(this._options.getAttribute('group'));
         this.eventType = `fafi.filter.${this.name}`;
 
-        // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel factory function
+        // If the parent node doesn't have the specified group attribute or a filter with the specified group already exists, cancel constructor
         if (
-            !targetNode.hasAttribute(this._options.getAttribute('group')) ||
-            (configuration.currentFilters !== undefined &&
-                configuration.currentFilters.find((filter: iFantaWrapper) => filter.name === this.name))
+            !parentNode.hasAttribute(this._options.getAttribute('group')) ||
+            (FantaFilterWrapper.CurrentFilters !== undefined &&
+                FantaFilterWrapper.CurrentFilters.find((filter: iFantaWrapper) => filter.name === this.name))
         ) {
-            return null;
+            this.name = null;
+            return this;
         }
 
         let domElements = context.querySelectorAll(`[${this._options.getAttribute('group')}=${this.name}]`);
@@ -75,17 +72,17 @@ const Properties: iFantaWrapper_Base = {
                 _userOptions,
             };
             if (elements.tagName.toLowerCase().match('input')) {
-                this.inputs.push(FantaFilterInput(filterConstructorArgs));
+                this.inputs.push(this._options.FilterElementClasses.inputs(filterConstructorArgs));
             } else if (!elements.classList.contains(this._options.getClass('parent')))
-                this.items.push(FantaFilterItem(filterConstructorArgs));
+                this.items.push(this._options.FilterElementClasses.items(filterConstructorArgs));
         });
 
-        this.filterGroup = this.hasInputs()
+        this.filterGroup = this.hasInputs
             ? new FilterGroup(dependencies, this.eventType, this.inputs, this.items)
             : undefined;
 
-        if (configuration.currentFilters === undefined) configuration.currentFilters = [];
-        configuration.currentFilters.push(this);
-    },
-};
-export const FantaFilterWrapper = stampit(Base, Properties);
+        if (isUndefined(FantaFilterWrapper.CurrentFilters)) FantaFilterWrapper.CurrentFilters = [];
+        FantaFilterWrapper.CurrentFilters.push(this);
+        return this;
+    }
+}
