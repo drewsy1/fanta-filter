@@ -71,9 +71,15 @@ export class FantaFilterWrapper implements iFantaWrapper {
                 eventType: this.eventType,
                 _userOptions,
             };
-            if (elements.tagName.toLowerCase().match('input')) {
+            if (
+                elements.classList.contains(this._options.getClass('toggleGroup'))
+            ) {
+                this.inputs.push(this._options.FilterElementClasses.toggleGroup(filterConstructorArgs));
+            }
+            else if(elements.tagName.toLowerCase().match('input')){
                 this.inputs.push(this._options.FilterElementClasses.inputs(filterConstructorArgs));
-            } else if (!elements.classList.contains(this._options.getClass('parent')))
+            }
+            else if (!elements.classList.contains(this._options.getClass('parent')))
                 this.items.push(this._options.FilterElementClasses.items(filterConstructorArgs));
         });
 

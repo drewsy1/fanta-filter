@@ -61,12 +61,25 @@
     <body>
         <div>
             <h1>testGroup1</h1>
-            <input
-                class="js-fafi-input"
-                title="testGroup1, Input 0"
+            <div
+                class="js-fafi-toggle-group"
                 data-fantafilter-group="testGroup1"
                 data-fantafilter-comparer="match"
                 data-fantafilter-selector="color"
+            >
+                <input id="testGroup1ColorsDefault" type="radio" name="color" value="" />
+                <label for="testGroup1ColorsDefault">All</label>
+                <input id="testGroup1ColorsBlue" type="radio" name="color" value="blue" />
+                <label for="testGroup1ColorsBlue">Blue</label>
+                <input id="testGroup1ColorsBlack" type="radio" name="color" value="black" />
+                <label for="testGroup1ColorsBlack">Black</label>
+            </div>
+            <input
+                class="js-fafi-input"
+                data-fantafilter-group="testGroup1"
+                title="testGroup1, Input 1"
+                data-fantafilter-comparer="match"
+                data-fantafilter-selector="innerText"
             />
             <ul class="js-fafi js-fafi-parent" data-fantafilter-group="testGroup1">
                 <li class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="blue">
@@ -117,8 +130,28 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><input type="date" id="event-start" class="js-fafi-input" data-fantafilter-group="testGroup3" data-fantafilter-comparer="date" data-fantafilter-selector="date-start" data-fantafilter-operator=">"/></td>
-                        <td><input type="date" id="event-end" class="js-fafi-input" data-fantafilter-group="testGroup3" data-fantafilter-comparer="date" data-fantafilter-selector="date-end" data-fantafilter-operator="<"/></td>
+                        <td>
+                            <input
+                                type="date"
+                                id="event-start"
+                                class="js-fafi-input"
+                                data-fantafilter-group="testGroup3"
+                                data-fantafilter-comparer="date"
+                                data-fantafilter-selector="date-start"
+                                data-fantafilter-operator=">"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                type="date"
+                                id="event-end"
+                                class="js-fafi-input"
+                                data-fantafilter-group="testGroup3"
+                                data-fantafilter-comparer="date"
+                                data-fantafilter-selector="date-end"
+                                data-fantafilter-operator="<"
+                            />
+                        </td>
                     </tr>
                 </tbody>
             </table>

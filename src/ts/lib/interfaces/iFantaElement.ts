@@ -35,5 +35,4 @@ export interface iFantaInput extends iFantaElement {
     operator: string;
     updateId: string;
     updateEvent: CustomEvent<any>;
-    setUpdateEvent: (eventTrigger: string, event: CustomEvent<any>) => CustomEvent<any>;
 }

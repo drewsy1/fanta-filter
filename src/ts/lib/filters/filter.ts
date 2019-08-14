@@ -30,7 +30,7 @@ export abstract class Filter implements iFantaFilter {
         this.selector = input.selector;
         this.operator = input.operator;
 
-        context.addEventListener(this.input.updateId, event => {
+        context.addEventListener(this.input.updateId, (event: CustomEvent) => {
             this.Update(event);
         });
 
@@ -48,9 +48,9 @@ export abstract class Filter implements iFantaFilter {
      * @param {Event} event The event that triggered the Update method
      * @memberof Filter
      */
-    Update(event: Event) {
+    Update(event: CustomEvent) {
         let eventTarget = event.target as HTMLInputElement;
-        this.filterValue = eventTarget.value;
+        this.filterValue = event.detail.value();
         eventTarget.dispatchEvent(this.updateEvent);
     }
 

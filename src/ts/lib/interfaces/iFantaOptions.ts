@@ -13,6 +13,8 @@ export interface iFantaOptions {
     ComparisonOperatorFunctions?: { [key: string]: (comparisonVal: any, objectVal: any) => boolean};
     InputComparerClasses?: { [key: string]: (constructor: iFantaFilterConstructor) => any };
     FilterElementClasses?: { [key: string]: (constructor: iFantaElementConstructor) => any };
+    InputTypeClasses?: { [key: string]: (constructor: iFantaElementConstructor) => any };
+    ToggleGroupTypeClasses?: { [key: string]: (constructor: iFantaElementConstructor, children: NodeList | HTMLCollection) => any };
     getAttribute?: (suffix?: string) => any;
     getClass?: (suffix?: string) => any;
     [key: string]: any;
@@ -33,6 +35,7 @@ export interface ClassNames {
     input?: string;
     item?: string;
     hidden?: string;
+    toggleGroup?: string;
     [key: string]: any;
 }
 

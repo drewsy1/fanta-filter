@@ -5,7 +5,6 @@
         }
     ],
     "settings": {
-        "eslint.enable": true,
         "mochaExplorer.files": "test/**/*.ts",
         "mochaExplorer.require": ["ts-node/register", "esm", "ignore-styles", "jsdom-global/register"],
         "mochaExplorer.logpanel": true,

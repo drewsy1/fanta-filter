@@ -1,5 +1,6 @@
 import { Filter } from './filter';
 import { iMatchFantaFilter, iFantaFilterConstructor, iFantaItem } from '../interfaces';
+import { isNullOrUndefined, isString } from 'util';
 
 /**
  * @description Implements a basic text-matching filter
@@ -29,7 +30,18 @@ export class MatchFilter extends Filter implements iMatchFantaFilter {
             console.error('Property not found on object');
             return null;
         }
-        let isMatch = !!attrVal.match(this.filterValue) || this.filterValue === '';
+
+        let isMatch;
+
+        if (isNullOrUndefined(this.filterValue)) {
+            isMatch = true;
+        } else if (!!!this.filterValue.length) {
+            isMatch = true;
+        } else if (isString(this.filterValue)) {
+            isMatch = !!attrVal.match(this.filterValue);
+        } else {
+            isMatch = !!this.filterValue.includes(attrVal);
+        }
         return isMatch ? inputItem : null;
     }
 }
