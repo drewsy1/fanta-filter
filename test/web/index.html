@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8" />
+        <script defer src="nouislider.min.js"></script>
+        <script defer src="../../dist/js/bundle.js"></script>
+        <script>
+            let fantaFilterCurrent;
+            let dateSlider;
+            let dateValues;
+
+            function timestamp(str) {
+                return new Date(str).getTime();
+            }
+
+            function toFormattedDateString(date) {
+                function pad(number) {
+                    if (number < 10) {
+                        return '0' + number;
+                    }
+                    return number;
+                }
+                return date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate());
+            }
+
+            window.onload = () => {
+                fantaFilterCurrent = FantaFilter.init();
+                dateSlider = document.getElementById('slider-date');
+                dateValues = [document.getElementById('event-start'), document.getElementById('event-end')];
+
+                noUiSlider.create(dateSlider, {
+                    // Create two timestamps to define a range.
+                    range: {
+                        min: timestamp('1970-01-01'),
+                        max: timestamp('2019-08-13'),
+                    },
+
+                    // Steps of one week
+                    step: 7 * 24,
+
+                    // Two more timestamps indicate the handle starting positions.
+                    start: [timestamp('1980'), timestamp('2015')],
+                });
+
+                dateSlider.noUiSlider.on('update', function(values, handle) {
+                    dateValues[handle].value = toFormattedDateString(new Date(+values[handle]));
+                    dateValues[handle].dispatchEvent(new Event('input'));
+                });
+            };
+        </script>
+        <link rel="stylesheet" href="nouislider.min.css" />
+        <style>
+            input[type='range'].multirange.ghost {
+                --range-color: blue;
+            }
+            [data-fantafilter-color='blue'] {
+                color: blue;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <h1>testGroup1</h1>
+            <input
+                class="js-fafi-input"
+                title="testGroup1, Input 0"
+                data-fantafilter-group="testGroup1"
+                data-fantafilter-comparer="match"
+                data-fantafilter-selector="color"
+            />
+            <ul class="js-fafi js-fafi-parent" data-fantafilter-group="testGroup1">
+                <li class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="blue">
+                    testGroup1, Item 0
+                </li>
+                <li class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="black">
+                    testGroup1, Item 1
+                </li>
+                <li class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="blue">
+                    testGroup1, Item 2
+                </li>
+                <li class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="blue">
+                    testGroup1, Item 3
+                </li>
+                <li class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="black">
+                    testGroup1, Item 4
+                </li>
+                <li hidden class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="blue">
+                    testGroup1, Item 5
+                </li>
+            </ul>
+
+            <h1>testGroup2</h1>
+            <input
+                class="js-fafi-input"
+                data-fantafilter-group="testGroup2"
+                title="testGroup2, Input 0"
+                data-fantafilter-comparer="match"
+                data-fantafilter-selector="innerText"
+            />
+            <ul class="js-fafi js-fafi-parent" data-fantafilter-group="testGroup2">
+                <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 0</li>
+                <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 1</li>
+                <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 2</li>
+            </ul>
+            <ul class="js-fafi js-fafi-parent" data-fantafilter-group="testGroup2">
+                <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 3</li>
+                <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 4</li>
+                <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 5</li>
+            </ul>
+
+            <h1>testGroup3</h1>
+            <table>
+                <tbody>
+                    <tr>
+                        <td colspan="2" style="text-align: justify">
+                            <div id="slider-date"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="date" id="event-start" class="js-fafi-input" data-fantafilter-group="testGroup3" data-fantafilter-comparer="date" data-fantafilter-selector="date-start" data-fantafilter-operator=">"/></td>
+                        <td><input type="date" id="event-end" class="js-fafi-input" data-fantafilter-group="testGroup3" data-fantafilter-comparer="date" data-fantafilter-selector="date-end" data-fantafilter-operator="<"/></td>
+                    </tr>
+                </tbody>
+            </table>
+            <ul class="js-fafi js-fafi-parent" data-fantafilter-group="testGroup3">
+                <li
+                    class="js-fafi-item"
+                    data-fantafilter-group="testGroup3"
+                    data-fantafilter-date-start="1977-12-18T05:02:59"
+                    data-fantafilter-date-end="1987-12-18T05:02:59"
+                >
+                    testGroup3, Item 0 1977-12-18T05:02:59
+                </li>
+                <li
+                    class="js-fafi-item"
+                    data-fantafilter-group="testGroup3"
+                    data-fantafilter-date-start="2005-05-29T17:32:24"
+                    data-fantafilter-date-end="2015-05-29T17:32:24"
+                >
+                    testGroup3, Item 1 2015-05-29T17:32:24
+                </li>
+                <li
+                    class="js-fafi-item"
+                    data-fantafilter-group="testGroup3"
+                    data-fantafilter-date-start="2010-10-13T02:45:37"
+                    data-fantafilter-date-end="2000-10-13T02:45:37"
+                >
+                    testGroup3, Item 2 2010-10-13T02:45:37
+                </li>
+                <li
+                    class="js-fafi-item"
+                    data-fantafilter-group="testGroup3"
+                    data-fantafilter-date-start="1985-08-07T05:52:29"
+                    data-fantafilter-date-end="1995-08-07T05:52:29"
+                >
+                    testGroup3, Item 3 1985-08-07T05:52:29
+                </li>
+                <li
+                    class="js-fafi-item"
+                    data-fantafilter-group="testGroup3"
+                    data-fantafilter-date-start="1996-03-15T11:07:58"
+                    data-fantafilter-date-end="2006-03-15T11:07:58"
+                >
+                    testGroup3, Item 4 1996-03-15T11:07:58
+                </li>
+                <li
+                    class="js-fafi-item"
+                    data-fantafilter-group="testGroup3"
+                    data-fantafilter-date-start="2004-01-19T09:33:29"
+                    data-fantafilter-date-end="2014-01-19T09:33:29"
+                >
+                    testGroup3, Item 5 2004-01-19T09:33:29
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>

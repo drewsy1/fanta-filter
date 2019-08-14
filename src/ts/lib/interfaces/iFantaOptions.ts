@@ -10,6 +10,7 @@ export interface iFantaOptions {
     attributeNames?: AttributeNames;
     classNames?: ClassNames;
     inputTypes?: string[];
+    ComparisonOperatorFunctions?: { [key: string]: (comparisonVal: any, objectVal: any) => boolean};
     InputComparerClasses?: { [key: string]: (constructor: iFantaFilterConstructor) => any };
     FilterElementClasses?: { [key: string]: (constructor: iFantaElementConstructor) => any };
     getAttribute?: (suffix?: string) => any;
@@ -22,6 +23,7 @@ export interface AttributeNames {
     group?: string;
     selector?: string;
     comparer?: string;
+    operator?: string;
     [key: string]: any;
 }
 

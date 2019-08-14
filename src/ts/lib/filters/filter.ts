@@ -10,6 +10,7 @@ var without = require('lodash.without');
  */
 export abstract class Filter implements iFantaFilter {
     selector: string;
+    operator: string;
     filterValue: any;
     input: iFantaInput;
     eventType: string;
@@ -27,6 +28,7 @@ export abstract class Filter implements iFantaFilter {
         this.input = input;
         this.eventType = input.eventType;
         this.selector = input.selector;
+        this.operator = input.operator;
 
         context.addEventListener(this.input.updateId, event => {
             this.Update(event);

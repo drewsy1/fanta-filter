@@ -14,6 +14,7 @@ export class FantaFilterInput extends FantaFilterElement implements iFantaInput 
     comparer: string;
     selector: string;
     inputType: string;
+    operator: string;
     updateId: string;
     private _updateEvent: CustomEvent<any>;
 
@@ -41,6 +42,7 @@ export class FantaFilterInput extends FantaFilterElement implements iFantaInput 
         this.type = 'input';
         this.inputType = this.element.getAttribute('type') || 'text';
         this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
+        this.operator = this.element.getAttribute(this._options.getAttribute('operator'));
         this.updateId = `${this.eventType}.(${this.selector}).update`;
         let elementComparerVal = this.element.getAttribute(this._options.getAttribute('comparer'));
         this.comparer = Object.keys(this._options.InputComparerClasses).includes(elementComparerVal)

@@ -10,6 +10,7 @@ export const defaultOptions: iFantaOptions = {
         group: 'group',
         selector: 'selector',
         comparer: 'comparer',
+        operator: 'operator',
     },
     classNames: {
         root: 'js-fafi',
@@ -28,6 +29,14 @@ export const defaultOptions: iFantaOptions = {
         inputs: (constructor: iFantaElementConstructor) => new FantaFilterInput(constructor),
         items: (constructor: iFantaElementConstructor) => new FantaFilterItem(constructor),
     },
+    ComparisonOperatorFunctions:{
+        ">": (comparisonVal: any, objectVal: any) => objectVal > comparisonVal,
+        "<": (comparisonVal: any, objectVal: any) => objectVal < comparisonVal,
+        ">=": (comparisonVal: any, objectVal: any) => objectVal >= comparisonVal,
+        "<=": (comparisonVal: any, objectVal: any) => objectVal <= comparisonVal,
+        "===": (comparisonVal: any, objectVal: any) => objectVal === comparisonVal,
+        "!==": (comparisonVal: any, objectVal: any) => objectVal !== comparisonVal,
+    },
     getAttribute: (suffix?: string) =>
         getChildValue(defaultOptions.attributeNames, defaultOptions.attributeNames.root, suffix),
     getClass: (suffix?: string) => getChildValue(defaultOptions.classNames, defaultOptions.classNames.root, suffix),
@@ -36,10 +45,11 @@ export const defaultOptions: iFantaOptions = {
 function getChildValue(group: any, root?: string, suffix?: string) {
     root = isUndefined(root) ? group['root'] : root;
     const groupKeys = Object.keys(group).filter(value => value !== 'root');
+    const groupVals = Object.values(group).filter(value => value !== 'root');
     if (isUndefined(suffix)) {
         return groupKeys.map(key => prependRoot(root, group[key])) as string[];
-    } else if (isString(suffix) && groupKeys.includes(suffix)) {
-        return prependRoot(root, group[suffix]) as string;
+    } else if (isString(suffix) && groupVals.includes(suffix)) {
+        return prependRoot(root, suffix) as string;
     } else return suffix as string;
 }
 

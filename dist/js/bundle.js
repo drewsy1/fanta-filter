@@ -6454,6 +6454,7 @@ var FantaFilterInput = /** @class */ (function (_super) {
         _this.type = 'input';
         _this.inputType = _this.element.getAttribute('type') || 'text';
         _this.selector = _this.element.getAttribute(_this._options.getAttribute('selector'));
+        _this.operator = _this.element.getAttribute(_this._options.getAttribute('operator'));
         _this.updateId = _this.eventType + ".(" + _this.selector + ").update";
         var elementComparerVal = _this.element.getAttribute(_this._options.getAttribute('comparer'));
         _this.comparer = Object.keys(_this._options.InputComparerClasses).includes(elementComparerVal)
@@ -6598,6 +6599,7 @@ var DateFilter = /** @class */ (function (_super) {
     function DateFilter(_a) {
         var dependencies = _a.dependencies, input = _a.input, _userOptions = _a._userOptions;
         var _this = _super.call(this, { dependencies: dependencies, input: input, _userOptions: _userOptions }) || this;
+        _this.operator = input.operator;
         return _this;
     }
     /**
@@ -6607,7 +6609,25 @@ var DateFilter = /** @class */ (function (_super) {
      * @memberof MatchFilter
      */
     DateFilter.prototype.filterObject = function (inputItem) {
-        return inputItem;
+        if (!(Object.keys(this._options.ComparisonOperatorFunctions).includes(this.operator))) {
+            console.error("Invalid comparison operator: " + this.operator);
+            return null;
+        }
+        var operator = this._options.ComparisonOperatorFunctions[(this.operator)];
+        var filterValueDate = new Date(this.filterValue);
+        var attrName = this._options.getAttribute(this.selector);
+        var attrValStr = this.selector === 'innerText' ? inputItem.element.innerText : inputItem.element.getAttribute(attrName);
+        if (attrValStr === null) {
+            console.error('Property not found on object');
+            return null;
+        }
+        var attrVal = new Date(attrValStr);
+        if (attrVal.valueOf() === NaN) {
+            console.error('Property was not a valid date');
+            return null;
+        }
+        var isMatch = !!operator(filterValueDate, attrVal) || this.filterValue === '';
+        return isMatch ? inputItem : null;
     };
     return DateFilter;
 }(filter_1.Filter));
@@ -6648,6 +6668,7 @@ var Filter = /** @class */ (function () {
         this.input = input;
         this.eventType = input.eventType;
         this.selector = input.selector;
+        this.operator = input.operator;
         context.addEventListener(this.input.updateId, function (event) {
             _this.Update(event);
         });
@@ -7024,6 +7045,7 @@ exports.defaultOptions = {
         group: 'group',
         selector: 'selector',
         comparer: 'comparer',
+        operator: 'operator',
     },
     classNames: {
         root: 'js-fafi',
@@ -7042,6 +7064,14 @@ exports.defaultOptions = {
         inputs: function (constructor) { return new input_1.FantaFilterInput(constructor); },
         items: function (constructor) { return new item_1.FantaFilterItem(constructor); },
     },
+    ComparisonOperatorFunctions: {
+        ">": function (comparisonVal, objectVal) { return objectVal > comparisonVal; },
+        "<": function (comparisonVal, objectVal) { return objectVal < comparisonVal; },
+        ">=": function (comparisonVal, objectVal) { return objectVal >= comparisonVal; },
+        "<=": function (comparisonVal, objectVal) { return objectVal <= comparisonVal; },
+        "===": function (comparisonVal, objectVal) { return objectVal === comparisonVal; },
+        "!==": function (comparisonVal, objectVal) { return objectVal !== comparisonVal; },
+    },
     getAttribute: function (suffix) {
         return getChildValue(exports.defaultOptions.attributeNames, exports.defaultOptions.attributeNames.root, suffix);
     },
@@ -7050,11 +7080,12 @@ exports.defaultOptions = {
 function getChildValue(group, root, suffix) {
     root = util_1.isUndefined(root) ? group['root'] : root;
     var groupKeys = Object.keys(group).filter(function (value) { return value !== 'root'; });
+    var groupVals = Object.values(group).filter(function (value) { return value !== 'root'; });
     if (util_1.isUndefined(suffix)) {
         return groupKeys.map(function (key) { return prependRoot(root, group[key]); });
     }
-    else if (util_1.isString(suffix) && groupKeys.includes(suffix)) {
-        return prependRoot(root, group[suffix]);
+    else if (util_1.isString(suffix) && groupVals.includes(suffix)) {
+        return prependRoot(root, suffix);
     }
     else
         return suffix;

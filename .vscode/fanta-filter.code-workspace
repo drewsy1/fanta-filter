@@ -21,7 +21,7 @@
                 "type": "chrome",
                 "request": "launch",
                 "name": "Launch Chrome",
-                "url": "http://localhost:8080/index",
+                "url": "http://localhost:8080/test/web/index",
                 "webRoot": "${workspaceFolder}",
                 "sourceMaps": true,
                 "sourceMapPathOverrides": {
