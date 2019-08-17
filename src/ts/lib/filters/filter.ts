@@ -9,7 +9,7 @@ var without = require('lodash.without');
  * @implements {iFantaFilter}
  */
 export abstract class Filter implements iFantaFilter {
-    selector: string;
+    selector: string | string[];
     operator: string;
     filterValue: any;
     input: iFantaInput;
@@ -50,7 +50,7 @@ export abstract class Filter implements iFantaFilter {
      */
     Update(event: CustomEvent) {
         let eventTarget = event.target as HTMLInputElement;
-        this.filterValue = event.detail.value();
+        this.filterValue = this.valueConverter(event.detail.value);
         eventTarget.dispatchEvent(this.updateEvent);
     }
 
@@ -63,6 +63,27 @@ export abstract class Filter implements iFantaFilter {
     applyFilter(inputItems: iFantaItem[]): iFantaItem[] {
         return without(inputItems.map(item => this.filterObject(item)), null);
     }
+
+    get Selectors(): string[] {
+        return Array.isArray(this.selector) ? this.selector : [this.selector];
+    }
+
+    getSelectorValues(inputItem: iFantaItem): string[] {
+        let selectorVals: string[] = [];
+        this.Selectors.forEach((selector: string) => {
+            let attrName: string = this._options.getAttribute(selector);
+            let attrVal: string =
+                selector === 'innerText' ? inputItem.element.innerText : inputItem.element.getAttribute(attrName);
+            if (attrVal === null) {
+                console.error('Property not found on object');
+                return null;
+            }
+            selectorVals.push(attrVal);
+        });
+        return selectorVals;
+    }
+
+    abstract valueConverter(arg: string | string[]): any;
 
     /**
      * @description Abstract method for filtering a set of elements, implemented by sub-classes

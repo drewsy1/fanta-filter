@@ -16,7 +16,7 @@ export class FantaFilterItem extends FantaFilterElement implements iFantaItem {
     }
 
     set hidden(isHidden: boolean) {
-        this.element.hidden = isUndefined(isHidden) ? this.element.hidden : isHidden;
+        this.element.hidden =isHidden === undefined ? this.element.hidden : isHidden;
     }
 
     /**

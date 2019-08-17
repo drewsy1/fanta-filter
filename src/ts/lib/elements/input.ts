@@ -13,11 +13,11 @@ import { FantaFilterElement } from './element';
 export abstract class FantaFilterInput extends FantaFilterElement implements iFantaInput {
     type: string;
     comparer: string;
-    selector: string;
+    selector: string | string[];
     inputType: string;
     operator: string;
     updateId: string;
-    abstract _updateEvent: CustomEvent<any>;
+    protected _updateEvent: CustomEvent<any>;
 
     get updateEvent() {
         return this._updateEvent;
@@ -32,11 +32,11 @@ export abstract class FantaFilterInput extends FantaFilterElement implements iFa
         super({ dependencies, elements, parentName, eventType, _userOptions });
         this.type = 'input';
         this.inputType = this.element.getAttribute('type') || 'text';
-        this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
+        this.selector = this.element.getAttribute(this._options.getAttribute('selector')).split(';');
         this.operator = this.element.getAttribute(this._options.getAttribute('operator'));
         this.updateId = `${this.eventType}.(${this.selector}).update`;
         let elementComparerVal = this.element.getAttribute(this._options.getAttribute('comparer'));
-        
+
         this.comparer = Object.keys(this._options.InputComparerClasses).includes(elementComparerVal)
             ? elementComparerVal
             : 'match';
@@ -49,37 +49,56 @@ export abstract class FantaFilterInput extends FantaFilterElement implements iFa
      * @returns A specific input class instance (or array of them)
      * @memberof FantaFilterInput
      */
-    static create({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor){
+    static create({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
         const { configure, defaultOptions } = dependencies;
         const options: iFantaOptions = configure(defaultOptions, null, _userOptions);
         if (isNodeList(elements)) {
             return [].slice
                 .call(Array.from(elements))
-                .map(
-                    (_element: HTMLElement) =>
-                        options.FilterElementClasses.inputs({ dependencies, elements: _element, parentName, eventType, _userOptions }),
+                .map((_element: HTMLElement) =>
+                    options.FilterElementClasses.inputs({
+                        dependencies,
+                        elements: _element,
+                        parentName,
+                        eventType,
+                        _userOptions,
+                    }),
                 )
                 .filter((x: HTMLElement) => x);
         }
 
-        let inputType = elements.getAttribute('type') || "text";
-        if(Object.keys(options.InputTypeClasses).includes(inputType)){
+        let inputType = elements.getAttribute('type') || 'text';
+        if (Object.keys(options.InputTypeClasses).includes(inputType)) {
             return options.InputTypeClasses[inputType]({ dependencies, elements, parentName, eventType, _userOptions });
         }
     }
 
     /**
-     * @description Sets this class' update event
+     * @description Sets this input's event listener
      * @param {string} eventTrigger String representation of the event that will trigger the dispatch of this event
-     * @param {CustomEvent<any>} event The event that will be dispatched
-     * @returns The _updateEvent of the class, after having been set by this method
+     * @param {(e: Event) => any} updateFunction The function that will run at dispatch
      * @memberof FantaFilterInput
      */
-    setUpdateEvent(eventTrigger: string, event: CustomEvent<any>) {
-        if (eventTrigger !== undefined && event !== undefined) {
-            this.element.addEventListener(eventTrigger, (e: Event) => e.target.dispatchEvent(event));
-            this._updateEvent = event;
+    setUpdateEvent(eventTrigger: string, updateFunction: (e: Event) => any) {
+        if (eventTrigger !== undefined && updateFunction !== undefined) {
+            this.element.addEventListener(eventTrigger, updateFunction);
         }
-        return this._updateEvent;
+    }
+
+    /**
+     * @description Method that sets this instance's _updateEvent variable and dispatches it
+     * @param {Event} e The event to recieve and use to create the _updateEvent
+     * @memberof FantaFilterInput
+     */
+    raiseUpdateEvent(e: Event) {
+        this._updateEvent = new CustomEvent(this.updateId, {
+            bubbles: true,
+            detail: {
+                sender: e.target,
+                value: (e.target as HTMLInputElement).value,
+            },
+        });
+
+        e.target.dispatchEvent(this._updateEvent);
     }
 }

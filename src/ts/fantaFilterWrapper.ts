@@ -71,15 +71,14 @@ export class FantaFilterWrapper implements iFantaWrapper {
                 eventType: this.eventType,
                 _userOptions,
             };
-            if (
-                elements.classList.contains(this._options.getClass('toggleGroup'))
-            ) {
+            if (elements.classList.contains(this._options.getClass('toggleGroup'))) {
                 this.inputs.push(this._options.FilterElementClasses.toggleGroup(filterConstructorArgs));
-            }
-            else if(elements.tagName.toLowerCase().match('input')){
+            } else if (
+                elements.classList.contains(this._options.getClass('input')) ||
+                (elements as HTMLInputElement).type
+            ) {
                 this.inputs.push(this._options.FilterElementClasses.inputs(filterConstructorArgs));
-            }
-            else if (!elements.classList.contains(this._options.getClass('parent')))
+            } else if (!elements.classList.contains(this._options.getClass('parent')))
                 this.items.push(this._options.FilterElementClasses.items(filterConstructorArgs));
         });
 
@@ -87,7 +86,7 @@ export class FantaFilterWrapper implements iFantaWrapper {
             ? new FilterGroup(dependencies, this.eventType, this.inputs, this.items)
             : undefined;
 
-        if (isUndefined(FantaFilterWrapper.CurrentFilters)) FantaFilterWrapper.CurrentFilters = [];
+        if (FantaFilterWrapper.CurrentFilters === undefined) FantaFilterWrapper.CurrentFilters = [];
         FantaFilterWrapper.CurrentFilters.push(this);
         return this;
     }

@@ -9,12 +9,6 @@ import { FantaFilterInput } from '../input';
  * @implements {iFantaInput}
  */
 export class FantaFilterInputText extends FantaFilterInput implements iFantaInput {
-    _updateEvent: CustomEvent<any>;
-
-    get updateEvent() {
-        return this._updateEvent;
-    }
-
     /**
      *Creates an instance of FantaFilterInputText.
      * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
@@ -22,14 +16,6 @@ export class FantaFilterInputText extends FantaFilterInput implements iFantaInpu
      */
     constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
         super({ dependencies, elements, parentName, eventType, _userOptions });
-
-        let updateEvent = new CustomEvent(this.updateId, {
-            bubbles: true,
-            detail: {
-                sender: this,
-                value: () => (this.element as HTMLInputElement).value,
-            },
-        });
-        this.setUpdateEvent('input', updateEvent);
+        this.setUpdateEvent('input', this.raiseUpdateEvent);
     }
 }

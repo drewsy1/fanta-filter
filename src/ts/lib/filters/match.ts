@@ -1,5 +1,5 @@
 import { Filter } from './filter';
-import { iMatchFantaFilter, iFantaFilterConstructor, iFantaItem } from '../interfaces';
+import { iFantaFilter, iFantaFilterConstructor, iFantaItem } from '../interfaces';
 import { isNullOrUndefined, isString } from 'util';
 
 /**
@@ -9,7 +9,7 @@ import { isNullOrUndefined, isString } from 'util';
  * @extends {Filter}
  * @implements {iMatchFantaFilter}
  */
-export class MatchFilter extends Filter implements iMatchFantaFilter {
+export class MatchFilter extends Filter implements iFantaFilter {
     constructor({ dependencies, input, _userOptions }: iFantaFilterConstructor) {
         super({ dependencies, input, _userOptions });
 
@@ -23,25 +23,23 @@ export class MatchFilter extends Filter implements iMatchFantaFilter {
      * @memberof MatchFilter
      */
     filterObject(inputItem: iFantaItem): iFantaItem | null {
-        let attrName: string = this._options.getAttribute(this.selector);
-        let attrVal: string =
-            this.selector === 'innerText' ? inputItem.element.innerText : inputItem.element.getAttribute(attrName);
-        if (attrVal === null) {
-            console.error('Property not found on object');
-            return null;
-        }
-
-        let isMatch;
-
-        if (isNullOrUndefined(this.filterValue)) {
-            isMatch = true;
-        } else if (!!!this.filterValue.length) {
-            isMatch = true;
-        } else if (isString(this.filterValue)) {
-            isMatch = !!attrVal.match(this.filterValue);
-        } else {
-            isMatch = !!this.filterValue.includes(attrVal);
-        }
+        let selectorValues = this.getSelectorValues(inputItem);
+        let isMatch = selectorValues.every(selectorVal => {
+            if(this.filterValue === undefined || this.filterValue === selectorVal) {
+                return true;
+            } else if (!!!this.filterValue.length) {
+                return true;
+            } else if (typeof this.filterValue === 'string') {
+                return !!selectorVal.match(this.filterValue);
+            } else {
+                return !!this.filterValue.includes(selectorVal);
+            }
+        })
+        
         return isMatch ? inputItem : null;
+    }
+
+    valueConverter(arg: string | string[]){
+        return Array.isArray(arg) ? arg : [arg];
     }
 }

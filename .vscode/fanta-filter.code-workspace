@@ -12,7 +12,10 @@
             "TS_NODE_COMPILER_OPTIONS": "{\"lib\": [\"dom\", \"es6\", \"es5\"],\"esModuleInterop\": true}"
         },
         "prettier.eslintIntegration": true,
-        "typescript.locale": "en"
+        "typescript.locale": "en",
+        "workbench.colorCustomizations": {
+            "titleBar.activeBackground": "#b58900",
+        }
     },
     "launch": {
         "configurations": [
@@ -21,6 +24,20 @@
                 "request": "launch",
                 "name": "Launch Chrome",
                 "url": "http://localhost:8080/test/web/index",
+                "webRoot": "${workspaceFolder}",
+                "sourceMaps": true,
+                "sourceMapPathOverrides": {
+                    "webpack://FantaFilter/./*": "${webRoot}/*",
+                    "webpack://FantaFilter/./src/*": "${webRoot}/src/*",
+                    "webpack://FantaFilter/*": "*",
+                    "webpack:///./~/*": "${webRoot}/node_modules/*"
+                }
+            },
+            {
+                "type": "chrome",
+                "request": "launch",
+                "name": "Launch operatortest",
+                "url": "http://localhost:8080/test/web/operatortest",
                 "webRoot": "${workspaceFolder}",
                 "sourceMaps": true,
                 "sourceMapPathOverrides": {

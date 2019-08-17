@@ -6244,7 +6244,6 @@ module.exports = g;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var filters_1 = __webpack_require__(/*! ./lib/filters */ "./src/ts/lib/filters/index.ts");
-var util_1 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
 /**
  * @description Manages a group of elements that filter/will be filtered and their mechanisms
  * @export
@@ -6287,7 +6286,8 @@ var FantaFilterWrapper = /** @class */ (function () {
             if (elements.classList.contains(_this._options.getClass('toggleGroup'))) {
                 _this.inputs.push(_this._options.FilterElementClasses.toggleGroup(filterConstructorArgs));
             }
-            else if (elements.tagName.toLowerCase().match('input')) {
+            else if (elements.classList.contains(_this._options.getClass('input')) ||
+                elements.type) {
                 _this.inputs.push(_this._options.FilterElementClasses.inputs(filterConstructorArgs));
             }
             else if (!elements.classList.contains(_this._options.getClass('parent')))
@@ -6296,7 +6296,7 @@ var FantaFilterWrapper = /** @class */ (function () {
         this.filterGroup = this.hasInputs
             ? new filters_1.FilterGroup(dependencies, this.eventType, this.inputs, this.items)
             : undefined;
-        if (util_1.isUndefined(FantaFilterWrapper.CurrentFilters))
+        if (FantaFilterWrapper.CurrentFilters === undefined)
             FantaFilterWrapper.CurrentFilters = [];
         FantaFilterWrapper.CurrentFilters.push(this);
         return this;
@@ -6448,7 +6448,7 @@ var FantaFilterInput = /** @class */ (function (_super) {
         var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
         _this.type = 'input';
         _this.inputType = _this.element.getAttribute('type') || 'text';
-        _this.selector = _this.element.getAttribute(_this._options.getAttribute('selector'));
+        _this.selector = _this.element.getAttribute(_this._options.getAttribute('selector')).split(';');
         _this.operator = _this.element.getAttribute(_this._options.getAttribute('operator'));
         _this.updateId = _this.eventType + ".(" + _this.selector + ").update";
         var elementComparerVal = _this.element.getAttribute(_this._options.getAttribute('comparer'));
@@ -6479,28 +6479,46 @@ var FantaFilterInput = /** @class */ (function (_super) {
             return [].slice
                 .call(Array.from(elements))
                 .map(function (_element) {
-                return options.FilterElementClasses.inputs({ dependencies: dependencies, elements: _element, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
+                return options.FilterElementClasses.inputs({
+                    dependencies: dependencies,
+                    elements: _element,
+                    parentName: parentName,
+                    eventType: eventType,
+                    _userOptions: _userOptions,
+                });
             })
                 .filter(function (x) { return x; });
         }
-        var inputType = elements.getAttribute('type') || "text";
+        var inputType = elements.getAttribute('type') || 'text';
         if (Object.keys(options.InputTypeClasses).includes(inputType)) {
             return options.InputTypeClasses[inputType]({ dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
         }
     };
     /**
-     * @description Sets this class' update event
+     * @description Sets this input's event listener
      * @param {string} eventTrigger String representation of the event that will trigger the dispatch of this event
-     * @param {CustomEvent<any>} event The event that will be dispatched
-     * @returns The _updateEvent of the class, after having been set by this method
+     * @param {(e: Event) => any} updateFunction The function that will run at dispatch
      * @memberof FantaFilterInput
      */
-    FantaFilterInput.prototype.setUpdateEvent = function (eventTrigger, event) {
-        if (eventTrigger !== undefined && event !== undefined) {
-            this.element.addEventListener(eventTrigger, function (e) { return e.target.dispatchEvent(event); });
-            this._updateEvent = event;
+    FantaFilterInput.prototype.setUpdateEvent = function (eventTrigger, updateFunction) {
+        if (eventTrigger !== undefined && updateFunction !== undefined) {
+            this.element.addEventListener(eventTrigger, updateFunction);
         }
-        return this._updateEvent;
+    };
+    /**
+     * @description Method that sets this instance's _updateEvent variable and dispatches it
+     * @param {Event} e The event to recieve and use to create the _updateEvent
+     * @memberof FantaFilterInput
+     */
+    FantaFilterInput.prototype.raiseUpdateEvent = function (e) {
+        this._updateEvent = new CustomEvent(this.updateId, {
+            bubbles: true,
+            detail: {
+                sender: e.target,
+                value: e.target.value,
+            },
+        });
+        e.target.dispatchEvent(this._updateEvent);
     };
     return FantaFilterInput;
 }(element_1.FantaFilterElement));
@@ -6532,28 +6550,41 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var text_1 = __webpack_require__(/*! ./text */ "./src/ts/lib/elements/inputs/text.ts");
+var input_1 = __webpack_require__(/*! ../input */ "./src/ts/lib/elements/input.ts");
 /**
  * @description Implements the FantaFilterInput class to describe a date input element
  * @export
- * @class FantaFilterInputDate
- * @extends {FantaFilterInputText}
+ * @class FantaFilterInputnoUiSlider
+ * @extends {FantaFilterInput}
  * @implements {iFantaInput}
  */
-var FantaFilterInputDate = /** @class */ (function (_super) {
-    __extends(FantaFilterInputDate, _super);
+var FantaFilterInputnoUiSlider = /** @class */ (function (_super) {
+    __extends(FantaFilterInputnoUiSlider, _super);
     /**
      *Creates an instance of FantaFilterInputDate.
      * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
-     * @memberof FantaFilterInput
+     * @memberof FantaFilterInputnoUiSlider
      */
-    function FantaFilterInputDate(_a) {
+    function FantaFilterInputnoUiSlider(_a) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
-        return _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
+        var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
+        _this.element.noUiSlider.on('update', function (e) { return _this.raiseUpdateEvent(e); });
+        return _this;
+        // super.setUpdateEvent('input',super.raiseUpdateEvent);
     }
-    return FantaFilterInputDate;
-}(text_1.FantaFilterInputText));
-exports.FantaFilterInputDate = FantaFilterInputDate;
+    FantaFilterInputnoUiSlider.prototype.raiseUpdateEvent = function (e) {
+        this._updateEvent = new CustomEvent(this.updateId, {
+            bubbles: true,
+            detail: {
+                sender: this.element,
+                value: e,
+            },
+        });
+        this.element.dispatchEvent(this._updateEvent);
+    };
+    return FantaFilterInputnoUiSlider;
+}(input_1.FantaFilterInput));
+exports.FantaFilterInputnoUiSlider = FantaFilterInputnoUiSlider;
 
 
 /***/ }),
@@ -6618,23 +6649,9 @@ var FantaFilterInputText = /** @class */ (function (_super) {
     function FantaFilterInputText(_a) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
-        var updateEvent = new CustomEvent(_this.updateId, {
-            bubbles: true,
-            detail: {
-                sender: _this,
-                value: function () { return _this.element.value; },
-            },
-        });
-        _this.setUpdateEvent('input', updateEvent);
+        _this.setUpdateEvent('input', _this.raiseUpdateEvent);
         return _this;
     }
-    Object.defineProperty(FantaFilterInputText.prototype, "updateEvent", {
-        get: function () {
-            return this._updateEvent;
-        },
-        enumerable: true,
-        configurable: true
-    });
     return FantaFilterInputText;
 }(input_1.FantaFilterInput));
 exports.FantaFilterInputText = FantaFilterInputText;
@@ -6667,7 +6684,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
 var element_1 = __webpack_require__(/*! ./element */ "./src/ts/lib/elements/element.ts");
-var util_2 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
 /**
  * @description Implements the FantaFilterElement class to describe a filterable item element
  * @export
@@ -6702,7 +6718,7 @@ var FantaFilterItem = /** @class */ (function (_super) {
             return this.element.hidden;
         },
         set: function (isHidden) {
-            this.element.hidden = util_2.isUndefined(isHidden) ? this.element.hidden : isHidden;
+            this.element.hidden = isHidden === undefined ? this.element.hidden : isHidden;
         },
         enumerable: true,
         configurable: true
@@ -7081,44 +7097,26 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var filter_1 = __webpack_require__(/*! ./filter */ "./src/ts/lib/filters/filter.ts");
+var value_1 = __webpack_require__(/*! ./value */ "./src/ts/lib/filters/value.ts");
 var DateFilter = /** @class */ (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter(_a) {
         var dependencies = _a.dependencies, input = _a.input, _userOptions = _a._userOptions;
         var _this = _super.call(this, { dependencies: dependencies, input: input, _userOptions: _userOptions }) || this;
-        _this.operator = input.operator;
         return _this;
     }
-    /**
-     * @description Implements the Filter superclass' filterObject method
-     * @param {iFantaItem} inputItem An element to be filtered
-     * @returns {(iFantaItem | null)} The element if it passes the filter test, or null
-     * @memberof MatchFilter
-     */
-    DateFilter.prototype.filterObject = function (inputItem) {
-        if (!(Object.keys(this._options.ComparisonOperatorFunctions).includes(this.operator))) {
-            console.error("Invalid comparison operator: " + this.operator);
-            return null;
-        }
-        var operator = this._options.ComparisonOperatorFunctions[(this.operator)];
-        var filterValueDate = new Date(this.filterValue);
-        var attrName = this._options.getAttribute(this.selector);
-        var attrValStr = this.selector === 'innerText' ? inputItem.element.innerText : inputItem.element.getAttribute(attrName);
-        if (attrValStr === null) {
-            console.error('Property not found on object');
-            return null;
-        }
-        var attrVal = new Date(attrValStr);
-        if (attrVal.valueOf() === NaN) {
-            console.error('Property was not a valid date');
-            return null;
-        }
-        var isMatch = !!operator(filterValueDate, attrVal) || this.filterValue === '';
-        return isMatch ? inputItem : null;
+    DateFilter.prototype.valueConverter = function (arg) {
+        if (arg === undefined)
+            return arg;
+        arg = Array.isArray(arg) ? arg : [arg];
+        var argConverted = arg
+            .map(function (_arg) { return (typeof _arg === 'string' && _arg.match(/^\d*\.?\d*$/) ? parseInt(_arg) : _arg); })
+            .map(function (_arg) { return new Date(_arg); });
+        argConverted.sort(function (a, b) { return a - b; });
+        return argConverted;
     };
     return DateFilter;
-}(filter_1.Filter));
+}(value_1.ValueFilter));
 exports.DateFilter = DateFilter;
 
 
@@ -7175,7 +7173,7 @@ var Filter = /** @class */ (function () {
      */
     Filter.prototype.Update = function (event) {
         var eventTarget = event.target;
-        this.filterValue = event.detail.value();
+        this.filterValue = this.valueConverter(event.detail.value);
         eventTarget.dispatchEvent(this.updateEvent);
     };
     /**
@@ -7187,6 +7185,27 @@ var Filter = /** @class */ (function () {
     Filter.prototype.applyFilter = function (inputItems) {
         var _this = this;
         return without(inputItems.map(function (item) { return _this.filterObject(item); }), null);
+    };
+    Object.defineProperty(Filter.prototype, "Selectors", {
+        get: function () {
+            return Array.isArray(this.selector) ? this.selector : [this.selector];
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Filter.prototype.getSelectorValues = function (inputItem) {
+        var _this = this;
+        var selectorVals = [];
+        this.Selectors.forEach(function (selector) {
+            var attrName = _this._options.getAttribute(selector);
+            var attrVal = selector === 'innerText' ? inputItem.element.innerText : inputItem.element.getAttribute(attrName);
+            if (attrVal === null) {
+                console.error('Property not found on object');
+                return null;
+            }
+            selectorVals.push(attrVal);
+        });
+        return selectorVals;
     };
     return Filter;
 }());
@@ -7278,7 +7297,6 @@ __export(__webpack_require__(/*! ./group */ "./src/ts/lib/filters/group.ts"));
 __export(__webpack_require__(/*! ./filter */ "./src/ts/lib/filters/filter.ts"));
 __export(__webpack_require__(/*! ./match */ "./src/ts/lib/filters/match.ts"));
 __export(__webpack_require__(/*! ./date */ "./src/ts/lib/filters/date.ts"));
-__export(__webpack_require__(/*! ./tag */ "./src/ts/lib/filters/tag.ts"));
 
 
 /***/ }),
@@ -7307,7 +7325,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var filter_1 = __webpack_require__(/*! ./filter */ "./src/ts/lib/filters/filter.ts");
-var util_1 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
 /**
  * @description Implements a basic text-matching filter
  * @export
@@ -7329,26 +7346,26 @@ var MatchFilter = /** @class */ (function (_super) {
      * @memberof MatchFilter
      */
     MatchFilter.prototype.filterObject = function (inputItem) {
-        var attrName = this._options.getAttribute(this.selector);
-        var attrVal = this.selector === 'innerText' ? inputItem.element.innerText : inputItem.element.getAttribute(attrName);
-        if (attrVal === null) {
-            console.error('Property not found on object');
-            return null;
-        }
-        var isMatch;
-        if (util_1.isNullOrUndefined(this.filterValue)) {
-            isMatch = true;
-        }
-        else if (!!!this.filterValue.length) {
-            isMatch = true;
-        }
-        else if (util_1.isString(this.filterValue)) {
-            isMatch = !!attrVal.match(this.filterValue);
-        }
-        else {
-            isMatch = !!this.filterValue.includes(attrVal);
-        }
+        var _this = this;
+        var selectorValues = this.getSelectorValues(inputItem);
+        var isMatch = selectorValues.every(function (selectorVal) {
+            if (_this.filterValue === undefined || _this.filterValue === selectorVal) {
+                return true;
+            }
+            else if (!!!_this.filterValue.length) {
+                return true;
+            }
+            else if (typeof _this.filterValue === 'string') {
+                return !!selectorVal.match(_this.filterValue);
+            }
+            else {
+                return !!_this.filterValue.includes(selectorVal);
+            }
+        });
         return isMatch ? inputItem : null;
+    };
+    MatchFilter.prototype.valueConverter = function (arg) {
+        return Array.isArray(arg) ? arg : [arg];
     };
     return MatchFilter;
 }(filter_1.Filter));
@@ -7357,10 +7374,10 @@ exports.MatchFilter = MatchFilter;
 
 /***/ }),
 
-/***/ "./src/ts/lib/filters/tag.ts":
-/*!***********************************!*\
-  !*** ./src/ts/lib/filters/tag.ts ***!
-  \***********************************/
+/***/ "./src/ts/lib/filters/value.ts":
+/*!*************************************!*\
+  !*** ./src/ts/lib/filters/value.ts ***!
+  \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7381,25 +7398,54 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var filter_1 = __webpack_require__(/*! ./filter */ "./src/ts/lib/filters/filter.ts");
-var TagFilter = /** @class */ (function (_super) {
-    __extends(TagFilter, _super);
-    function TagFilter(_a) {
+var ValueFilter = /** @class */ (function (_super) {
+    __extends(ValueFilter, _super);
+    /**
+     *Creates an instance of ValueFilter.
+     * @param {iFantaFilterConstructor} { dependencies, input, _userOptions }
+     * @memberof ValueFilter
+     */
+    function ValueFilter(_a) {
         var dependencies = _a.dependencies, input = _a.input, _userOptions = _a._userOptions;
         var _this = _super.call(this, { dependencies: dependencies, input: input, _userOptions: _userOptions }) || this;
+        _this.operator = input.operator;
         return _this;
     }
     /**
      * @description Implements the Filter superclass' filterObject method
      * @param {iFantaItem} inputItem An element to be filtered
      * @returns {(iFantaItem | null)} The element if it passes the filter test, or null
-     * @memberof MatchFilter
+     * @memberof ValueFilter
      */
-    TagFilter.prototype.filterObject = function (inputItem) {
-        return inputItem;
+    ValueFilter.prototype.filterObject = function (inputItem) {
+        var _this = this;
+        if (!Object.keys(this._options.ComparisonOperatorFunctions).includes(this.operator)) {
+            console.error("Invalid comparison operator: " + this.operator);
+            return null;
+        }
+        var operator = this._options.ComparisonOperatorFunctions[this.operator];
+        var selectorVals = this.getSelectorValues(inputItem);
+        var attrVals = [];
+        selectorVals.forEach(function (selectorVal) {
+            var attrVal = _this.valueConverter(selectorVal);
+            if (attrVal.valueOf() === NaN) {
+                console.error('Property was not a valid date');
+                return null;
+            }
+            attrVals = attrVals.concat(attrVal);
+        });
+        var isMatch = !!operator(this.filterValue, attrVals) || !this.filterValue.length;
+        return isMatch ? inputItem : null;
     };
-    return TagFilter;
+    ValueFilter.prototype.valueConverter = function (arg) {
+        if (arg === undefined)
+            return arg;
+        arg = Array.isArray(arg) ? arg : [arg];
+        return arg.map(function (x) { return parseInt(x); });
+    };
+    return ValueFilter;
 }(filter_1.Filter));
-exports.TagFilter = TagFilter;
+exports.ValueFilter = ValueFilter;
 
 
 /***/ }),
@@ -7536,13 +7582,14 @@ exports.configure = configure;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(/*! util */ "./node_modules/util/util.js");
-var filters_1 = __webpack_require__(/*! ../filters */ "./src/ts/lib/filters/index.ts");
+var date_1 = __webpack_require__(/*! ../filters/date */ "./src/ts/lib/filters/date.ts");
 var input_1 = __webpack_require__(/*! ../elements/input */ "./src/ts/lib/elements/input.ts");
-var item_1 = __webpack_require__(/*! ../elements/item */ "./src/ts/lib/elements/item.ts");
-var toggleGroup_1 = __webpack_require__(/*! ../elements/toggleGroup */ "./src/ts/lib/elements/toggleGroup.ts");
 var inputs_1 = __webpack_require__(/*! ../elements/inputs */ "./src/ts/lib/elements/inputs/index.ts");
+var item_1 = __webpack_require__(/*! ../elements/item */ "./src/ts/lib/elements/item.ts");
 var toggleGroups_1 = __webpack_require__(/*! ../elements/toggleGroups */ "./src/ts/lib/elements/toggleGroups/index.ts");
+var toggleGroup_1 = __webpack_require__(/*! ../elements/toggleGroup */ "./src/ts/lib/elements/toggleGroup.ts");
+var match_1 = __webpack_require__(/*! ../filters/match */ "./src/ts/lib/filters/match.ts");
+var value_1 = __webpack_require__(/*! ../filters/value */ "./src/ts/lib/filters/value.ts");
 exports.defaultOptions = {
     attributeNames: {
         root: 'data-fantafilter',
@@ -7557,13 +7604,13 @@ exports.defaultOptions = {
         input: 'input',
         item: 'item',
         hidden: 'hidden',
-        toggleGroup: 'toggle-group'
+        toggleGroup: 'toggle-group',
     },
     inputTypes: ['INPUT'],
     InputComparerClasses: {
-        date: function (constructor) { return new filters_1.DateFilter(constructor); },
-        match: function (constructor) { return new filters_1.MatchFilter(constructor); },
-        tag: function (constructor) { return new filters_1.TagFilter(constructor); },
+        date: function (constructor) { return new date_1.DateFilter(constructor); },
+        match: function (constructor) { return new match_1.MatchFilter(constructor); },
+        value: function (constructor) { return new value_1.ValueFilter(constructor); },
     },
     FilterElementClasses: {
         inputs: function (constructor) { return input_1.FantaFilterInput.create(constructor); },
@@ -7571,21 +7618,29 @@ exports.defaultOptions = {
         toggleGroup: function (constructor) { return toggleGroup_1.FantaFilterToggleGroup.create(constructor); },
     },
     InputTypeClasses: {
-        date: function (constructor) { return new inputs_1.FantaFilterInputDate(constructor); },
+        noUiSlider: function (constructor) { return new inputs_1.FantaFilterInputnoUiSlider(constructor); },
         text: function (constructor) { return new inputs_1.FantaFilterInputText(constructor); },
     },
     ToggleGroupTypeClasses: {
-        button: function (constructor, childNodes) { return new toggleGroups_1.FantaFilterButtonGroup(constructor, childNodes); },
-        checkbox: function (constructor, childNodes) { return new toggleGroups_1.FantaFilterCheckboxGroup(constructor, childNodes); },
-        radio: function (constructor, childNodes) { return new toggleGroups_1.FantaFilterRadioGroup(constructor, childNodes); },
+        button: function (constructor, childNodes) {
+            return new toggleGroups_1.FantaFilterButtonGroup(constructor, childNodes);
+        },
+        checkbox: function (constructor, childNodes) {
+            return new toggleGroups_1.FantaFilterCheckboxGroup(constructor, childNodes);
+        },
+        radio: function (constructor, childNodes) {
+            return new toggleGroups_1.FantaFilterRadioGroup(constructor, childNodes);
+        },
     },
     ComparisonOperatorFunctions: {
-        ">": function (comparisonVal, objectVal) { return objectVal > comparisonVal; },
-        "<": function (comparisonVal, objectVal) { return objectVal < comparisonVal; },
-        ">=": function (comparisonVal, objectVal) { return objectVal >= comparisonVal; },
-        "<=": function (comparisonVal, objectVal) { return objectVal <= comparisonVal; },
-        "===": function (comparisonVal, objectVal) { return objectVal === comparisonVal; },
-        "!==": function (comparisonVal, objectVal) { return objectVal !== comparisonVal; },
+        '>': function (comparisonVal, objectVal) { return objectVal > comparisonVal; },
+        '<': function (comparisonVal, objectVal) { return objectVal < comparisonVal; },
+        '>=': function (comparisonVal, objectVal) { return objectVal >= comparisonVal; },
+        '<=': function (comparisonVal, objectVal) { return objectVal <= comparisonVal; },
+        '===': function (comparisonVal, objectVal) { return objectVal === comparisonVal; },
+        '!==': function (comparisonVal, objectVal) { return objectVal !== comparisonVal; },
+        contains: contains,
+        overlap: overlap,
     },
     getAttribute: function (suffix) {
         return getChildValue(exports.defaultOptions.attributeNames, exports.defaultOptions.attributeNames.root, suffix);
@@ -7593,22 +7648,35 @@ exports.defaultOptions = {
     getClass: function (suffix) { return getChildValue(exports.defaultOptions.classNames, exports.defaultOptions.classNames.root, suffix); },
 };
 function getChildValue(group, root, suffix) {
-    root = util_1.isUndefined(root) ? group['root'] : root;
+    root = root === undefined ? group['root'] : root;
     var groupKeys = Object.keys(group).filter(function (value) { return value !== 'root'; });
     var groupVals = Object.values(group).filter(function (value) { return value !== 'root'; });
-    if (util_1.isUndefined(suffix)) {
+    if (suffix === undefined) {
         return groupKeys.map(function (key) { return prependRoot(root, group[key]); });
     }
-    else if (util_1.isString(suffix) && groupKeys.includes(suffix)) {
+    else if (typeof suffix === 'string' && groupKeys.includes(suffix)) {
         return prependRoot(root, group[suffix]);
     }
-    else if (util_1.isString(suffix) && groupVals.includes(suffix)) {
+    else if (typeof suffix === 'string' && groupVals.includes(suffix)) {
         return prependRoot(root, suffix);
     }
     else
         return suffix;
 }
 var prependRoot = function (root, suffix) { return root + "-" + suffix; };
+function contains(container, objectVal) {
+    container.sort(function (a, b) { return a - b; });
+    objectVal.sort(function (a, b) { return a - b; });
+    return objectVal.every(function (val) { return val >= container[0] && val <= container[1]; });
+}
+function overlap(comparisonVal, objectVal) {
+    comparisonVal.sort(function (a, b) { return a - b; });
+    objectVal.sort(function (a, b) { return a - b; });
+    var compare1 = contains(comparisonVal, objectVal);
+    var compare2 = objectVal.some(function (val) { return contains(comparisonVal, [val]); });
+    var compare3 = comparisonVal.some(function (val) { return contains(objectVal, [val]); });
+    return compare1 || compare2 || compare3;
+}
 
 
 /***/ }),
@@ -7772,7 +7840,7 @@ function isNodeList(nodes) {
     var stringRepr = Object.prototype.toString.call(nodes);
     return (util_1.isObject(nodes) &&
         /^\[object (HTMLCollection|NodeList|Object)\]$/.test(stringRepr) &&
-        util_1.isNumber(nodes.length) &&
+        typeof nodes.length === 'number' &&
         (nodes.length === 0 || (util_1.isObject(nodes[0]) && nodes[0].nodeType > 0)));
 }
 exports.isNodeList = isNodeList;

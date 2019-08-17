@@ -12,7 +12,7 @@ export function isNodeList(nodes: any): nodes is NodeList | HTMLCollection {
     return (
         isObject(nodes) &&
         /^\[object (HTMLCollection|NodeList|Object)\]$/.test(stringRepr) &&
-        isNumber(nodes.length) &&
+       typeof nodes.length === 'number' &&
         (nodes.length === 0 || (isObject(nodes[0]) && nodes[0].nodeType > 0))
     );
 }

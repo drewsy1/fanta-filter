@@ -24,9 +24,8 @@
             }
 
             window.onload = () => {
-                fantaFilterCurrent = FantaFilter.init();
                 dateSlider = document.getElementById('slider-date');
-                dateValues = [document.getElementById('event-start'), document.getElementById('event-end')];
+                dateValues = [document.getElementById('dateLow'), document.getElementById('dateHigh')];
 
                 noUiSlider.create(dateSlider, {
                     // Create two timestamps to define a range.
@@ -43,9 +42,10 @@
                 });
 
                 dateSlider.noUiSlider.on('update', function(values, handle) {
-                    dateValues[handle].value = toFormattedDateString(new Date(+values[handle]));
-                    dateValues[handle].dispatchEvent(new Event('input'));
+                    dateValues[handle].value = new Date(+values[handle]);
                 });
+
+                fantaFilterCurrent = FantaFilter.init();
             };
         </script>
         <link rel="stylesheet" href="nouislider.min.css" />
@@ -97,7 +97,7 @@
                 <li class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="black">
                     testGroup1, Item 4
                 </li>
-                <li hidden class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="blue">
+                <li class="js-fafi-item" data-fantafilter-group="testGroup1" data-fantafilter-color="blue">
                     testGroup1, Item 5
                 </li>
             </ul>
@@ -122,39 +122,19 @@
             </ul>
 
             <h1>testGroup3</h1>
-            <table>
-                <tbody>
-                    <tr>
-                        <td colspan="2" style="text-align: justify">
-                            <div id="slider-date"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <input
-                                type="date"
-                                id="event-start"
-                                class="js-fafi-input"
-                                data-fantafilter-group="testGroup3"
-                                data-fantafilter-comparer="date"
-                                data-fantafilter-selector="date-start"
-                                data-fantafilter-operator=">"
-                            />
-                        </td>
-                        <td>
-                            <input
-                                type="date"
-                                id="event-end"
-                                class="js-fafi-input"
-                                data-fantafilter-group="testGroup3"
-                                data-fantafilter-comparer="date"
-                                data-fantafilter-selector="date-end"
-                                data-fantafilter-operator="<"
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div
+                id="slider-date"
+                class="js-fafi-input"
+                type="noUiSlider"
+                data-fantafilter-group="testGroup3"
+                data-fantafilter-comparer="date"
+                data-fantafilter-selector="date-start;date-end"
+                data-fantafilter-operator="overlap"
+            ></div>
+            <div style="display: flex;flex-direction: row;">
+                <input type="text" id="dateLow" readonly />
+                <input type="text" id="dateHigh" readonly />
+            </div>
             <ul class="js-fafi js-fafi-parent" data-fantafilter-group="testGroup3">
                 <li
                     class="js-fafi-item"
@@ -175,8 +155,8 @@
                 <li
                     class="js-fafi-item"
                     data-fantafilter-group="testGroup3"
-                    data-fantafilter-date-start="2010-10-13T02:45:37"
-                    data-fantafilter-date-end="2000-10-13T02:45:37"
+                    data-fantafilter-date-start="2000-10-13T02:45:37"
+                    data-fantafilter-date-end="2010-10-13T02:45:37"
                 >
                     testGroup3, Item 2 2010-10-13T02:45:37
                 </li>

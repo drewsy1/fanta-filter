@@ -30,7 +30,7 @@ export interface iFantaItem extends iFantaElement {
  */
 export interface iFantaInput extends iFantaElement {
     comparer: string;
-    selector: string;
+    selector: string | string[];
     inputType: string;
     operator: string;
     updateId: string;
