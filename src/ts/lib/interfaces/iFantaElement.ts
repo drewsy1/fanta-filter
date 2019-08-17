@@ -25,14 +25,15 @@ export interface iFantaItem extends iFantaElement {
 /**
  * @description Defines a FantaFilterInput object
  * @export
- * @interface iFantaInput
+ * @interface iFantaManipulator
  * @extends {iFantaElement}
  */
-export interface iFantaInput extends iFantaElement {
+export interface iFantaManipulator extends iFantaElement {
     comparer: string;
     selector: string | string[];
     inputType: string;
     operator: string;
     updateId: string;
     updateEvent: CustomEvent<any>;
+    getFilterValue: () => any;
 }

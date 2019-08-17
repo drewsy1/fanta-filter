@@ -1,5 +1,4 @@
-import { iFantaElementConstructor, iFantaInput } from '../../interfaces';
-import { FantaFilterInputText } from './text';
+import { iFantaElementConstructor, iFantaManipulator } from '../../../interfaces';
 import { FantaFilterInput } from '../input';
 
 /**
@@ -7,9 +6,9 @@ import { FantaFilterInput } from '../input';
  * @export
  * @class FantaFilterInputnoUiSlider
  * @extends {FantaFilterInput}
- * @implements {iFantaInput}
+ * @implements {iFantaManipulator}
  */
-export class FantaFilterInputnoUiSlider extends FantaFilterInput implements iFantaInput {
+export class FantaFilterInputnoUiSlider extends FantaFilterInput implements iFantaManipulator {
     /**
      *Creates an instance of FantaFilterInputDate.
      * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
@@ -18,7 +17,6 @@ export class FantaFilterInputnoUiSlider extends FantaFilterInput implements iFan
     constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
         super({ dependencies, elements, parentName, eventType, _userOptions });
         (this.element as any).noUiSlider.on('update', (e: Event) => this.raiseUpdateEvent(e));
-        // super.setUpdateEvent('input',super.raiseUpdateEvent);
     }
 
     raiseUpdateEvent(e: Event) {
@@ -26,10 +24,14 @@ export class FantaFilterInputnoUiSlider extends FantaFilterInput implements iFan
             bubbles: true,
             detail: {
                 sender: this.element,
-                value: (e as any),
+                value: e as any,
             },
         });
 
         this.element.dispatchEvent(this._updateEvent);
+    }
+
+    getFilterValue() {
+        return (this.element as any).noUiSlider.get();
     }
 }

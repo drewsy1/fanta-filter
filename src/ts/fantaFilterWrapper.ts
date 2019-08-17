@@ -4,7 +4,7 @@ import {
     iFantaElementConstructor,
     iFantaFilterGroup,
     iFantaItem,
-    iFantaInput,
+    iFantaManipulator,
 } from './lib/interfaces';
 import { FilterGroup } from './lib/filters';
 import { iFantaWrapperConstructor } from './lib/interfaces/iFantaOptions';
@@ -19,7 +19,7 @@ import { isUndefined } from 'util';
 export class FantaFilterWrapper implements iFantaWrapper {
     parentNode: HTMLElement;
     name: string;
-    inputs: iFantaInput[];
+    inputs: iFantaManipulator[];
     items: iFantaItem[];
     filterGroup: iFantaFilterGroup;
     eventType: string;
@@ -73,10 +73,7 @@ export class FantaFilterWrapper implements iFantaWrapper {
             };
             if (elements.classList.contains(this._options.getClass('toggleGroup'))) {
                 this.inputs.push(this._options.FilterElementClasses.toggleGroup(filterConstructorArgs));
-            } else if (
-                elements.classList.contains(this._options.getClass('input')) ||
-                (elements as HTMLInputElement).type
-            ) {
+            } else if (elements.classList.contains(this._options.getClass('input'))) {
                 this.inputs.push(this._options.FilterElementClasses.inputs(filterConstructorArgs));
             } else if (!elements.classList.contains(this._options.getClass('parent')))
                 this.items.push(this._options.FilterElementClasses.items(filterConstructorArgs));

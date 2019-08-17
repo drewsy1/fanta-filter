@@ -1,4 +1,4 @@
-import { iFantaFilterConstructor, iFantaInput, iFantaFilter, iFantaOptions, iFantaItem } from '../interfaces';
+import { iFantaFilterConstructor, iFantaManipulator, iFantaFilter, iFantaOptions, iFantaItem } from '../interfaces';
 var without = require('lodash.without');
 
 /**
@@ -12,7 +12,7 @@ export abstract class Filter implements iFantaFilter {
     selector: string | string[];
     operator: string;
     filterValue: any;
-    input: iFantaInput;
+    input: iFantaManipulator;
     eventType: string;
     updateEvent: CustomEvent;
     protected _options: iFantaOptions;
@@ -29,6 +29,7 @@ export abstract class Filter implements iFantaFilter {
         this.eventType = input.eventType;
         this.selector = input.selector;
         this.operator = input.operator;
+        this.filterValue = input.getFilterValue();
 
         context.addEventListener(this.input.updateId, (event: CustomEvent) => {
             this.Update(event);

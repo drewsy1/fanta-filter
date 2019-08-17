@@ -1,7 +1,7 @@
-import { iFantaInput, iFantaElement, iFantaItem } from './iFantaElement';
+import { iFantaManipulator, iFantaElement, iFantaItem } from './iFantaElement';
 
 export interface iFantaFilter {
-    input: iFantaInput;
+    input: iFantaManipulator;
     selector: string | string[];
     operator: string;
     filterValue: any;

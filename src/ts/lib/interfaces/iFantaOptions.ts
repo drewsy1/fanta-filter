@@ -1,5 +1,5 @@
 import { iFantaDependencies } from './iFantaDependencies';
-import { iFantaInput } from './iFantaElement';
+import { iFantaManipulator } from './iFantaElement';
 
 /**
  * @description Describes options used throughout FantaFilter
@@ -41,7 +41,7 @@ export interface ClassNames {
 
 export interface iFantaFilterConstructor {
     dependencies: iFantaDependencies;
-    input: iFantaInput;
+    input: iFantaManipulator;
     _userOptions?: iFantaOptions;
 }
 

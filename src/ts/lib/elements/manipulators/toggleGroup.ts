@@ -1,29 +1,16 @@
-import { iFantaElementConstructor, iFantaInput, iFantaOptions } from '../interfaces';
-import { FantaFilterElement } from './element';
-import { isNodeList } from '../util';
+import { iFantaElementConstructor, iFantaManipulator, iFantaOptions } from '../../interfaces';
+import { isNodeList } from '../../util';
+import { FantaFilterManipulator } from '../manipulator';
 var forEach = require('lodash.foreach');
 
 /**
  * @description Implements the FantaFilterInput class to describe a group of toggleable input elements
  * @export
  * @class FantaFilterToggleGroup
- * @extends {FantaFilterElement}
- * @implements {iFantaInput}
+ * @extends {FantaFilterManipulator}
+ * @implements {iFantaManipulator}
  */
-export abstract class FantaFilterToggleGroup extends FantaFilterElement implements iFantaInput {
-    type: string;
-    comparer: string;
-    selector: string;
-    inputType: string;
-    operator: string;
-    updateId: string;
-    filterValue: string[];
-    _updateEvent: CustomEvent<any>;
-
-    get updateEvent() {
-        return this._updateEvent;
-    }
-
+export abstract class FantaFilterToggleGroup extends FantaFilterManipulator implements iFantaManipulator {
     /**
      *Creates an instance of FantaFilterInputToggleGroup.
      * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
@@ -35,28 +22,12 @@ export abstract class FantaFilterToggleGroup extends FantaFilterElement implemen
     ) {
         super({ dependencies, elements, parentName, eventType, _userOptions });
         this.type = this.element.tagName;
-        this.selector = this.element.getAttribute(this._options.getAttribute('selector'));
-        this.operator = this.element.getAttribute(this._options.getAttribute('operator'));
-        this.updateId = `${this.eventType}.(${this.selector}).update`;
-        let elementComparerVal = this.element.getAttribute(this._options.getAttribute('comparer'));
-
-        this.comparer = Object.keys(this._options.InputComparerClasses).includes(elementComparerVal)
-            ? elementComparerVal
-            : 'match';
-
-        this._updateEvent = new CustomEvent(this.updateId, {
-            bubbles: true,
-            detail: {
-                sender: this,
-                value: () => this.filterValue,
-            },
-        });
-
+        this.inputType = this.type;
         forEach(childNodes, (childNode: HTMLElement) => {
             if (childNode.tagName.toLowerCase() === 'button') {
-                childNode.onclick = e => this.Update(childNode, e);
+                childNode.onclick = (e: Event) => this.raiseUpdateEvent(e);
             } else {
-                childNode.oninput = e => this.Update(childNode, e);
+                childNode.oninput = (e: Event) => this.raiseUpdateEvent(e);
             }
         });
     }
@@ -123,22 +94,4 @@ export abstract class FantaFilterToggleGroup extends FantaFilterElement implemen
             );
         }
     }
-
-    /**
-     * @description Returns the current value of this class' filterValue
-     * @returns The current value of this class' filterValue
-     * @memberof FantaFilterToggleGroup
-     */
-    getFilterValue() {
-        return this.filterValue;
-    }
-
-    /**
-     * @description
-     * @abstract
-     * @param {HTMLElement} element
-     * @param {Event} e
-     * @memberof FantaFilterToggleGroup
-     */
-    abstract Update(element: HTMLElement, e: Event): void;
 }

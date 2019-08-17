@@ -1,4 +1,4 @@
-import { iFantaElementConstructor, iFantaInput, iFantaOptions } from '../../interfaces';
+import { iFantaElementConstructor, iFantaManipulator, iFantaOptions } from '../../../interfaces';
 import { FantaFilterToggleGroup } from '../toggleGroup';
 var forEach = require('lodash.foreach');
 
@@ -7,9 +7,9 @@ var forEach = require('lodash.foreach');
  * @export
  * @class FantaFilterRadioGroup
  * @extends {FantaFilterToggleGroup}
- * @implements {iFantaInput}
+ * @implements {iFantaManipulator}
  */
-export class FantaFilterRadioGroup extends FantaFilterToggleGroup implements iFantaInput {
+export class FantaFilterRadioGroup extends FantaFilterToggleGroup implements iFantaManipulator {
     /**
      *Creates an instance of FantaFilterInputToggleGroup.
      * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
@@ -21,9 +21,10 @@ export class FantaFilterRadioGroup extends FantaFilterToggleGroup implements iFa
     ) {
         super({ dependencies, elements, parentName, eventType, _userOptions }, childNodes);
         this.inputType = 'radio';
+        this.filterValue = this.getFilterValue();
     }
 
-    Update(element: HTMLElement, e: Event): void {
+    getFilterValue(): string[] {
         let checkedElements = this.element.querySelectorAll('input:checked');
         let newFilterValue: string[] = [];
         forEach(checkedElements, (checkedElement: HTMLInputElement) => {
@@ -31,7 +32,6 @@ export class FantaFilterRadioGroup extends FantaFilterToggleGroup implements iFa
                 newFilterValue.push(checkedElement.value);
             }
         });
-        this.filterValue = newFilterValue;
-        e.target.dispatchEvent(this._updateEvent);
+        return newFilterValue;
     }
 }

@@ -1,4 +1,4 @@
-import { iFantaElementConstructor, iFantaInput } from '../../interfaces';
+import { iFantaElementConstructor, iFantaManipulator } from '../../../interfaces';
 import { FantaFilterInput } from '../input';
 
 /**
@@ -6,9 +6,9 @@ import { FantaFilterInput } from '../input';
  * @export
  * @class FantaFilterInputText
  * @extends {FantaFilterInput}
- * @implements {iFantaInput}
+ * @implements {iFantaManipulator}
  */
-export class FantaFilterInputText extends FantaFilterInput implements iFantaInput {
+export class FantaFilterInputText extends FantaFilterInput implements iFantaManipulator {
     /**
      *Creates an instance of FantaFilterInputText.
      * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
@@ -16,6 +16,10 @@ export class FantaFilterInputText extends FantaFilterInput implements iFantaInpu
      */
     constructor({ dependencies, elements, parentName, eventType, _userOptions }: iFantaElementConstructor) {
         super({ dependencies, elements, parentName, eventType, _userOptions });
-        this.setUpdateEvent('input', this.raiseUpdateEvent);
+        this.element.oninput = (e: Event) => this.raiseUpdateEvent(e);
+    }
+
+    getFilterValue() {
+        return (this.element as HTMLInputElement).value;
     }
 }

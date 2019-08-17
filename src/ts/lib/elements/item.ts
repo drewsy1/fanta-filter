@@ -1,7 +1,6 @@
 import { iFantaElementConstructor, iFantaItem } from '../interfaces';
 import { isNodeList } from '../util';
 import { FantaFilterElement } from './element';
-import { isUndefined } from 'util';
 
 /**
  * @description Implements the FantaFilterElement class to describe a filterable item element

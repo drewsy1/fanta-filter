@@ -1,4 +1,4 @@
-import { iFantaFilterGroup, iFantaFilter, iFantaInput, iFantaDependencies, iFantaItem } from '../interfaces';
+import { iFantaFilterGroup, iFantaFilter, iFantaManipulator, iFantaDependencies, iFantaItem } from '../interfaces';
 var difference = require('lodash.difference');
 var intersection = require('lodash.intersection');
 
@@ -20,14 +20,14 @@ export class FilterGroup implements iFantaFilterGroup {
      *Creates an instance of FilterGroup.
      * @param {iFantaDependencies} dependencies
      * @param {string} eventType
-     * @param {iFantaInput[]} inputs
+     * @param {iFantaManipulator[]} inputs
      * @param {iFantaItem[]} items
      * @memberof FilterGroup
      */
     constructor(
         dependencies: iFantaDependencies,
         public eventType: string,
-        inputs: iFantaInput[],
+        inputs: iFantaManipulator[],
         public items: iFantaItem[],
     ) {
         inputs

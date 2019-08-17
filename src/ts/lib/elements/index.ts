@@ -1,4 +1,4 @@
 export * from './element';
-export * from './input';
 export * from './item';
-export * from './toggleGroup'
+export * from './manipulator';
+export * from './manipulators';

@@ -24,22 +24,23 @@ export class MatchFilter extends Filter implements iFantaFilter {
      */
     filterObject(inputItem: iFantaItem): iFantaItem | null {
         let selectorValues = this.getSelectorValues(inputItem);
+        let filterValue = this.filterValue[0];
         let isMatch = selectorValues.every(selectorVal => {
-            if(this.filterValue === undefined || this.filterValue === selectorVal) {
+            if (filterValue === undefined || filterValue === selectorVal) {
                 return true;
-            } else if (!!!this.filterValue.length) {
+            } else if (!!!filterValue.length) {
                 return true;
-            } else if (typeof this.filterValue === 'string') {
-                return !!selectorVal.match(this.filterValue);
+            } else if (typeof filterValue === 'string') {
+                return !!selectorVal.match(filterValue);
             } else {
-                return !!this.filterValue.includes(selectorVal);
+                return !!filterValue.includes(selectorVal);
             }
-        })
-        
+        });
+
         return isMatch ? inputItem : null;
     }
 
-    valueConverter(arg: string | string[]){
+    valueConverter(arg: string | string[]) {
         return Array.isArray(arg) ? arg : [arg];
     }
 }

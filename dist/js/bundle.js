@@ -6286,8 +6286,7 @@ var FantaFilterWrapper = /** @class */ (function () {
             if (elements.classList.contains(_this._options.getClass('toggleGroup'))) {
                 _this.inputs.push(_this._options.FilterElementClasses.toggleGroup(filterConstructorArgs));
             }
-            else if (elements.classList.contains(_this._options.getClass('input')) ||
-                elements.type) {
+            else if (elements.classList.contains(_this._options.getClass('input'))) {
                 _this.inputs.push(_this._options.FilterElementClasses.inputs(filterConstructorArgs));
             }
             else if (!elements.classList.contains(_this._options.getClass('parent')))
@@ -6403,262 +6402,6 @@ exports.FantaFilterElement = FantaFilterElement;
 
 /***/ }),
 
-/***/ "./src/ts/lib/elements/input.ts":
-/*!**************************************!*\
-  !*** ./src/ts/lib/elements/input.ts ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
-var element_1 = __webpack_require__(/*! ./element */ "./src/ts/lib/elements/element.ts");
-/**
- * @description Implements the FantaFilterElement class to describe an input element
- * @export
- * @abstract
- * @class FantaFilterInput
- * @extends {FantaFilterElement}
- * @implements {iFantaInput}
- */
-var FantaFilterInput = /** @class */ (function (_super) {
-    __extends(FantaFilterInput, _super);
-    /**
-     *Creates an instance of FantaFilterInput.
-     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
-     * @memberof FantaFilterInput
-     */
-    function FantaFilterInput(_a) {
-        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
-        var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
-        _this.type = 'input';
-        _this.inputType = _this.element.getAttribute('type') || 'text';
-        _this.selector = _this.element.getAttribute(_this._options.getAttribute('selector')).split(';');
-        _this.operator = _this.element.getAttribute(_this._options.getAttribute('operator'));
-        _this.updateId = _this.eventType + ".(" + _this.selector + ").update";
-        var elementComparerVal = _this.element.getAttribute(_this._options.getAttribute('comparer'));
-        _this.comparer = Object.keys(_this._options.InputComparerClasses).includes(elementComparerVal)
-            ? elementComparerVal
-            : 'match';
-        return _this;
-    }
-    Object.defineProperty(FantaFilterInput.prototype, "updateEvent", {
-        get: function () {
-            return this._updateEvent;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * @description Calls the correct input constructor for a specified input element
-     * @static
-     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
-     * @returns A specific input class instance (or array of them)
-     * @memberof FantaFilterInput
-     */
-    FantaFilterInput.create = function (_a) {
-        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
-        var configure = dependencies.configure, defaultOptions = dependencies.defaultOptions;
-        var options = configure(defaultOptions, null, _userOptions);
-        if (util_1.isNodeList(elements)) {
-            return [].slice
-                .call(Array.from(elements))
-                .map(function (_element) {
-                return options.FilterElementClasses.inputs({
-                    dependencies: dependencies,
-                    elements: _element,
-                    parentName: parentName,
-                    eventType: eventType,
-                    _userOptions: _userOptions,
-                });
-            })
-                .filter(function (x) { return x; });
-        }
-        var inputType = elements.getAttribute('type') || 'text';
-        if (Object.keys(options.InputTypeClasses).includes(inputType)) {
-            return options.InputTypeClasses[inputType]({ dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
-        }
-    };
-    /**
-     * @description Sets this input's event listener
-     * @param {string} eventTrigger String representation of the event that will trigger the dispatch of this event
-     * @param {(e: Event) => any} updateFunction The function that will run at dispatch
-     * @memberof FantaFilterInput
-     */
-    FantaFilterInput.prototype.setUpdateEvent = function (eventTrigger, updateFunction) {
-        if (eventTrigger !== undefined && updateFunction !== undefined) {
-            this.element.addEventListener(eventTrigger, updateFunction);
-        }
-    };
-    /**
-     * @description Method that sets this instance's _updateEvent variable and dispatches it
-     * @param {Event} e The event to recieve and use to create the _updateEvent
-     * @memberof FantaFilterInput
-     */
-    FantaFilterInput.prototype.raiseUpdateEvent = function (e) {
-        this._updateEvent = new CustomEvent(this.updateId, {
-            bubbles: true,
-            detail: {
-                sender: e.target,
-                value: e.target.value,
-            },
-        });
-        e.target.dispatchEvent(this._updateEvent);
-    };
-    return FantaFilterInput;
-}(element_1.FantaFilterElement));
-exports.FantaFilterInput = FantaFilterInput;
-
-
-/***/ }),
-
-/***/ "./src/ts/lib/elements/inputs/date.ts":
-/*!********************************************!*\
-  !*** ./src/ts/lib/elements/inputs/date.ts ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var input_1 = __webpack_require__(/*! ../input */ "./src/ts/lib/elements/input.ts");
-/**
- * @description Implements the FantaFilterInput class to describe a date input element
- * @export
- * @class FantaFilterInputnoUiSlider
- * @extends {FantaFilterInput}
- * @implements {iFantaInput}
- */
-var FantaFilterInputnoUiSlider = /** @class */ (function (_super) {
-    __extends(FantaFilterInputnoUiSlider, _super);
-    /**
-     *Creates an instance of FantaFilterInputDate.
-     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
-     * @memberof FantaFilterInputnoUiSlider
-     */
-    function FantaFilterInputnoUiSlider(_a) {
-        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
-        var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
-        _this.element.noUiSlider.on('update', function (e) { return _this.raiseUpdateEvent(e); });
-        return _this;
-        // super.setUpdateEvent('input',super.raiseUpdateEvent);
-    }
-    FantaFilterInputnoUiSlider.prototype.raiseUpdateEvent = function (e) {
-        this._updateEvent = new CustomEvent(this.updateId, {
-            bubbles: true,
-            detail: {
-                sender: this.element,
-                value: e,
-            },
-        });
-        this.element.dispatchEvent(this._updateEvent);
-    };
-    return FantaFilterInputnoUiSlider;
-}(input_1.FantaFilterInput));
-exports.FantaFilterInputnoUiSlider = FantaFilterInputnoUiSlider;
-
-
-/***/ }),
-
-/***/ "./src/ts/lib/elements/inputs/index.ts":
-/*!*********************************************!*\
-  !*** ./src/ts/lib/elements/inputs/index.ts ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(/*! ./text */ "./src/ts/lib/elements/inputs/text.ts"));
-__export(__webpack_require__(/*! ./date */ "./src/ts/lib/elements/inputs/date.ts"));
-
-
-/***/ }),
-
-/***/ "./src/ts/lib/elements/inputs/text.ts":
-/*!********************************************!*\
-  !*** ./src/ts/lib/elements/inputs/text.ts ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var input_1 = __webpack_require__(/*! ../input */ "./src/ts/lib/elements/input.ts");
-/**
- * @description Implements the FantaFilterInput class to describe a text input element
- * @export
- * @class FantaFilterInputText
- * @extends {FantaFilterInput}
- * @implements {iFantaInput}
- */
-var FantaFilterInputText = /** @class */ (function (_super) {
-    __extends(FantaFilterInputText, _super);
-    /**
-     *Creates an instance of FantaFilterInputText.
-     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
-     * @memberof FantaFilterInput
-     */
-    function FantaFilterInputText(_a) {
-        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
-        var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
-        _this.setUpdateEvent('input', _this.raiseUpdateEvent);
-        return _this;
-    }
-    return FantaFilterInputText;
-}(input_1.FantaFilterInput));
-exports.FantaFilterInputText = FantaFilterInputText;
-
-
-/***/ }),
-
 /***/ "./src/ts/lib/elements/item.ts":
 /*!*************************************!*\
   !*** ./src/ts/lib/elements/item.ts ***!
@@ -6730,9 +6473,9 @@ exports.FantaFilterItem = FantaFilterItem;
 
 /***/ }),
 
-/***/ "./src/ts/lib/elements/toggleGroup.ts":
+/***/ "./src/ts/lib/elements/manipulator.ts":
 /*!********************************************!*\
-  !*** ./src/ts/lib/elements/toggleGroup.ts ***!
+  !*** ./src/ts/lib/elements/manipulator.ts ***!
   \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -6754,14 +6497,317 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var element_1 = __webpack_require__(/*! ./element */ "./src/ts/lib/elements/element.ts");
-var util_1 = __webpack_require__(/*! ../util */ "./src/ts/lib/util/index.ts");
+/**
+ * @description Implements the FantaFilterElement class to describe an input element
+ * @export
+ * @abstract
+ * @class FantaFilterInput
+ * @extends {FantaFilterElement}
+ * @implements {iFantaManipulator}
+ */
+var FantaFilterManipulator = /** @class */ (function (_super) {
+    __extends(FantaFilterManipulator, _super);
+    /**
+     *Creates an instance of FantaFilterManipulator.
+     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
+     * @memberof FantaFilterManipulator
+     */
+    function FantaFilterManipulator(_a) {
+        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+        var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
+        // this.type = 'input';
+        // this.inputType = this.element.getAttribute('type') || 'text';
+        _this.selector = _this.element.getAttribute(_this._options.getAttribute('selector')).split(';');
+        _this.operator = _this.element.getAttribute(_this._options.getAttribute('operator'));
+        _this.updateId = _this.eventType + ".(" + _this.selector + ").update";
+        var elementComparerVal = _this.element.getAttribute(_this._options.getAttribute('comparer'));
+        _this.comparer = Object.keys(_this._options.InputComparerClasses).includes(elementComparerVal)
+            ? elementComparerVal
+            : 'match';
+        return _this;
+    }
+    Object.defineProperty(FantaFilterManipulator.prototype, "updateEvent", {
+        get: function () {
+            return this._updateEvent;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * @description Method that sets this instance's _updateEvent variable and dispatches it
+     * @param {Event} e The event to recieve and use to create the _updateEvent
+     * @memberof FantaFilterInput
+     */
+    FantaFilterManipulator.prototype.raiseUpdateEvent = function (e) {
+        this._updateEvent = new CustomEvent(this.updateId, {
+            bubbles: true,
+            detail: {
+                sender: e.target,
+                value: this.getFilterValue(),
+            },
+        });
+        e.target.dispatchEvent(this._updateEvent);
+    };
+    return FantaFilterManipulator;
+}(element_1.FantaFilterElement));
+exports.FantaFilterManipulator = FantaFilterManipulator;
+
+
+/***/ }),
+
+/***/ "./src/ts/lib/elements/manipulators/input.ts":
+/*!***************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/input.ts ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var util_1 = __webpack_require__(/*! ../../util */ "./src/ts/lib/util/index.ts");
+var manipulator_1 = __webpack_require__(/*! ../manipulator */ "./src/ts/lib/elements/manipulator.ts");
+/**
+ * @description Implements the FantaFilterElement class to describe an input element
+ * @export
+ * @abstract
+ * @class FantaFilterInput
+ * @extends {FantaFilterManipulator}
+ * @implements {iFantaManipulator}
+ */
+var FantaFilterInput = /** @class */ (function (_super) {
+    __extends(FantaFilterInput, _super);
+    /**
+     *Creates an instance of FantaFilterInput.
+     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
+     * @memberof FantaFilterInput
+     */
+    function FantaFilterInput(_a) {
+        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+        var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
+        _this.type = 'input';
+        _this.inputType = _this.element.getAttribute('type') || 'text';
+        return _this;
+    }
+    /**
+     * @description Calls the correct input constructor for a specified input element
+     * @static
+     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
+     * @returns A specific input class instance (or array of them)
+     * @memberof FantaFilterInput
+     */
+    FantaFilterInput.create = function (_a) {
+        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+        var configure = dependencies.configure, defaultOptions = dependencies.defaultOptions;
+        var options = configure(defaultOptions, null, _userOptions);
+        if (util_1.isNodeList(elements)) {
+            return [].slice
+                .call(Array.from(elements))
+                .map(function (_element) {
+                return options.FilterElementClasses.inputs({
+                    dependencies: dependencies,
+                    elements: _element,
+                    parentName: parentName,
+                    eventType: eventType,
+                    _userOptions: _userOptions,
+                });
+            })
+                .filter(function (x) { return x; });
+        }
+        var inputType = elements.getAttribute('type') || 'text';
+        if (Object.keys(options.InputTypeClasses).includes(inputType)) {
+            return options.InputTypeClasses[inputType]({ dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions });
+        }
+    };
+    return FantaFilterInput;
+}(manipulator_1.FantaFilterManipulator));
+exports.FantaFilterInput = FantaFilterInput;
+
+
+/***/ }),
+
+/***/ "./src/ts/lib/elements/manipulators/inputs/index.ts":
+/*!**********************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/inputs/index.ts ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(/*! ./text */ "./src/ts/lib/elements/manipulators/inputs/text.ts"));
+__export(__webpack_require__(/*! ./noUiSlider */ "./src/ts/lib/elements/manipulators/inputs/noUiSlider.ts"));
+
+
+/***/ }),
+
+/***/ "./src/ts/lib/elements/manipulators/inputs/noUiSlider.ts":
+/*!***************************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/inputs/noUiSlider.ts ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var input_1 = __webpack_require__(/*! ../input */ "./src/ts/lib/elements/manipulators/input.ts");
+/**
+ * @description Implements the FantaFilterInput class to describe a date input element
+ * @export
+ * @class FantaFilterInputnoUiSlider
+ * @extends {FantaFilterInput}
+ * @implements {iFantaManipulator}
+ */
+var FantaFilterInputnoUiSlider = /** @class */ (function (_super) {
+    __extends(FantaFilterInputnoUiSlider, _super);
+    /**
+     *Creates an instance of FantaFilterInputDate.
+     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
+     * @memberof FantaFilterInputnoUiSlider
+     */
+    function FantaFilterInputnoUiSlider(_a) {
+        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+        var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
+        _this.element.noUiSlider.on('update', function (e) { return _this.raiseUpdateEvent(e); });
+        return _this;
+    }
+    FantaFilterInputnoUiSlider.prototype.raiseUpdateEvent = function (e) {
+        this._updateEvent = new CustomEvent(this.updateId, {
+            bubbles: true,
+            detail: {
+                sender: this.element,
+                value: e,
+            },
+        });
+        this.element.dispatchEvent(this._updateEvent);
+    };
+    FantaFilterInputnoUiSlider.prototype.getFilterValue = function () {
+        return this.element.noUiSlider.get();
+    };
+    return FantaFilterInputnoUiSlider;
+}(input_1.FantaFilterInput));
+exports.FantaFilterInputnoUiSlider = FantaFilterInputnoUiSlider;
+
+
+/***/ }),
+
+/***/ "./src/ts/lib/elements/manipulators/inputs/text.ts":
+/*!*********************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/inputs/text.ts ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var input_1 = __webpack_require__(/*! ../input */ "./src/ts/lib/elements/manipulators/input.ts");
+/**
+ * @description Implements the FantaFilterInput class to describe a text input element
+ * @export
+ * @class FantaFilterInputText
+ * @extends {FantaFilterInput}
+ * @implements {iFantaManipulator}
+ */
+var FantaFilterInputText = /** @class */ (function (_super) {
+    __extends(FantaFilterInputText, _super);
+    /**
+     *Creates an instance of FantaFilterInputText.
+     * @param {iFantaElementConstructor} { dependencies, elements, parentName, eventType, _userOptions }
+     * @memberof FantaFilterInput
+     */
+    function FantaFilterInputText(_a) {
+        var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
+        var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
+        _this.element.oninput = function (e) { return _this.raiseUpdateEvent(e); };
+        return _this;
+    }
+    FantaFilterInputText.prototype.getFilterValue = function () {
+        return this.element.value;
+    };
+    return FantaFilterInputText;
+}(input_1.FantaFilterInput));
+exports.FantaFilterInputText = FantaFilterInputText;
+
+
+/***/ }),
+
+/***/ "./src/ts/lib/elements/manipulators/toggleGroup.ts":
+/*!*********************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/toggleGroup.ts ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var util_1 = __webpack_require__(/*! ../../util */ "./src/ts/lib/util/index.ts");
+var manipulator_1 = __webpack_require__(/*! ../manipulator */ "./src/ts/lib/elements/manipulator.ts");
 var forEach = __webpack_require__(/*! lodash.foreach */ "./node_modules/lodash.foreach/index.js");
 /**
  * @description Implements the FantaFilterInput class to describe a group of toggleable input elements
  * @export
  * @class FantaFilterToggleGroup
- * @extends {FantaFilterElement}
- * @implements {iFantaInput}
+ * @extends {FantaFilterManipulator}
+ * @implements {iFantaManipulator}
  */
 var FantaFilterToggleGroup = /** @class */ (function (_super) {
     __extends(FantaFilterToggleGroup, _super);
@@ -6774,37 +6820,17 @@ var FantaFilterToggleGroup = /** @class */ (function (_super) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }) || this;
         _this.type = _this.element.tagName;
-        _this.selector = _this.element.getAttribute(_this._options.getAttribute('selector'));
-        _this.operator = _this.element.getAttribute(_this._options.getAttribute('operator'));
-        _this.updateId = _this.eventType + ".(" + _this.selector + ").update";
-        var elementComparerVal = _this.element.getAttribute(_this._options.getAttribute('comparer'));
-        _this.comparer = Object.keys(_this._options.InputComparerClasses).includes(elementComparerVal)
-            ? elementComparerVal
-            : 'match';
-        _this._updateEvent = new CustomEvent(_this.updateId, {
-            bubbles: true,
-            detail: {
-                sender: _this,
-                value: function () { return _this.filterValue; },
-            },
-        });
+        _this.inputType = _this.type;
         forEach(childNodes, function (childNode) {
             if (childNode.tagName.toLowerCase() === 'button') {
-                childNode.onclick = function (e) { return _this.Update(childNode, e); };
+                childNode.onclick = function (e) { return _this.raiseUpdateEvent(e); };
             }
             else {
-                childNode.oninput = function (e) { return _this.Update(childNode, e); };
+                childNode.oninput = function (e) { return _this.raiseUpdateEvent(e); };
             }
         });
         return _this;
     }
-    Object.defineProperty(FantaFilterToggleGroup.prototype, "updateEvent", {
-        get: function () {
-            return this._updateEvent;
-        },
-        enumerable: true,
-        configurable: true
-    });
     /**
      * @description Calls the correct input constructor for a specified input element
      * @static
@@ -6861,25 +6887,17 @@ var FantaFilterToggleGroup = /** @class */ (function (_super) {
             }, checkboxInputs);
         }
     };
-    /**
-     * @description Returns the current value of this class' filterValue
-     * @returns The current value of this class' filterValue
-     * @memberof FantaFilterToggleGroup
-     */
-    FantaFilterToggleGroup.prototype.getFilterValue = function () {
-        return this.filterValue;
-    };
     return FantaFilterToggleGroup;
-}(element_1.FantaFilterElement));
+}(manipulator_1.FantaFilterManipulator));
 exports.FantaFilterToggleGroup = FantaFilterToggleGroup;
 
 
 /***/ }),
 
-/***/ "./src/ts/lib/elements/toggleGroups/button.ts":
-/*!****************************************************!*\
-  !*** ./src/ts/lib/elements/toggleGroups/button.ts ***!
-  \****************************************************/
+/***/ "./src/ts/lib/elements/manipulators/toggleGroups/button.ts":
+/*!*****************************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/toggleGroups/button.ts ***!
+  \*****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6899,14 +6917,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var toggleGroup_1 = __webpack_require__(/*! ../toggleGroup */ "./src/ts/lib/elements/toggleGroup.ts");
+var toggleGroup_1 = __webpack_require__(/*! ../toggleGroup */ "./src/ts/lib/elements/manipulators/toggleGroup.ts");
 var forEach = __webpack_require__(/*! lodash.foreach */ "./node_modules/lodash.foreach/index.js");
 /**
  * @description Implements the FantaFilterInput class to describe a group of toggleable input elements
  * @export
  * @class FantaFilterButtonGroup
  * @extends {FantaFilterToggleGroup}
- * @implements {iFantaInput}
+ * @implements {iFantaManipulator}
  */
 var FantaFilterButtonGroup = /** @class */ (function (_super) {
     __extends(FantaFilterButtonGroup, _super);
@@ -6919,10 +6937,31 @@ var FantaFilterButtonGroup = /** @class */ (function (_super) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }, childNodes) || this;
         _this.inputType = 'button';
+        _this.filterValue = _this.getFilterValue();
         return _this;
     }
-    FantaFilterButtonGroup.prototype.Update = function (element, e) {
-        this.filterValue = [element.getAttribute('value')];
+    FantaFilterButtonGroup.prototype.getToggleGroupValue = function (element) {
+        var newFilterValue = [element.getAttribute('value')];
+        this.filterValue = newFilterValue;
+        return newFilterValue;
+    };
+    FantaFilterButtonGroup.prototype.getFilterValue = function () {
+        return this.filterValue;
+    };
+    /**
+     * @description Method that sets this instance's _updateEvent variable and dispatches it
+     * @param {Event} e The event to recieve and use to create the _updateEvent
+     * @memberof FantaFilterInput
+     */
+    FantaFilterButtonGroup.prototype.raiseUpdateEvent = function (e) {
+        this.filterValue = this.getToggleGroupValue(e.target);
+        this._updateEvent = new CustomEvent(this.updateId, {
+            bubbles: true,
+            detail: {
+                sender: e.target,
+                value: this.getFilterValue(),
+            },
+        });
         e.target.dispatchEvent(this._updateEvent);
     };
     return FantaFilterButtonGroup;
@@ -6932,10 +6971,10 @@ exports.FantaFilterButtonGroup = FantaFilterButtonGroup;
 
 /***/ }),
 
-/***/ "./src/ts/lib/elements/toggleGroups/checkbox.ts":
-/*!******************************************************!*\
-  !*** ./src/ts/lib/elements/toggleGroups/checkbox.ts ***!
-  \******************************************************/
+/***/ "./src/ts/lib/elements/manipulators/toggleGroups/checkbox.ts":
+/*!*******************************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/toggleGroups/checkbox.ts ***!
+  \*******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6955,14 +6994,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var toggleGroup_1 = __webpack_require__(/*! ../toggleGroup */ "./src/ts/lib/elements/toggleGroup.ts");
+var toggleGroup_1 = __webpack_require__(/*! ../toggleGroup */ "./src/ts/lib/elements/manipulators/toggleGroup.ts");
 var forEach = __webpack_require__(/*! lodash.foreach */ "./node_modules/lodash.foreach/index.js");
 /**
  * @description Implements the FantaFilterInput class to describe a group of toggleable input elements
  * @export
  * @class FantaFilterCheckboxGroup
  * @extends {FantaFilterToggleGroup}
- * @implements {iFantaInput}
+ * @implements {iFantaManipulator}
  */
 var FantaFilterCheckboxGroup = /** @class */ (function (_super) {
     __extends(FantaFilterCheckboxGroup, _super);
@@ -6975,14 +7014,14 @@ var FantaFilterCheckboxGroup = /** @class */ (function (_super) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }, childNodes) || this;
         _this.inputType = 'checkbox';
+        _this.filterValue = _this.getFilterValue();
         return _this;
     }
-    FantaFilterCheckboxGroup.prototype.Update = function (element, e) {
+    FantaFilterCheckboxGroup.prototype.getFilterValue = function () {
         var checkedElements = this.element.querySelectorAll('input:checked');
         var newFilterValue = [];
         forEach(checkedElements, function (checkedElement) { return newFilterValue.push(checkedElement.value); });
-        this.filterValue = newFilterValue;
-        e.target.dispatchEvent(this._updateEvent);
+        return newFilterValue;
     };
     return FantaFilterCheckboxGroup;
 }(toggleGroup_1.FantaFilterToggleGroup));
@@ -6991,10 +7030,10 @@ exports.FantaFilterCheckboxGroup = FantaFilterCheckboxGroup;
 
 /***/ }),
 
-/***/ "./src/ts/lib/elements/toggleGroups/index.ts":
-/*!***************************************************!*\
-  !*** ./src/ts/lib/elements/toggleGroups/index.ts ***!
-  \***************************************************/
+/***/ "./src/ts/lib/elements/manipulators/toggleGroups/index.ts":
+/*!****************************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/toggleGroups/index.ts ***!
+  \****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7004,17 +7043,17 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(/*! ./button */ "./src/ts/lib/elements/toggleGroups/button.ts"));
-__export(__webpack_require__(/*! ./checkbox */ "./src/ts/lib/elements/toggleGroups/checkbox.ts"));
-__export(__webpack_require__(/*! ./radio */ "./src/ts/lib/elements/toggleGroups/radio.ts"));
+__export(__webpack_require__(/*! ./button */ "./src/ts/lib/elements/manipulators/toggleGroups/button.ts"));
+__export(__webpack_require__(/*! ./checkbox */ "./src/ts/lib/elements/manipulators/toggleGroups/checkbox.ts"));
+__export(__webpack_require__(/*! ./radio */ "./src/ts/lib/elements/manipulators/toggleGroups/radio.ts"));
 
 
 /***/ }),
 
-/***/ "./src/ts/lib/elements/toggleGroups/radio.ts":
-/*!***************************************************!*\
-  !*** ./src/ts/lib/elements/toggleGroups/radio.ts ***!
-  \***************************************************/
+/***/ "./src/ts/lib/elements/manipulators/toggleGroups/radio.ts":
+/*!****************************************************************!*\
+  !*** ./src/ts/lib/elements/manipulators/toggleGroups/radio.ts ***!
+  \****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7034,14 +7073,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var toggleGroup_1 = __webpack_require__(/*! ../toggleGroup */ "./src/ts/lib/elements/toggleGroup.ts");
+var toggleGroup_1 = __webpack_require__(/*! ../toggleGroup */ "./src/ts/lib/elements/manipulators/toggleGroup.ts");
 var forEach = __webpack_require__(/*! lodash.foreach */ "./node_modules/lodash.foreach/index.js");
 /**
  * @description Implements the FantaFilterInput class to describe a group of toggleable input elements
  * @export
  * @class FantaFilterRadioGroup
  * @extends {FantaFilterToggleGroup}
- * @implements {iFantaInput}
+ * @implements {iFantaManipulator}
  */
 var FantaFilterRadioGroup = /** @class */ (function (_super) {
     __extends(FantaFilterRadioGroup, _super);
@@ -7054,9 +7093,10 @@ var FantaFilterRadioGroup = /** @class */ (function (_super) {
         var dependencies = _a.dependencies, elements = _a.elements, parentName = _a.parentName, eventType = _a.eventType, _userOptions = _a._userOptions;
         var _this = _super.call(this, { dependencies: dependencies, elements: elements, parentName: parentName, eventType: eventType, _userOptions: _userOptions }, childNodes) || this;
         _this.inputType = 'radio';
+        _this.filterValue = _this.getFilterValue();
         return _this;
     }
-    FantaFilterRadioGroup.prototype.Update = function (element, e) {
+    FantaFilterRadioGroup.prototype.getFilterValue = function () {
         var checkedElements = this.element.querySelectorAll('input:checked');
         var newFilterValue = [];
         forEach(checkedElements, function (checkedElement) {
@@ -7064,8 +7104,7 @@ var FantaFilterRadioGroup = /** @class */ (function (_super) {
                 newFilterValue.push(checkedElement.value);
             }
         });
-        this.filterValue = newFilterValue;
-        e.target.dispatchEvent(this._updateEvent);
+        return newFilterValue;
     };
     return FantaFilterRadioGroup;
 }(toggleGroup_1.FantaFilterToggleGroup));
@@ -7155,6 +7194,7 @@ var Filter = /** @class */ (function () {
         this.eventType = input.eventType;
         this.selector = input.selector;
         this.operator = input.operator;
+        this.filterValue = input.getFilterValue();
         context.addEventListener(this.input.updateId, function (event) {
             _this.Update(event);
         });
@@ -7237,7 +7277,7 @@ var FilterGroup = /** @class */ (function () {
      *Creates an instance of FilterGroup.
      * @param {iFantaDependencies} dependencies
      * @param {string} eventType
-     * @param {iFantaInput[]} inputs
+     * @param {iFantaManipulator[]} inputs
      * @param {iFantaItem[]} items
      * @memberof FilterGroup
      */
@@ -7346,20 +7386,20 @@ var MatchFilter = /** @class */ (function (_super) {
      * @memberof MatchFilter
      */
     MatchFilter.prototype.filterObject = function (inputItem) {
-        var _this = this;
         var selectorValues = this.getSelectorValues(inputItem);
+        var filterValue = this.filterValue[0];
         var isMatch = selectorValues.every(function (selectorVal) {
-            if (_this.filterValue === undefined || _this.filterValue === selectorVal) {
+            if (filterValue === undefined || filterValue === selectorVal) {
                 return true;
             }
-            else if (!!!_this.filterValue.length) {
+            else if (!!!filterValue.length) {
                 return true;
             }
-            else if (typeof _this.filterValue === 'string') {
-                return !!selectorVal.match(_this.filterValue);
+            else if (typeof filterValue === 'string') {
+                return !!selectorVal.match(filterValue);
             }
             else {
-                return !!_this.filterValue.includes(selectorVal);
+                return !!filterValue.includes(selectorVal);
             }
         });
         return isMatch ? inputItem : null;
@@ -7583,11 +7623,11 @@ exports.configure = configure;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var date_1 = __webpack_require__(/*! ../filters/date */ "./src/ts/lib/filters/date.ts");
-var input_1 = __webpack_require__(/*! ../elements/input */ "./src/ts/lib/elements/input.ts");
-var inputs_1 = __webpack_require__(/*! ../elements/inputs */ "./src/ts/lib/elements/inputs/index.ts");
+var input_1 = __webpack_require__(/*! ../elements/manipulators/input */ "./src/ts/lib/elements/manipulators/input.ts");
+var inputs_1 = __webpack_require__(/*! ../elements/manipulators/inputs */ "./src/ts/lib/elements/manipulators/inputs/index.ts");
 var item_1 = __webpack_require__(/*! ../elements/item */ "./src/ts/lib/elements/item.ts");
-var toggleGroups_1 = __webpack_require__(/*! ../elements/toggleGroups */ "./src/ts/lib/elements/toggleGroups/index.ts");
-var toggleGroup_1 = __webpack_require__(/*! ../elements/toggleGroup */ "./src/ts/lib/elements/toggleGroup.ts");
+var toggleGroups_1 = __webpack_require__(/*! ../elements/manipulators/toggleGroups */ "./src/ts/lib/elements/manipulators/toggleGroups/index.ts");
+var toggleGroup_1 = __webpack_require__(/*! ../elements/manipulators/toggleGroup */ "./src/ts/lib/elements/manipulators/toggleGroup.ts");
 var match_1 = __webpack_require__(/*! ../filters/match */ "./src/ts/lib/filters/match.ts");
 var value_1 = __webpack_require__(/*! ../filters/value */ "./src/ts/lib/filters/value.ts");
 exports.defaultOptions = {

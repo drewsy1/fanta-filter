@@ -1,9 +1,9 @@
 import { DateFilter } from '../filters/date';
-import { FantaFilterInput } from '../elements/input';
-import { FantaFilterInputText, FantaFilterInputnoUiSlider } from '../elements/inputs';
+import { FantaFilterInput } from '../elements/manipulators/input';
+import { FantaFilterInputText, FantaFilterInputnoUiSlider } from '../elements/manipulators/inputs';
 import { FantaFilterItem } from '../elements/item';
-import { FantaFilterRadioGroup, FantaFilterCheckboxGroup, FantaFilterButtonGroup } from '../elements/toggleGroups';
-import { FantaFilterToggleGroup } from '../elements/toggleGroup';
+import { FantaFilterRadioGroup, FantaFilterCheckboxGroup, FantaFilterButtonGroup } from '../elements/manipulators/toggleGroups';
+import { FantaFilterToggleGroup } from '../elements/manipulators/toggleGroup';
 import { iFantaOptions, iFantaFilterConstructor, iFantaElementConstructor } from '../interfaces';
 import { isUndefined, isString } from 'util';
 import { MatchFilter } from '../filters/match';
