@@ -1,6 +1,6 @@
 {
     "name": "fanta-filter",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "An attempt at a JS HTML filtering plugin",
     "main": "dist/js/fanta-filter.js",
     "scripts": {
@@ -56,7 +56,6 @@
         "prettier": "^1.18.2",
         "prettier-eslint": "^9.0.0",
         "should": "^13.2.3",
-        "terser-webpack-plugin": "^1.4.1",
         "ts-loader": "^6.0.4",
         "ts-node": "^8.3.0",
         "typescript": "^3.5.3",
@@ -70,7 +69,6 @@
         "lodash.foreach": "^4.5.0",
         "lodash.intersection": "^4.4.0",
         "lodash.union": "^4.6.0",
-        "lodash.without": "^4.4.0",
-        "stampit": "^4.2.0"
+        "lodash.without": "^4.4.0"
     }
 }

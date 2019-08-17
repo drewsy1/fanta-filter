@@ -1,3 +1,13 @@
 {
-    
+    "mochaExplorer.files": "test/**/*.ts",
+        "mochaExplorer.require": ["ts-node/register", "esm", "ignore-styles", "jsdom-global/register"],
+        "mochaExplorer.logpanel": true,
+        "mochaExplorer.env": {
+            "TS_NODE_COMPILER_OPTIONS": "{\"lib\": [\"dom\", \"es6\", \"es5\"],\"esModuleInterop\": true}"
+        },
+        "prettier.eslintIntegration": true,
+        "typescript.locale": "en",
+        "workbench.colorCustomizations": {
+            "titleBar.activeBackground": "#b58900",
+        }
 }

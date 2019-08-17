@@ -4,6 +4,31 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-    ]
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome",
+            "url": "http://localhost:8080/test/index",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack://FantaFilter/./*": "${webRoot}/*",
+                "webpack://FantaFilter/./src/*": "${webRoot}/src/*",
+                "webpack://FantaFilter/*": "*",
+                "webpack:///./~/*": "${webRoot}/node_modules/*"
+            }
+        },
+        {
+            "name": "Run mocha",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "stopOnEntry": false,
+            "args": ["--no-timeouts", "-r", "ts-node/register", "${workspaceRoot}/test/**/*.spec.ts"],
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector"
+        }
+    ],
+    "compounds": []
+
 }
