@@ -1,4 +1,4 @@
-import { asyncForEach } from '../../../src/ts/lib/util';
+import { asyncForEach } from '../src/ts/lib/util';
 import should from 'should';
 
 describe('asyncForEach', async function() {

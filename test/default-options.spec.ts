@@ -1,4 +1,4 @@
-import { defaultOptions, asyncForEach } from '../../../src/ts/lib/util';
+import { defaultOptions, asyncForEach } from '../src/ts/lib/util';
 import { iFantaOptions } from 'src/ts/lib/interfaces';
 import should from 'should';
 

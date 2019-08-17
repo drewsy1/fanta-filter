@@ -2,8 +2,8 @@
 <html lang="en-US">
     <head>
         <meta charset="utf-8" />
-        <script defer src="nouislider.min.js"></script>
-        <script defer src="../../dist/js/bundle.js"></script>
+        <script defer src="../node_modules/nouislider/distribute/nouislider.min.js"></script>
+        <script defer src="../dist/js/bundle.js"></script>
         <script>
             let fantaFilterCurrent;
             let dateSlider;
@@ -24,7 +24,7 @@
             }
 
             window.onload = () => {
-                dateSlider = document.getElementById('slider-date');
+                dateSlider = document.getElementById('testGroup3Slider');
                 dateValues = [document.getElementById('dateLow'), document.getElementById('dateHigh')];
 
                 noUiSlider.create(dateSlider, {
@@ -48,7 +48,7 @@
                 fantaFilterCurrent = FantaFilter.init();
             };
         </script>
-        <link rel="stylesheet" href="nouislider.min.css" />
+        <link rel="stylesheet" href="../node_modules/nouislider/distribute/nouislider.min.css" />
         <style>
             input[type='range'].multirange.ghost {
                 --range-color: blue;
@@ -63,6 +63,7 @@
             <h1>testGroup1</h1>
             <div
                 class="js-fafi-toggle-group"
+                id="testGroup1ToggleGroup"
                 data-fantafilter-group="testGroup1"
                 data-fantafilter-comparer="match"
                 data-fantafilter-selector="color"
@@ -78,6 +79,7 @@
                 class="js-fafi-input"
                 data-fantafilter-group="testGroup1"
                 title="testGroup1, Input 1"
+                id="testGroup1TextFilter"
                 data-fantafilter-comparer="match"
                 data-fantafilter-selector="innerText"
             />
@@ -107,6 +109,7 @@
                 class="js-fafi-input"
                 data-fantafilter-group="testGroup2"
                 title="testGroup2, Input 0"
+                id="testGroup2TextFilter"
                 data-fantafilter-comparer="match"
                 data-fantafilter-selector="innerText"
             />
@@ -114,8 +117,6 @@
                 <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 0</li>
                 <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 1</li>
                 <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 2</li>
-            </ul>
-            <ul class="js-fafi js-fafi-parent" data-fantafilter-group="testGroup2">
                 <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 3</li>
                 <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 4</li>
                 <li class="js-fafi-item" data-fantafilter-group="testGroup2">testGroup2, Item 5</li>
@@ -123,7 +124,7 @@
 
             <h1>testGroup3</h1>
             <div
-                id="slider-date"
+                id="testGroup3Slider"
                 class="js-fafi-input"
                 type="noUiSlider"
                 data-fantafilter-group="testGroup3"

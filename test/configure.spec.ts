@@ -1,4 +1,4 @@
-import { configure, defaultOptions, convertAttributeNamesToOptions } from '../../../src/ts/lib/util';
+import { configure, defaultOptions, convertAttributeNamesToOptions } from '../src/ts/lib/util';
 import { mocks } from 'mock-browser';
 import * as should from 'should';
 import * as fs from 'fs';

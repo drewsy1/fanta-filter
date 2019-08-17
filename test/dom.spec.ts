@@ -3,7 +3,7 @@ import {
     configure,
     defaultOptions,
     convertAttributeNamesToOptions,
-} from '../../../src/ts/lib/util';
+} from '../src/ts/lib/util';
 import { mocks } from 'mock-browser';
 import should from 'should';
 import * as fs from 'fs';

@@ -8,7 +8,7 @@
         "start": "webpack --config webpack.config.js --watch --progress --profile",
         "build": "webpack --config webpack.config.js --progress --profile  --display-error-details",
         "prod": "webpack --env.NODE_ENV=production --config webpack.config.js --progress --mode=production",
-        "web": "http-server"
+        "web": "http-server src"
     },
     "repository": {
         "type": "git",
@@ -21,7 +21,6 @@
     },
     "homepage": "https://github.com/drewsy1/fanta-filter#readme",
     "devDependencies": {
-        "@types/stampit": "^3.0.3",
         "@types/jsdom": "^12.2.4",
         "@types/lodash.assignin": "^4.2.6",
         "@types/lodash.camelcase": "^4.3.6",
@@ -32,6 +31,7 @@
         "@types/lodash.without": "^4.4.6",
         "@types/mocha": "^5.2.7",
         "@types/node": "^12.7.1",
+        "@types/stampit": "^3.0.3",
         "@typescript-eslint/eslint-plugin": "^1.13.0",
         "@typescript-eslint/parser": "^1.13.0",
         "eslint": "^6.1.0",
@@ -52,6 +52,7 @@
         "mocha": "^6.2.0",
         "mock-browser": "^0.92.14",
         "ndb": "^1.1.4",
+        "nouislider": "^14.0.2",
         "prettier": "^1.18.2",
         "prettier-eslint": "^9.0.0",
         "should": "^13.2.3",
