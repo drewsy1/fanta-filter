@@ -8,7 +8,7 @@
         "start": "webpack --config webpack.config.js --watch --progress --profile",
         "build": "webpack --config webpack.config.js --progress --profile  --display-error-details",
         "prod": "webpack --env.NODE_ENV=production --config webpack.config.js --progress --mode=production",
-        "web": "http-server src"
+        "web": "http-server"
     },
     "repository": {
         "type": "git",
