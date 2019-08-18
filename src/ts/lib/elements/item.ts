@@ -11,11 +11,11 @@ import { FantaFilterElement } from './element';
  */
 export class FantaFilterItem extends FantaFilterElement implements iFantaItem {
     get hidden() {
-        return this.element.hidden;
+        return this.element.classList.contains(this._options.getClass('hidden'));
     }
 
     set hidden(isHidden: boolean) {
-        this.element.hidden =isHidden === undefined ? this.element.hidden : isHidden;
+        this.element.classList.toggle(this._options.getClass('hidden'), isHidden)
     }
 
     /**
