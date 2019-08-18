@@ -8326,4 +8326,4 @@ exports.isNodeList = isNodeList;
 
 /******/ });
 });
-//# sourceMappingURL=bundle.js.map
+//# sourceMappingURL=fanta-filter.js.map
