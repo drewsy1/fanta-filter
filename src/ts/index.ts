@@ -2,6 +2,7 @@ import { configure, defaultOptions } from './lib/util';
 import { iFantaOptions, iFantaWrapper, iFantaDependencies } from './lib/interfaces';
 import { FantaFilterWrapper } from './FantaFilterWrapper';
 import { isNull } from 'util';
+import '../css/item.css';
 
 /**
  * @description Creates an instance of FantaFilter
