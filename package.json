@@ -1,6 +1,6 @@
 {
     "name": "fanta-filter",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "An attempt at a JS HTML filtering plugin",
     "main": "dist/js/fanta-filter.js",
     "scripts": {

@@ -7,7 +7,7 @@ module.exports = {
     entry: './src/ts/index.ts',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'js/bundle.js',
+        filename: 'js/fanta-filter.js',
         libraryTarget: 'umd',
         library: 'FantaFilter',
         umdNamedDefine: true,
