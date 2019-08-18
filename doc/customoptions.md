@@ -90,9 +90,11 @@ Comparison operations using operators as keys.
 ## getAttribute
 
 Signature: `(suffix?) => string | string[]`
+
 Function that retrieves the full (w/ root attribute prepended) version of an attribute.
 
 ## getClass
 
 Signature: `(suffix?) => string | string[]`
+
 Function that retrieves the full (w/ root class prepended) version of a class
